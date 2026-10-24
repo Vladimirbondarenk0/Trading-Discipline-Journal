@@ -745,24 +745,36 @@
             document.getElementById('firebase-modal').classList.toggle('hidden');
         }
 
-        // Firebase Setup Logic
+        // Вшитые настройки для автоматической синхронизации с братом
+const DEFAULT_CONFIG = {
+    databaseURL: "https://trading-journal-bb826-default-rtdb.firebaseio.com/",
+    apiKey: "AIzaSyBCJAnn1JlzPgfm1Fxd-RRGksk5YdgTjkc",
+    projectId: "trading-journal-bb826"
+};
+        
         function loadFirebaseConfig() {
-            const savedConfig = localStorage.getItem('firebase_sync_config');
-            if (savedConfig) {
-                try {
-                    const cfg = JSON.parse(savedConfig);
-                    document.getElementById('fb-database-url').value = cfg.databaseURL || '';
-                    document.getElementById('fb-api-key').value = cfg.apiKey || '';
-                    document.getElementById('fb-project-id').value = cfg.projectId || '';
-
-                    initFirebase(cfg);
-                } catch (e) {
-                    fallbackToLocal();
-                }
-            } else {
-                fallbackToLocal();
-            }
+    // Если в памяти пусто — берём вшитые по умолчанию настройки
+    let savedConfig = localStorage.getItem('firebase_sync_config');
+    if (!savedConfig) {
+        savedConfig = JSON.stringify(DEFAULT_CONFIG);
+        localStorage.setItem('firebase_sync_config', savedConfig);
+    }
+    
+    if (savedConfig) {
+        try {
+            const cfg = JSON.parse(savedConfig);
+            document.getElementById('fb-database-url').value = cfg.databaseURL || '';
+            document.getElementById('fb-api-key').value = cfg.apiKey || '';
+            document.getElementById('fb-project-id').value = cfg.projectId || '';
+            
+            initFirebase(cfg);
+        } catch (e) {
+            fallbackToLocal();
         }
+    } else {
+        fallbackToLocal();
+    }
+}
 
         function initFirebase(cfg) {
             if (!window.fbSDK || !cfg.databaseURL) {
