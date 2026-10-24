@@ -43,15 +43,21 @@
             background-image: radial-gradient(circle at 50% 0%, rgba(243, 186, 47, 0.05) 0%, transparent 70%);
         }
 
-        /* Плавная анимация аккордеона */
+       /* Плавная анимация аккордеона */
         .accordion-body {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-top-width: 0;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease, border-width 0.4s ease, opacity 0.3s ease;
             opacity: 0;
         }
         .accordion-body.open {
             max-height: 2000px;
+            padding-top: 1.25rem; /* возвращает p-5 */
+            padding-bottom: 1.25rem;
+            border-top-width: 1px;
             opacity: 1;
         }
 
