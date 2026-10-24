@@ -345,11 +345,14 @@
         </div>
     </div>
 
-    <!-- Lightbox Modal for Fullscreen Image View -->
-    <div id="lightbox-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden" onclick="closeLightbox()">
-        <div class="relative max-w-4xl max-h-[90vh]" onclick="event.stopPropagation()">
-            <img id="lightbox-img" src="" class="max-w-full max-h-[85vh] rounded-xl object-contain border border-brand-border shadow-2xl">
-            <button onclick="closeLightbox()" class="absolute -top-4 -right-4 bg-brand-card hover:bg-rose-500 text-gray-300 hover:text-white w-10 h-10 rounded-full border border-brand-border flex items-center justify-center shadow-lg transition">
+    <!-- Lightbox Modal for Fullscreen Image View (Во весь экран) -->
+    <div id="lightbox-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-6 hidden cursor-zoom-out" onclick="closeLightbox()">
+        <div class="relative max-w-full max-h-full flex items-center justify-center" onclick="event.stopPropagation()">
+            <!-- Изображение во весь экран -->
+            <img id="lightbox-img" src="" class="max-w-[98vw] max-h-[96vh] object-contain rounded-lg shadow-2xl border border-white/10">
+            
+            <!-- Плавающий полупрозрачный крестик прямо на картинке -->
+            <button onclick="closeLightbox()" title="Закрыть (Esc)" class="absolute top-3 right-3 bg-black/50 hover:bg-rose-600/80 text-white/80 hover:text-white w-10 h-10 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center shadow-2xl transition-all transform hover:scale-110">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
@@ -590,7 +593,7 @@
             }
         }
 
-        // Image Handling (Resize & Convert to Base64)
+        // Image Handling (High Quality Base64)
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -600,7 +603,8 @@
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const maxDim = 1000;
+                    // Увеличиваем лимит разрешения до 2500px для сохранения идеального качества графиков
+                    const maxDim = 2500; 
                     let width = img.width;
                     let height = img.height;
 
@@ -617,7 +621,8 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    // Качество 0.92 для сохранения чёткости свечей и ордеров
+                    const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
                     reportData.image = resizedDataUrl;
 
                     document.getElementById('preview-img').src = resizedDataUrl;
