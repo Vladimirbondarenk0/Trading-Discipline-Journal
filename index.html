@@ -43,6 +43,18 @@
             background-image: radial-gradient(circle at 50% 0%, rgba(243, 186, 47, 0.05) 0%, transparent 70%);
         }
 
+        /* Плавная анимация аккордеона */
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            opacity: 0;
+        }
+        .accordion-body.open {
+            max-height: 2000px;
+            opacity: 1;
+        }
+
         /* Glassmorphism Effect */
         .glass-panel {
             background: rgba(21, 25, 33, 0.8);
@@ -434,9 +446,11 @@
         let currentUser = localStorage.getItem('trading_journal_user') || 'Владимир';
         let currentStep = 1;
         let dbRef = null;
-        let dbInstance = null; // Экземпляр базы для корректного удаления
+        let dbInstance = null;
         let isFirebaseConnected = false;
         let itemToDelete = null;
+        let reportsHistory = [];
+        let openAccordions = []; // Массив для отслеживания открытых карточек (макс. 2)
 
         let reportData = {
             trades: '',
@@ -471,8 +485,6 @@
             "9. Уведомления и динамическое управление позицией",
             "10. Перезаход"
         ];
-
-        let reportsHistory = [];
 
         window.addEventListener('load', () => {
             updateUserUI();
@@ -603,7 +615,6 @@
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    // Увеличиваем лимит разрешения до 2500px для сохранения идеального качества графиков
                     const maxDim = 2500; 
                     let width = img.width;
                     let height = img.height;
@@ -621,7 +632,6 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Качество 0.92 для сохранения чёткости свечей и ордеров
                     const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
                     reportData.image = resizedDataUrl;
 
@@ -777,7 +787,7 @@
                         </div>
                     </div>
 
-                    <div id="body-${item.id}" class="hidden border-t border-brand-border/50 p-5 bg-brand-card/40 space-y-4">
+                    <div id="body-${item.id}" class="accordion-body border-t border-brand-border/50 p-5 bg-brand-card/40 space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                             <div class="space-y-2">
                                 <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
@@ -826,16 +836,28 @@
             });
         }
 
+        // Плавный аккордеон с лимитом в 2 одновременно открытых отчёта
         function toggleAccordion(id) {
             const body = document.getElementById(`body-${id}`);
             const chevron = document.getElementById(`chevron-${id}`);
-            
-            if (body.classList.contains('hidden')) {
-                body.classList.remove('hidden');
-                chevron.classList.add('rotate-180');
-            } else {
-                body.classList.add('hidden');
+            const isOpen = body.classList.contains('open');
+
+            if (isOpen) {
+                body.classList.remove('open');
                 chevron.classList.remove('rotate-180');
+                openAccordions = openAccordions.filter(item => item !== id);
+            } else {
+                body.classList.add('open');
+                chevron.classList.add('rotate-180');
+                openAccordions.push(id);
+
+                if (openAccordions.length > 2) {
+                    const oldestId = openAccordions.shift();
+                    const oldBody = document.getElementById(`body-${oldestId}`);
+                    const oldChevron = document.getElementById(`chevron-${oldestId}`);
+                    if (oldBody) oldBody.classList.remove('open');
+                    if (oldChevron) oldChevron.classList.remove('rotate-180');
+                }
             }
         }
 
@@ -885,7 +907,7 @@
 
             try {
                 const app = window.fbSDK.initializeApp(cfg, 'tradingApp');
-                dbInstance = window.fbSDK.getDatabase(app); // Сохраняем экземпляр базы
+                dbInstance = window.fbSDK.getDatabase(app);
                 dbRef = window.fbSDK.ref(dbInstance, 'reports');
 
                 window.fbSDK.onValue(dbRef, (snapshot) => {
