@@ -451,17 +451,14 @@
             loadFirebaseConfig();
         });
 
-        // Date formatter for Russian aesthetic format (e.g., "24 окт. 2026, 11:26")
+        // Date formatter for Russian concise format (e.g., "24 окт.")
         function formatDate(timestamp) {
             const d = new Date(timestamp);
             if (isNaN(d)) return timestamp;
             const months = ['янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.', 'июл.', 'авг.', 'сен.', 'окт.', 'нояб.', 'дек.'];
             const day = d.getDate();
             const month = months[d.getMonth()];
-            const year = d.getFullYear();
-            const hours = String(d.getHours()).padStart(2, '0');
-            const mins = String(d.getMinutes()).padStart(2, '0');
-            return `${day} ${month} ${year}, ${hours}:${mins}`;
+            return `${day} ${month}`;
         }
 
         // User Selection
@@ -721,18 +718,16 @@
 
                 row.innerHTML = `
                     <div onclick="toggleAccordion(${item.id})" class="p-4 flex items-center justify-between cursor-pointer hover:bg-white/[0.02] transition">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            ${badgeHtml}
-                            <div>
-                                <div class="flex items-center space-x-2 text-xs">
-                                    ${authorBadge}
-                                    <span class="text-gray-400 font-medium">${item.date}</span>
-                                </div>
-                                <div class="text-sm font-semibold text-white mt-1">${item.trades}</div>
+                        <div>
+                            <div class="flex items-center space-x-2 text-xs">
+                                ${authorBadge}
+                                <span class="text-gray-400 font-medium">${item.date}</span>
                             </div>
+                            <div class="text-sm font-semibold text-white mt-1">${item.trades}</div>
                         </div>
 
                         <div class="flex items-center space-x-3">
+                            ${badgeHtml}
                             <i id="chevron-${item.id}" class="fa-solid fa-chevron-down text-gray-500 text-xs transition-transform duration-300"></i>
                         </div>
                     </div>
