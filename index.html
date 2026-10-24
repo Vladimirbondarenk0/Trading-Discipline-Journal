@@ -124,18 +124,19 @@
             }
         }
 
-       @keyframes smoothFade {
-            0%, 100% {
-                opacity: 0.35;
-            }
-            50% {
-                opacity: 1;
-            }
-        }
-        .pulse-smooth {
-            animation: smoothFade 6s infinite ease-in-out;
-            will-change: opacity;
-        }
+      @keyframes smoothFade {
+    from {
+        opacity: 0.55;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.pulse-smooth {
+    animation: smoothFade 3s ease-in-out infinite alternate;
+    will-change: opacity;
+}
     </style>
 </head>
 <body class="min-h-screen pb-16">
@@ -771,9 +772,18 @@
                     const authorInfoEl = document.getElementById('completed-author-info');
                     if (authorInfoEl) authorInfoEl.innerText = `Дисциплинарный блок (${lastUserReport.author})`;
 
-                    const badgeContainerEl = document.getElementById('completed-badge-container');
-                    if (badgeContainerEl) {
-                       badgeContainerEl.innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-smooth"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>БЛОК ТОРГОВЛИ: 1 ДЕНЬ</span>`;}
+                   const badgeContainerEl = document.getElementById('completed-badge-container');
+
+if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== 'blocked') {
+    badgeContainerEl.innerHTML = `
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-smooth">
+            <i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>
+            БЛОК ТОРГОВЛИ: 1 ДЕНЬ
+        </span>
+    `;
+
+    badgeContainerEl.dataset.badgeType = 'blocked';
+}
 
                     const unlockDateStr = `${unlockDate.getDate()} ${months[unlockDate.getMonth()]} в 09:00`;
                     const thoughtEl = document.getElementById('completed-spiritual-thought');
@@ -810,11 +820,17 @@
                 const authorInfoEl = document.getElementById('completed-author-info');
                 if (authorInfoEl) authorInfoEl.innerText = `Запись зафиксирована (${userTodayReport.author})`;
                 
-               const badgeContainerEl = document.getElementById('completed-badge-container');
-            if (badgeContainerEl) {
-               badgeContainerEl.innerHTML = isClean
+              const badgeContainerEl = document.getElementById('completed-badge-container');
+
+const badgeType = isClean ? 'clean' : 'blocked';
+
+if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
+    badgeContainerEl.innerHTML = isClean
     ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✅ 100% По системе</span>`
-    : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-smooth"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>БЛОК ТОРГОВЛИ: 1 ДЕНЬ</span>`;}
+    : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-smooth"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>БЛОК ТОРГОВЛИ: 1 ДЕНЬ</span>`;
+    badgeContainerEl.dataset.badgeType = badgeType;
+}
+              
                 const thoughtEl = document.getElementById('completed-spiritual-thought');
                 if (thoughtEl) {
                     if (isClean) {
