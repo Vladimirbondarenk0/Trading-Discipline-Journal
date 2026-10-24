@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru" class="dark">
 <head>
@@ -36,61 +37,11 @@
     </script>
 
     <style>
-        /* Тёмная тема (по умолчанию) */
         body {
             background-color: #0B0E14;
             color: #E2E8F0;
             font-family: 'Inter', sans-serif;
             background-image: radial-gradient(circle at 50% 0%, rgba(243, 186, 47, 0.05) 0%, transparent 70%);
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* Светлая тема (спокойный светло-серый фон) */
-        body.light {
-            background-color: #F1F3F5;
-            color: #1E293B;
-            background-image: radial-gradient(circle at 50% 0%, rgba(243, 186, 47, 0.08) 0%, transparent 70%);
-        }
-
-        body.light .glass-panel {
-            background: rgba(255, 255, 255, 0.85) !important;
-            border-color: rgba(0, 0, 0, 0.08) !important;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-        }
-
-        body.light .glass-card {
-            background: rgba(248, 249, 250, 0.7);
-            border-color: rgba(0, 0, 0, 0.06);
-        }
-
-        body.light header {
-            background-color: rgba(248, 249, 250, 0.9) !important;
-            border-color: rgba(0, 0, 0, 0.08) !important;
-        }
-
-        body.light .bg-brand-card {
-            background-color: #E9ECEF !important;
-            color: #212529;
-        }
-
-        body.light .border-brand-border {
-            border-color: #DEE2E6 !important;
-        }
-
-        body.light .text-gray-400 {
-            color: #6C757D !important;
-        }
-
-        body.light .text-gray-300 {
-            color: #495057 !important;
-        }
-
-        body.light .text-white {
-            color: #111827 !important;
-        }
-
-        body.light .bg-brand-dark {
-            background-color: #F8F9FA !important;
         }
 
        /* Плавная анимация аккордеона */
@@ -126,9 +77,6 @@
             .record-header:hover {
                 background-color: rgba(255, 255, 255, 0.02);
             }
-            body.light .record-header:hover {
-                background-color: rgba(0, 0, 0, 0.02);
-            }
         }
 
         /* Custom Scrollbar */
@@ -136,7 +84,7 @@
             width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: #0B0E14;
         }
         ::-webkit-scrollbar-thumb {
             background: #2A303C;
@@ -147,6 +95,7 @@
             transition: all 0.4s ease-in-out;
         }
 
+        /* Мобильная адаптация */
         /* Мобильная адаптация */
         @media (max-width: 640px) {
             header .max-w-5xl {
@@ -219,11 +168,6 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Theme Toggle Button -->
-                <button onclick="toggleTheme()" id="theme-toggle-btn" title="Сменить тему" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-300 w-8 h-8 rounded-lg border border-brand-border flex items-center justify-center transition flex-shrink-0">
-                    <i id="theme-icon" class="fa-solid fa-moon text-amber-400"></i>
-                </button>
 
                 <!-- Sync Settings Button -->
                 <button onclick="toggleFirebaseModal()" title="Настройка базы данных" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-300 w-8 h-8 rounded-lg border border-brand-border flex items-center justify-center transition flex-shrink-0">
@@ -578,35 +522,10 @@
         ];
 
         window.addEventListener('load', () => {
-            initTheme();
             updateUserUI();
             initRulesAndErrors();
             loadFirebaseConfig();
         });
-
-        // Theme Toggle Logic
-        function initTheme() {
-            const savedTheme = localStorage.getItem('trading_journal_theme') || 'dark';
-            if (savedTheme === 'light') {
-                document.body.classList.add('light');
-                document.getElementById('theme-icon').className = "fa-solid fa-sun text-amber-500";
-            } else {
-                document.body.classList.remove('light');
-                document.getElementById('theme-icon').className = "fa-solid fa-moon text-amber-400";
-            }
-        }
-
-        function toggleTheme() {
-            const isLight = document.body.classList.toggle('light');
-            const themeIcon = document.getElementById('theme-icon');
-            if (isLight) {
-                localStorage.setItem('trading_journal_theme', 'light');
-                themeIcon.className = "fa-solid fa-sun text-amber-500";
-            } else {
-                localStorage.setItem('trading_journal_theme', 'dark');
-                themeIcon.className = "fa-solid fa-moon text-amber-400";
-            }
-        }
 
         // Date formatter for Russian concise format (e.g., "24 окт.")
         function formatDate(timestamp) {
@@ -875,7 +794,8 @@
                         <i class="fa-solid fa-circle-check text-emerald-400"></i>
                         <span>Системно</span>
                        </div>`
-                    : `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/35" style="text-wrap: nowrap;">
+                    : `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/35" style="
+    text-wrap: nowrap;>
                         <i class="fa-solid fa-circle-xmark text-rose-400"></i>
                         <span>Блок 1 день</span>
                        </div>`;
