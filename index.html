@@ -770,11 +770,26 @@
                 return;
             }
 
-            // 3. Выходной день (Суббота / Воскресенье) без сданного отчёта
+           // 3. Выходной день (Суббота / Воскресенье) без сданного отчёта за сегодня
             if (dayOfWeek === 6 || dayOfWeek === 0) {
                 if (completedCard) completedCard.classList.add('hidden');
-                if (timerCard) timerCard.classList.add('hidden');
-                if (wizardContainer) wizardContainer.classList.remove('hidden');
+                if (wizardContainer) wizardContainer.classList.add('hidden');
+                
+                // Показываем карточку таймера в режиме выходного дня
+                if (timerCard) {
+                    timerCard.classList.remove('hidden');
+                    const badgeTextEl = document.getElementById('session-badge-text');
+                    if (badgeTextEl) badgeTextEl.innerText = "Выходной день (Рынок закрыт)";
+                    
+                    const clockEl = document.getElementById('live-clock');
+                    if (clockEl) clockEl.innerText = "ПОКОЙ";
+                    
+                    const remTextEl = document.getElementById('session-remaining-text');
+                    if (remTextEl) remTextEl.innerText = "Отдых до понедельника, 09:00";
+                    
+                    const progressBarEl = document.getElementById('session-progress-bar');
+                    if (progressBarEl) progressBarEl.style.width = "100%";
+                }
                 return;
             }
 
