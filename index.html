@@ -1,532 +1,980 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru" class="dark">
-  <head>
-    <script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
-injectIntoGlobalHook(window);
-window.$RefreshReg$ = () => {};
-window.$RefreshSig$ = () => (type) => type;</script>
-
-    <script type="module" src="/@vite/client"></script>
-
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="https://base44.com/logo_v2.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#0D0D0E" />
-    <meta
-      name="description"
-      content="Ежедневный учёт торговой дисциплины: предполётная настройка, отчёт по сделкам и журнал сессий."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap"
-      rel="stylesheet"
-    />
-    <title>Дисциплина — торговый журнал</title>
-      <!-- Tailwind CSS CDN for visual editing -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM AMD | Совместный Дневник Трейдинга</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230D0D0E'/><text x='50%' y='62%' font-family='Arial, sans-serif' font-weight='900' font-size='38' fill='%23E5A93C' text-anchor='middle'>AMD</text></svg>">
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/node_modules/@base44/vite-plugin/dist/injections/unhandled-errors-handlers.js" type="module"></script>
-    <script src="/node_modules/@base44/vite-plugin/dist/injections/sandbox-hmr-notifier.js" type="module"></script>
-    <script src="/node_modules/@base44/vite-plugin/dist/injections/navigation-notifier.js" type="module"></script>
-  <script>if (window.self !== window.top) window.parent.postMessage({ type: 'SANDBOX_DOCUMENT_START' }, '*');</script><script>
-    (function() {
-        var buffer = window.__base44_preview_native_failures;
-        if (!buffer || buffer.version !== 1 || !Array.isArray(buffer.entries)) {
-            buffer = { version: 1, entries: [], listenersInstalled: false };
-            window.__base44_preview_native_failures = buffer;
-        }
-        if (buffer.listenersInstalled) return;
-        function value(object, key) {
-            return object && typeof object[key] === 'string' ? object[key] : '';
-        }
-        function append(message) {
-            if (!message) return;
-            var normalizedMessage = String(message).slice(0, 5000);
-            for (var index = buffer.entries.length - 1; index >= 0; index--) {
-                var existing = buffer.entries[index];
-                if (existing && existing.level === 'error' && existing.message === normalizedMessage) {
-                    buffer.entries.splice(index, 1);
-                }
-            }
-            buffer.entries.push({
-                level: 'error',
-                message: normalizedMessage,
-                timestamp: Date.now()
-            });
-            if (buffer.entries.length > 100) {
-                buffer.entries.splice(0, buffer.entries.length - 100);
-            }
-        }
-        buffer.append = append;
-        function handleError(event) {
-            var target = event && event.target;
-            var tagName = value(target, 'tagName').toLowerCase() || 'window';
-            var isModule = tagName === 'script' && value(target, 'type').toLowerCase() === 'module';
-            var resourceType = isModule ? 'module' : tagName;
-            var url = value(target, 'src') || value(target, 'href') || value(event, 'filename');
-            var detail = value(event, 'message') || value(event && event.error, 'message');
-            var prefix = tagName === 'window' ? 'Native browser error' : 'Failed to load ' + resourceType;
-            append(prefix + (url ? ' ' + url : '') + (detail ? ': ' + detail : ''));
-        }
-        function rejectionReason(reason) {
-            if (typeof reason === 'string') return reason;
-            var message = value(reason, 'message');
-            if (message) return message;
-            try { return JSON.stringify(reason) || String(reason); }
-            catch (e) { return String(reason); }
-        }
-        function handleRejection(event) {
-            append('Unhandled promise rejection: ' + rejectionReason(event && event.reason));
-        }
-        function handleCspViolation(event) {
-            var blockedUri = value(event, 'blockedURI') || 'resource';
-            var directive = value(event, 'violatedDirective');
-            append('Content Security Policy blocked ' + blockedUri + (directive ? ' (' + directive + ')' : ''));
-        }
-        function overlayText(root, selector) {
-            var element = root && root.querySelector(selector);
-            return value(element, 'textContent').trim();
-        }
-        function captureViteOverlay(overlay) {
-            var root = overlay && overlay.shadowRoot;
-            var message = overlayText(root, '.message-body');
-            if (!message) return;
-            var plugin = overlayText(root, '.plugin');
-            var details = ['Vite build error: ' + (plugin ? plugin + ' ' : '') + message];
-            var file = overlayText(root, '.file');
-            var frame = overlayText(root, '.frame');
-            var stack = overlayText(root, '.stack');
-            if (file) details.push('File: ' + file);
-            if (frame) details.push(frame);
-            if (stack) details.push(stack);
-            append(details.join(String.fromCharCode(10)));
-        }
-        function captureViteOverlays(node) {
-            if (!node || node.nodeType !== 1) return;
-            if (node.matches && node.matches('vite-error-overlay')) captureViteOverlay(node);
-            if (!node.querySelectorAll) return;
-            var overlays = node.querySelectorAll('vite-error-overlay');
-            for (var index = 0; index < overlays.length; index++) captureViteOverlay(overlays[index]);
-        }
-        window.addEventListener('error', handleError, true);
-        window.addEventListener('unhandledrejection', handleRejection);
-        window.addEventListener('securitypolicyviolation', handleCspViolation);
-        if (typeof MutationObserver !== 'undefined' && document.documentElement) {
-            captureViteOverlays(document.documentElement);
-            new MutationObserver(function(records) {
-                for (var recordIndex = 0; recordIndex < records.length; recordIndex++) {
-                    var nodes = records[recordIndex].addedNodes;
-                    for (var nodeIndex = 0; nodeIndex < nodes.length; nodeIndex++) {
-                        captureViteOverlays(nodes[nodeIndex]);
-                    }
-                }
-            }).observe(document.documentElement, { childList: true, subtree: true });
-        }
-        buffer.listenersInstalled = true;
-    })();
-    </script><script data-preview-data-env-pin="true">
-    (function() {
-        var KEY = 'base44_data_env';
-        var APP_API_PATH = "/api/apps/6adc61e5aba147daf2624023/";
-        var STORAGE_KEY = KEY + ':' + APP_API_PATH;
-        var API_ORIGINS = ["https://app.base44.com", "https://base44.app"].map(function(u) { return new URL(u).origin; });
-        var REQUEST_INIT_KEYS = [
-            'method', 'headers', 'credentials', 'mode', 'cache', 'redirect',
-            'referrer', 'referrerPolicy', 'integrity', 'keepalive', 'signal', 'priority',
-        ];
-        var env = new URLSearchParams(window.location.search).get(KEY);
-        try {
-            if (env === 'dev' || env === 'prod') sessionStorage.setItem(STORAGE_KEY, env);
-            else env = sessionStorage.getItem(STORAGE_KEY);
-        } catch (e) {}
-        if (env !== 'dev' && env !== 'prod') return;
-        function pin(url) {
-            try {
-                var u = new URL(url, window.location.href);
-                var sameOrigin = u.origin === window.location.origin;
-                if (!sameOrigin && API_ORIGINS.indexOf(u.origin) === -1) return url;
-                // The app's own server routes and TanStack server functions build
-                // their SDK client from this request, so they need the selection too.
-                var appServerPath = sameOrigin && (
-                    u.pathname.startsWith('/api/') || u.pathname.startsWith('/_serverFn/')
-                );
-                if (!appServerPath && !u.pathname.startsWith(APP_API_PATH)) return url;
-                // Privileged function/agent routes trust this app's Preview host,
-                // not a dev parameter sent to the generic SDK API origin.
-                if (u.origin !== window.location.origin && (
-                    u.pathname.startsWith(APP_API_PATH + 'functions/') ||
-                    u.pathname.startsWith(APP_API_PATH + 'agents/')
-                )) {
-                    u = new URL(u.pathname + u.search + u.hash, window.location.origin);
-                }
-                u.searchParams.set(KEY, env);
-                return u.toString();
-            } catch (e) { return url; }
-        }
-        var origFetch = window.fetch;
-        window.fetch = function(input, init) {
-            if (typeof input === 'string' || input instanceof URL) {
-                return origFetch.call(this, pin(String(input)), init);
-            }
-            if (!input || !input.url) return origFetch.call(this, input, init);
-            var pinned = pin(input.url);
-            if (pinned === input.url) return origFetch.call(this, input, init);
-            try {
-                input = new Request(input, init);
-                if (!input.keepalive || !input.body) {
-                    return origFetch.call(this, new Request(pinned, input));
-                }
-                // RequestInit exposes an existing body as a stream, which Fetch
-                // forbids with keepalive. Buffer only that case, after init overrides.
-                var self = this;
-                return input.blob().then(function(body) {
-                    var rebuilt = { body: body };
-                    REQUEST_INIT_KEYS.forEach(function(key) {
-                        if (input[key] !== undefined) rebuilt[key] = input[key];
-                    });
-                    return origFetch.call(self, new Request(pinned, rebuilt));
-                });
-            } catch (error) { return Promise.reject(error); }
-        };
-        var origOpen = XMLHttpRequest.prototype.open;
-        XMLHttpRequest.prototype.open = function(method, url) {
-            arguments[1] = pin(String(url));
-            return origOpen.apply(this, arguments);
-        };
-    })();
-    </script><script defer data-preview-inject="true" data-app-id="6adc61e5aba147daf2624023" data-preview-type="sandbox" data-rum-app-id="db50c921-10c3-4f12-bccb-950fa174b708" data-rum-client-token="pubfe8a4f2972b412b4556fd67e77f82cb4" data-dd-site="datadoghq.com" src="https://app.base44.com/builder-bridge.js?t=1792837380"></script><script>
-    (function() {
-        var IGNORE = { SCRIPT: 1, STYLE: 1, LINK: 1, META: 1, NOSCRIPT: 1, TEMPLATE: 1 };
-        const fire = () => window.parent.postMessage({ type: 'IFRAME_CONTENT_READY' }, '*');
-        function check() {
-            var body = document.body;
-            if (!body) return false;
-            for (var idx = 0; idx < body.children.length; idx++) {
-                if (!IGNORE[body.children[idx].tagName]) return true;
-            }
-            return false;
-        }
-        function start() {
-            if (check()) { fire(); return; }
-            var observer = new MutationObserver(function() {
-                if (check()) { fire(); observer.disconnect(); }
-            });
-            observer.observe(document.documentElement, { childList: true, subtree: true });
-        }
-        if (document.body) { start(); }
-        else { document.addEventListener('DOMContentLoaded', start, { once: true }); }
-    })();
-    </script><script>
-    (function() {
-        if (window.self === window.top) return;
-        var APP_ID = "6adc61e5aba147daf2624023";
-        var PREVIEW_TYPE = "sandbox";
-        var on404 = false;
-        var booted = false;
-        function detect() { return !!document.querySelector('[data-source-location^="PageNotFound:"]'); }
-        function payload() { return { app_id: APP_ID, preview_type: PREVIEW_TYPE, url_path: window.location.pathname }; }
-        function tick() {
-            var now = detect();
-            if (now && !on404) {
-                on404 = true;
-                window.parent.postMessage({ type: 'PREVIEW_PAGE_NOT_FOUND', payload: payload() }, '*');
-            } else if (!now && (on404 || !booted)) {
-                // On first tick of a fresh document, emit a cleared signal even when
-                // not currently on a 404 — the parent may have latched is404=true from
-                // a previous document at the same URL (e.g. after an iframe reload).
-                on404 = false;
-                window.parent.postMessage({ type: 'PREVIEW_PAGE_NOT_FOUND_CLEARED', payload: payload() }, '*');
-            }
-            booted = true;
-        }
-        function start() {
-            tick();
-            new MutationObserver(tick).observe(document.body, { childList: true, subtree: true });
-        }
-        if (document.body) { start(); }
-        else { document.addEventListener('DOMContentLoaded', start, { once: true }); }
-    })();
-    </script><script>
-    (function() {
-        if (window.self === window.top) return;
-        function fire() { window.parent.postMessage({ type: 'REACT_ROOT_HAS_CHILDREN' }, '*'); }
-        function findRoot() {
-            return document.getElementById('root')
-                || document.getElementById('app')
-                || document.querySelector('[data-react-root]');
-        }
-        // One-shot: wait for DOMContentLoaded (static HTML parsed by then, so the
-        // Base44 convention <div id="root"> is either present or not coming),
-        // observe the root's childList until the first element child appears,
-        // then fire and disconnect. No tree-wide subtree observer.
-        function start() {
-            var root = findRoot();
-            if (!root) return;
-            if (root.childElementCount > 0) { fire(); return; }
-            var obs = new MutationObserver(function() {
-                if (root.childElementCount > 0) { fire(); obs.disconnect(); }
-            });
-            obs.observe(root, { childList: true });
-        }
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', start, { once: true });
-        } else { start(); }
-    })();
-    </script><script>
-    (function() {
-        if (window.self === window.top) return;
-        function postUnsupported(reason) {
-            window.parent.postMessage({
-                type: 'IFRAME_FIRST_CONTENTFUL_PAINT_UNSUPPORTED',
-                payload: { reason: reason, userAgent: navigator.userAgent }
-            }, '*');
-        }
-        if (typeof PerformanceObserver === 'undefined') {
-            postUnsupported('no_performance_observer');
-            return;
-        }
-        try {
-            var obs = new PerformanceObserver(function(list) {
-                var entries = list.getEntries();
-                for (var i = 0; i < entries.length; i++) {
-                    if (entries[i].name === 'first-contentful-paint') {
-                        obs.disconnect();
-                        window.parent.postMessage({ type: 'IFRAME_FIRST_CONTENTFUL_PAINT' }, '*');
-                        return;
-                    }
-                }
-            });
-            obs.observe({ type: 'paint', buffered: true });
-        } catch (e) {
-            postUnsupported('observe_threw:' + (e && e.name ? e.name : 'Error'));
-        }
-    })();
-    </script><script>
-    (function() {
-        if (window.self === window.top) return;
-        var APP_ID = "6adc61e5aba147daf2624023";
-        var PREVIEW_TYPE = "sandbox";
-        var DEPS_PATH = '/node_modules/.vite/deps/';
-        var fired = false;
-        function isViteDep(url) {
-            return typeof url === 'string' && url.indexOf(DEPS_PATH) !== -1;
-        }
-        function looksFailed(entry) {
-            // HTTP failure status (Chrome 109+).
-            if (entry.responseStatus && entry.responseStatus >= 400) return true;
-            // Aborted / blocked / network-error: request ran, nothing decoded.
-            // decodedBodySize === 0 distinguishes from cache hits (Safari has no
-            // deliveryType, so we can't rely on it to exclude cached responses).
-            return entry.transferSize === 0
-                && entry.decodedBodySize === 0
-                && entry.duration > 0
-                && entry.responseEnd > 0;
-        }
-        function report(entry) {
-            if (fired) return;
-            fired = true;
-            var nativeBuffer = window.__base44_preview_native_failures;
-            if (nativeBuffer && typeof nativeBuffer.append === 'function') {
-                nativeBuffer.append('Failed to load module ' + entry.name);
-            }
-            window.parent.postMessage({
-                type: 'SANDBOX_VITE_DEPS_404',
-                payload: {
-                    app_id: APP_ID,
-                    preview_type: PREVIEW_TYPE,
-                    url: entry.name,
-                    initiator_type: entry.initiatorType,
-                    response_status: entry.responseStatus
-                }
-            }, '*');
-        }
-        new PerformanceObserver(function(list) {
-            var entries = list.getEntries();
-            for (var i = 0; i < entries.length; i++) {
-                if (isViteDep(entries[i].name) && looksFailed(entries[i])) {
-                    report(entries[i]);
-                    return;
-                }
-            }
-        }).observe({ type: 'resource', buffered: true });
-    })();
-    </script><script>
-    (function() {
-        if (typeof PerformanceObserver === 'undefined') return;
-        var reported = {};
-        // Only the app's own module trees may put an error over the preview. A page
-        // can load an optional classic script (analytics, a widget) that fails while
-        // the app renders perfectly well; that must not read as broken app code.
-        // Recording is deliberately wider than reporting — the console buffer keeps
-        // every failed module for diagnostics.
-        function isAppModule(path) {
-            return path.indexOf('/src/') === 0 || path.indexOf('/base44/') === 0;
-        }
-        function modulePath(url) {
-            try {
-                var path = new URL(url, window.location.href).pathname;
-                // The bridge probes this standard SDK path opportunistically;
-                // legacy/custom apps are allowed not to provide it.
-                if (path === '/src/api/base44Client.js') return '';
-                if (path.indexOf('/node_modules/.vite/deps/') !== -1) return '';
-                return /[.](?:[cm]?[jt]sx?)$/i.test(path) ? path : '';
-            } catch (e) {
-                return '';
-            }
-        }
-        new PerformanceObserver(function(list) {
-            var entries = list.getEntries();
-            for (var index = 0; index < entries.length; index++) {
-                var entry = entries[index];
-                if (entry.initiatorType !== 'script') continue;
-                var status = entry.responseStatus;
-                if (!status) continue;
-                var path = modulePath(entry.name);
-                if (!path) continue;
-                if (status < 400) {
-                    // Recovered (an HMR fix re-requests it). Forget it, or breaking the
-                    // same path again later this document would be silently suppressed.
-                    delete reported[path];
-                    continue;
-                }
-                var message = status === 404
-                    ? 'Module not found: ' + path
-                    : 'Module failed to load (' + status + '): ' + path;
-                var buffer = window.__base44_preview_native_failures;
-                if (buffer && typeof buffer.append === 'function') buffer.append(message);
-                if (!isAppModule(path) || reported[path] || window.self === window.top) continue;
-                reported[path] = true;
-                window.parent.postMessage({
-                    type: 'SANDBOX_MODULE_LOAD_FAILED',
-                    payload: { path: path, status: status, message: message }
-                }, '*');
-            }
-        }).observe({ type: 'resource', buffered: true });
-    })();
-    </script><script>
-    (function() {
-        if (window.self === window.top) return;
-        if (typeof performance === 'undefined' || typeof performance.getEntriesByType !== 'function') return;
-        var DEPS_PATH = '/node_modules/.vite/deps/';
-        var QUIESCENCE_MS = 1500;
-        var POLL_MS = 500;
-        var fired = false;
-        var intervalId = setInterval(function() {
-            if (fired) return;
-            var entries = performance.getEntriesByType('resource');
-            var lastDepEnd = 0;
-            for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name.indexOf(DEPS_PATH) === -1) continue;
-                if (entries[i].responseEnd > lastDepEnd) lastDepEnd = entries[i].responseEnd;
-            }
-            if (lastDepEnd === 0) return;
-            if (performance.now() - lastDepEnd >= QUIESCENCE_MS) {
-                fired = true;
-                clearInterval(intervalId);
-                window.parent.postMessage({ type: 'IFRAME_VITE_DEPS_SETTLED' }, '*');
-            }
-        }, POLL_MS);
-    })();
-    </script><script type="module">
-        try {
-            const { base44 } = await import("/src/api/base44Client.js");
-            if (base44) {
-                Object.defineProperty(window, "base44_sdk", {
-                    value: base44,
-                    writable: false,
-                    configurable: true
-                });
-            }
-        } catch (e) {
-            // Some legacy/custom apps may not have the standard client module.
-            // Leave window.base44_sdk undefined; PreviewLens can fall back to UI/network checks.
-            window.parent.postMessage({ type: "PREVIEW_LENS_SDK_ATTACH_FAILED", error: String(e) }, "*");
-        }
-        </script><script type="module">
-        try {
-            const { createHotContext } = await import("/@vite/client");
-            const hot = createHotContext("/__builder-bridge-hmr");
-            const previewFEVersion = Number(new URLSearchParams(window.location.search).get("previewFE_version")) || 0;
-            hot.on("vite:ws:connect", () => window.parent.postMessage({ type: "SANDBOX_WS_CONNECT" }, "*"));
-            hot.on("vite:ws:disconnect", () => window.parent.postMessage({ type: "SANDBOX_WS_DISCONNECT" }, "*"));
-        
-            hot.on("vite:error", (payload) => {
-                const err = payload && payload.err && typeof payload.err === "object" ? payload.err : {};
-                const message = typeof err.message === "string" ? err.message : "Unknown build error";
-                const plugin = typeof err.plugin === "string" ? `[plugin:${err.plugin}] ` : "";
-                const details = [`Vite build error: ${plugin}${message}`];
-                const loc = err.loc && typeof err.loc === "object" ? err.loc : null;
-                let file = loc && typeof loc.file === "string"
-                    ? loc.file
-                    : (typeof err.id === "string" ? err.id : "");
-                if (file) {
-                    file = file.split("?")[0];
-                    if (loc && Number.isFinite(loc.line) && Number.isFinite(loc.column)) {
-                        file += `:${loc.line}:${loc.column}`;
-                    }
-                    details.push(`File: ${file}`);
-                }
-                if (typeof err.frame === "string" && err.frame.trim()) details.push(err.frame.trim());
-                if (typeof err.stack === "string" && err.stack.trim()) details.push(err.stack.trim());
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-                const nativeBuffer = window.__base44_preview_native_failures;
-                if (!nativeBuffer || typeof nativeBuffer.append !== "function") return;
-                nativeBuffer.append(details.join(String.fromCharCode(10)));
-            });
-    
-            // The pending promise holds Vite's pageReload (it awaits listeners) so the parent swaps a fresh iframe; an editor that doesn't announce previewFE_version falls back to today's in-place reload.
-            hot.on("vite:beforeFullReload", () => {
-                window.parent.postMessage({ type: "sandbox:beforeFullReload" }, "*");
-                if (previewFEVersion > 0) return new Promise(() => {});
-            });
-        } catch (e) {
-            // Bundled dev mode serves no /@vite/client. The plugin's socket relay, shipped
-            // inside the bundle, reports these events and flags itself once it runs; Vite's
-            // pre-bundle fallback page reloads on its own. Give the bundle time before
-            // declaring the socket unreachable.
-            const reportAttachFailure = (attemptsLeft) => {
-                if (window.__base44_bundled_dev__ || globalThis.__vite_is_fallback_page__) return;
-                if (attemptsLeft <= 0) {
-                    window.parent.postMessage({ type: "SANDBOX_WS_ATTACH_FAILED", error: String(e) }, "*");
-                    return;
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0B0E14',
+                            card: '#151921',
+                            border: '#2A303C',
+                            accent: '#F3BA2F', // Trading Gold
+                            emerald: '#10B981',
+                            rose: '#F43F5E'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
                 }
-                setTimeout(() => reportAttachFailure(attemptsLeft - 1), 500);
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0B0E14;
+            color: #E2E8F0;
+            font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(circle at 50% 0%, rgba(243, 186, 47, 0.05) 0%, transparent 70%);
+        }
+
+        .mar6{
+            margin: 9px;
+        }
+
+       /* Плавная анимация аккордеона */
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .accordion-body.open {
+            max-height: 2000px;
+        }
+
+        /* Glassmorphism Effect */
+        .glass-panel {
+            background: rgba(21, 25, 33, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(30, 36, 48, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(243, 186, 47, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0E14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2A303C;
+            border-radius: 3px;
+        }
+
+        .step-transition {
+            transition: all 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-16">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-brand-border/50 bg-brand-dark/90 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/30 border border-amber-500/30 flex items-center justify-center shadow-lg shadow-amber-500/5">
+                    <i class="fa-solid fa-chart-line text-amber-400 text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-white tracking-wide text-base flex items-center gap-2">
+                        SYSTEM <span class="text-amber-400">AMD</span>
+                        <span id="sync-status-badge" class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                            <i class="fa-solid fa-database mr-1"></i> Offline
+                        </span>
+                    </h1>
+                    <p class="text-xs text-gray-400">Совместный Дневник Трейдинга</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- User Selector Button -->
+                <div class="relative">
+                    <button onclick="toggleUserSelector()" id="user-select-btn" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-200 px-3 py-1.5 rounded-lg border border-brand-border flex items-center space-x-2 transition">
+                        <i class="fa-solid fa-user-gear text-amber-400"></i>
+                        <span id="current-user-name">Vladimir</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                    </button>
+
+                    <!-- Dropdown -->
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-44 bg-brand-card border border-brand-border rounded-xl shadow-2xl z-50 py-1.5 text-xs">
+                        <div class="px-3 py-1.5 text-[10px] uppercase font-bold text-gray-400 tracking-wider">Кто вы сегодня?</div>
+                        <button onclick="switchUser('Vladimir')" class="w-full text-left px-3 py-2 text-gray-200 hover:bg-amber-500/10 hover:text-amber-400 flex items-center justify-between">
+                            <span>Vladimir</span>
+                            <i class="fa-solid fa-check text-amber-400 text-xs hidden" id="check-vladimir"></i>
+                        </button>
+                        <button onclick="switchUser('Max')" class="w-full text-left px-3 py-2 text-gray-200 hover:bg-amber-500/10 hover:text-amber-400 flex items-center justify-between">
+                            <span>Max</span>
+                            <i class="fa-solid fa-check text-amber-400 text-xs hidden" id="check-max"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sync Settings Button -->
+                <button onclick="toggleFirebaseModal()" title="Настройка базы данных" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-300 w-8 h-8 rounded-lg border border-brand-border flex items-center justify-center transition">
+                    <i class="fa-solid fa-plug text-amber-400"></i>
+                </button>
+
+                <!-- New Report Quick Button -->
+                <button onclick="resetWizard()" class="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-3 py-1.5 rounded-lg border border-amber-500/30 font-medium transition hidden sm:inline-flex items-center">
+                    <i class="fa-solid fa-plus mr-1.5"></i> Новый Отчёт
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 mt-8 space-y-8">
+
+        <!-- Pre-trading Discipline Code Header Card -->
+        <section class="glass-panel rounded-2xl p-6 border border-brand-border/80 shadow-2xl">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="inline-flex items-center space-x-2 text-xs text-amber-400 font-semibold tracking-wider uppercase bg-amber-400/10 px-2.5 py-1 rounded-md">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Кодекс Торговой Сессии (9:00 - 12:00)</span>
+                    </div>
+                    <h2 class="text-lg font-semibold text-white">Правила дисциплины и рисков</h2>
+                    <p class="text-xs text-gray-400">10 главных критериев нашей торговой модели и эмоционального контроля.</p>
+                </div>
+                
+                <button onclick="toggleRuleModal()" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-300 px-4 py-2.5 rounded-xl border border-brand-border flex items-center justify-center space-x-2 transition">
+                    <i class="fa-solid fa-list-check text-amber-400"></i>
+                    <span>Проверить 10 Правил</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- WIZARD STEP CONTAINER -->
+        <section class="glass-panel rounded-2xl p-6 sm:p-8 border border-brand-border shadow-2xl relative overflow-hidden">
+            <!-- Step Progress Indicator -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between text-xs text-gray-400 mb-2 font-medium">
+                    <span id="step-indicator-text">ШАГ 1 ИЗ 4: КОЛИЧЕСТВО СДЕЛОК</span>
+                    <span id="step-percent" class="text-amber-400 font-bold">25%</span>
+                </div>
+                <div class="w-full bg-brand-card h-2 rounded-full overflow-hidden border border-brand-border/50">
+                    <div id="step-bar" class="bg-gradient-to-r from-amber-500 to-amber-300 h-full w-1/4 transition-all duration-500"></div>
+                </div>
+            </div>
+
+            <!-- STEP 1: Trades Count -->
+            <div id="step-1" class="step-transition space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Сколько сделок было открыто сегодня?</h3>
+                    <p class="text-xs text-gray-400 mt-1">Выберите соответствующий вариант согласно вашему лимиту.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <button onclick="selectTrades('0 сделок')" class="glass-card p-5 rounded-xl text-left border border-brand-border hover:border-amber-400/50 group focus:outline-none">
+                        <div class="w-10 h-10 rounded-lg bg-gray-800/80 flex items-center justify-center text-amber-400 mb-3 group-hover:bg-amber-500/20 transition">
+                            <span class="font-bold text-lg">0</span>
+                        </div>
+                        <div class="font-semibold text-white">0 сделок</div>
+                        <div class="text-xs text-gray-400 mt-1">Сессия без входов в рынок</div>
+                    </button>
+
+                    <button onclick="selectTrades('1 сделка')" class="glass-card p-5 rounded-xl text-left border border-brand-border hover:border-amber-400/50 group focus:outline-none">
+                        <div class="w-10 h-10 rounded-lg bg-gray-800/80 flex items-center justify-center text-amber-400 mb-3 group-hover:bg-amber-500/20 transition">
+                            <span class="font-bold text-lg">1</span>
+                        </div>
+                        <div class="font-semibold text-white">1 сделка</div>
+                        <div class="text-xs text-gray-400 mt-1">Стандартный рабочий сетап</div>
+                    </button>
+
+                    <button onclick="selectTrades('2 сделки (основная + перезаход)')" class="glass-card p-5 rounded-xl text-left border border-brand-border hover:border-amber-400/50 group focus:outline-none">
+                        <div class="w-10 h-10 rounded-lg bg-gray-800/80 flex items-center justify-center text-amber-400 mb-3 group-hover:bg-amber-500/20 transition">
+                            <span class="font-bold text-lg">2</span>
+                        </div>
+                        <div class="font-semibold text-white">2 сделки</div>
+                        <div class="text-xs text-gray-400 mt-1">Основная + разрешённый перезаход</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Codex Compliance (Split Logic) -->
+            <div id="step-2" class="step-transition hidden space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Соблюдение торгового кодекса</h3>
+                    <p class="text-xs text-gray-400 mt-1">Были ли допущены эмоциональные или технические отклонения от системы?</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <!-- 100% System Option -->
+                    <button onclick="selectCompliance('clean')" class="glass-card p-6 rounded-xl text-left border border-emerald-500/30 hover:border-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 group focus:outline-none">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <span class="text-xs bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-1 rounded-full border border-emerald-500/30">БЕЗ ОШИБОК</span>
+                        </div>
+                        <div class="font-bold text-lg text-white group-hover:text-emerald-300 transition">✅ 100% По системе</div>
+                        <div class="text-xs text-gray-300 mt-1 leading-relaxed">Полное следование алгоритму. Пропускает этап выбора ошибок и ведет сразу к скриншоту.</div>
+                    </button>
+
+                    <!-- Violation Option -->
+                    <button onclick="selectCompliance('violation')" class="glass-card p-6 rounded-xl text-left border border-rose-500/30 hover:border-rose-400 bg-rose-500/5 hover:bg-rose-500/10 group focus:outline-none">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <span class="text-xs bg-rose-500/20 text-rose-300 font-bold px-2.5 py-1 rounded-full border border-rose-500/30">БЛОК 1 ДЕНЬ</span>
+                        </div>
+                        <div class="font-bold text-lg text-white group-hover:text-rose-300 transition">❌ Нарушение</div>
+                        <div class="text-xs text-gray-300 mt-1 leading-relaxed">Была допущена ошибка. Потребуется выбрать конкретную причину сбоя.</div>
+                    </button>
+                </div>
+
+                <div class="pt-4 flex justify-start">
+                    <button onclick="goToStep(1)" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1">
+                        <i class="fa-solid fa-arrow-left"></i> <span>Назад</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Error Stage (Appears only if Violation) -->
+            <div id="step-3-error" class="step-transition hidden space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white text-rose-400">Выявленные ошибки</h3>
+                    <p class="text-xs text-gray-400 mt-1">Укажите ключевую причину сбоя дисциплины во время сессии.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2" id="error-list">
+                    <!-- Populated via JS -->
+                </div>
+
+                <div class="pt-4 flex justify-between items-center">
+                    <button onclick="goToStep(2)" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1">
+                        <i class="fa-solid fa-arrow-left"></i> <span>Назад</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Screenshot Upload & Final Submission -->
+            <div id="step-4-upload" class="step-transition hidden space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Прикрепите скриншот истории ордеров</h3>
+                    <p class="text-xs text-gray-400 mt-1">Загрузите или перетащите изображение с подтверждением сделок.</p>
+                </div>
+
+                <div class="border-2 border-dashed border-brand-border hover:border-amber-400/60 rounded-2xl p-8 text-center bg-brand-card/40 transition cursor-pointer relative" id="drop-zone">
+                    <input type="file" id="screenshot-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleFileSelect(event)">
+                    
+                    <div id="upload-placeholder" class="space-y-3">
+                        <div class="w-14 h-14 mx-auto rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl border border-amber-500/20">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <div class="text-sm text-gray-200 font-medium">Нажмите или перетащите изображение сюда</div>
+                        <div class="text-xs text-gray-500">PNG, JPG или WEBP (макс. 5MB)</div>
+                    </div>
+
+                    <!-- Image Preview Area -->
+                    <div id="upload-preview" class="hidden relative inline-block">
+                        <img id="preview-img" src="" class="max-h-56 rounded-xl border border-brand-border object-contain shadow-lg">
+                        <button onclick="removeImage(event)" class="absolute -top-3 -right-3 bg-rose-500 text-white w-7 h-7 rounded-full text-xs hover:bg-rose-600 shadow-md flex items-center justify-center">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-between items-center">
+                    <button onclick="goBackFromUpload()" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1">
+                        <i class="fa-solid fa-arrow-left"></i> <span>Назад</span>
+                    </button>
+
+                    <button onclick="submitReport()" id="submit-btn" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold px-6 py-3 rounded-xl text-sm shadow-lg shadow-amber-500/10 flex items-center space-x-2 transition">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Опубликовать Отчёт</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SESSION FEED / HISTORY SECTION -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <span>Совместный Журнал Сессий</span>
+                        <span class="text-xs bg-brand-card border border-brand-border text-gray-400 font-normal px-2.5 py-0.5 rounded-full" id="reports-count">0 записей</span>
+                    </h2>
+                    <p class="text-xs text-gray-400">Синхронизированные отчёты Владимира и Брата.</p>
+                </div>
+            </div>
+
+            <!-- List of Expandable Accordion Rows -->
+            <div id="reports-feed" class="space-y-3">
+                <!-- Dynamically Inserted Reports -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Custom Delete Confirmation Modal -->
+    <div id="delete-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-sm w-full rounded-2xl p-6 border border-rose-500/30 text-center space-y-4 shadow-2xl">
+            <div class="w-12 h-12 mx-auto rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl border border-rose-500/30">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-white text-base">Подтверждение удаления</h3>
+                <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+                    Вы точно хотите удалить запись?<br>
+                    <span class="text-amber-400 font-medium">Удалить можно только если запись была сделана по ошибке.</span>
+                </p>
+            </div>
+            <div class="flex items-center space-x-3 pt-2">
+                <button onclick="closeDeleteModal()" class="w-1/2 bg-brand-card hover:bg-gray-800 text-gray-300 py-2.5 rounded-xl border border-brand-border text-xs transition">
+                    Отмена
+                </button>
+                <button id="confirm-delete-btn" class="w-1/2 bg-rose-600 hover:bg-rose-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-rose-600/20">
+                    Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal for Fullscreen Image View (Во весь экран) -->
+    <div id="lightbox-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-6 hidden cursor-zoom-out" onclick="closeLightbox()">
+        <div class="relative max-w-full max-h-full flex items-center justify-center" onclick="event.stopPropagation()">
+            <!-- Изображение во весь экран -->
+            <img id="lightbox-img" src="" class="max-w-[98vw] max-h-[96vh] object-contain rounded-lg shadow-2xl border border-white/10">
+            
+            <!-- Плавающий полупрозрачный крестик прямо на картинке -->
+            <button onclick="closeLightbox()" title="Закрыть (Esc)" class="absolute top-3 right-3 bg-black/50 hover:bg-rose-600/80 text-white/80 hover:text-white w-10 h-10 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center shadow-2xl transition-all transform hover:scale-110">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Checklist for 10 Rules -->
+    <div id="rule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-xl w-full rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-brand-border pb-3">
+                <h3 class="font-bold text-white text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-book-bookmark text-amber-400"></i>
+                    <span>Кодекс Дисциплины (10 Критериев)</span>
+                </h3>
+                <button onclick="toggleRuleModal()" class="text-gray-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <ol class="space-y-3 text-xs text-gray-300 list-decimal list-inside leading-relaxed" id="modal-rules-list">
+                <!-- Rules populated via JS -->
+            </ol>
+
+            <button onclick="toggleRuleModal()" class="w-full bg-brand-card hover:bg-gray-800 text-white font-medium py-2.5 rounded-xl border border-brand-border text-xs transition">
+                Понятно, закрыть
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase Sync Config Modal -->
+    <div id="firebase-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-lg w-full rounded-2xl p-6 border border-brand-border space-y-4">
+            <div class="flex items-center justify-between border-b border-brand-border pb-3">
+                <h3 class="font-bold text-white text-base flex items-center space-x-2">
+                    <i class="fa-solid fa-cloud text-amber-400"></i>
+                    <span>Синхронизация через Firebase</span>
+                </h3>
+                <button onclick="toggleFirebaseModal()" class="text-gray-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-gray-300 leading-relaxed">
+                Чтобы видеть отчёты друг друга в реальном времени, введите параметры вашего бесплатного проекта Firebase (Realtime Database). Если поля пусты, данные сохраняются локально.
+            </p>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-gray-400 mb-1">Database URL (https://your-db-default-rtdb.firebaseio.com)</label>
+                    <input type="text" id="fb-database-url" placeholder="https://..." class="w-full bg-brand-dark border border-brand-border rounded-lg p-2.5 text-white focus:border-amber-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">API Key</label>
+                    <input type="text" id="fb-api-key" placeholder="AIzaSy..." class="w-full bg-brand-dark border border-brand-border rounded-lg p-2.5 text-white focus:border-amber-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Project ID</label>
+                    <input type="text" id="fb-project-id" placeholder="trading-journal" class="w-full bg-brand-dark border border-brand-border rounded-lg p-2.5 text-white focus:border-amber-400 outline-none">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-2 pt-2">
+                <button onclick="clearFirebaseConfig()" class="text-xs text-rose-400 hover:text-rose-300 px-3 py-2">Сбросить</button>
+                <button onclick="saveFirebaseConfig()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2 rounded-xl text-xs">Сохранить и Синхронизировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        window.fbSDK = { initializeApp, getDatabase, ref, push, onValue, set, remove };
+    </script>
+
+    <!-- App Main Script -->
+    <script>
+        // State variables
+        let currentUser = localStorage.getItem('trading_journal_user') || 'Vladimir';
+        let currentStep = 1;
+        let dbRef = null;
+        let dbInstance = null;
+        let isFirebaseConnected = false;
+        let itemToDelete = null;
+        let reportsHistory = [];
+        let openAccordions = []; // Массив для отслеживания открытых карточек (макс. 2)
+
+        let reportData = {
+            trades: '',
+            compliance: '',
+            error: 'Отсутствуют',
+            image: null,
+            timestamp: ''
+        };
+
+        const rulesList = [
+            "Внутренний настрой и абсолютное спокойствие",
+            "Трендовые показатели и структура рынка",
+            "Ликвидность и зоны интереса (POI)",
+            "Правило одного актива и жесткий лимит риска",
+            "Идентификация сетапа и иерархия таймфреймов",
+            "Манипуляция и подтверждение входа",
+            "Отслеживание критериев торговой модели",
+            "Цели и риск-менеджмент (R:R)",
+            "Уведомления и динамическое управление позицией",
+            "Перезаход только при повторном сетапе"
+        ];
+
+        const errorOptions = [
+            "1. Внутренний настрой",
+            "2. Трендовые показатели и структура",
+            "3. Ликвидность и зоны интереса",
+            "4. Правило одного актива и жесткий лимит",
+            "5. Идентификация сетапа и иерархия таймфреймов",
+            "6. Манипуляция",
+            "7. Отслеживание критериев модели",
+            "8. Цели и риск-менеджмент",
+            "9. Уведомления и динамическое управление позицией",
+            "10. Перезаход"
+        ];
+
+        window.addEventListener('load', () => {
+            updateUserUI();
+            initRulesAndErrors();
+            loadFirebaseConfig();
+        });
+
+        // Date formatter for Russian concise format (e.g., "24 окт.")
+        function formatDate(timestamp) {
+            const d = new Date(timestamp);
+            if (isNaN(d)) return timestamp;
+            const months = ['янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.', 'июл.', 'авг.', 'сен.', 'окт.', 'нояб.', 'дек.'];
+            const day = d.getDate();
+            const month = months[d.getMonth()];
+            return `${day} ${month}`;
+        }
+
+        // User Selection
+        function toggleUserSelector() {
+            document.getElementById('user-dropdown').classList.toggle('hidden');
+        }
+
+        function switchUser(name) {
+            currentUser = name;
+            localStorage.setItem('trading_journal_user', name);
+            updateUserUI();
+            document.getElementById('user-dropdown').classList.add('hidden');
+        }
+
+        function updateUserUI() {
+            document.getElementById('current-user-name').innerText = currentUser;
+            document.getElementById('check-vladimir').classList.toggle('hidden', currentUser !== 'Vladimir');
+            document.getElementById('check-max').classList.toggle('hidden', currentUser !== 'Max');
+        }
+
+        // Rules and Errors Population
+        function initRulesAndErrors() {
+            const rulesOl = document.getElementById('modal-rules-list');
+            rulesOl.innerHTML = '';
+            rulesList.forEach(rule => {
+                const li = document.createElement('li');
+                li.className = "p-2.5 rounded-lg bg-brand-card/50 border border-brand-border/40 text-gray-200";
+                li.innerText = rule;
+                rulesOl.appendChild(li);
+            });
+
+            const errorContainer = document.getElementById('error-list');
+            errorContainer.innerHTML = '';
+            errorOptions.forEach(err => {
+                const btn = document.createElement('button');
+                btn.className = "glass-card p-3 rounded-xl text-left border border-brand-border hover:border-rose-400/50 text-xs text-gray-300 hover:text-white font-medium hover:bg-rose-500/10 transition";
+                btn.innerText = err;
+                btn.onclick = () => selectError(err);
+                errorContainer.appendChild(btn);
+            });
+        }
+
+        // Step Navigation
+        function goToStep(step) {
+            currentStep = step;
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.add('hidden');
+            document.getElementById('step-3-error').classList.add('hidden');
+            document.getElementById('step-4-upload').classList.add('hidden');
+
+            const bar = document.getElementById('step-bar');
+            const stepText = document.getElementById('step-indicator-text');
+            const stepPercent = document.getElementById('step-percent');
+
+            if (step === 1) {
+                document.getElementById('step-1').classList.remove('hidden');
+                bar.style.width = '25%';
+                stepText.innerText = 'ШАГ 1 ИЗ 4: КОЛИЧЕСТВО СДЕЛОК';
+                stepPercent.innerText = '25%';
+            } else if (step === 2) {
+                document.getElementById('step-2').classList.remove('hidden');
+                bar.style.width = '50%';
+                stepText.innerText = 'ШАГ 2 ИЗ 4: СОБЛЮДЕНИЕ КОДЕКСА';
+                stepPercent.innerText = '50%';
+            } else if (step === 3) {
+                document.getElementById('step-3-error').classList.remove('hidden');
+                bar.style.width = '75%';
+                stepText.innerText = 'ШАГ 3 ИЗ 4: ВЫЯВЛЕННЫЕ ОШИБКИ';
+                stepPercent.innerText = '75%';
+            } else if (step === 4) {
+                document.getElementById('step-4-upload').classList.remove('hidden');
+                bar.style.width = '100%';
+                stepText.innerText = 'ШАГ 4 ИЗ 4: СКРИНШОТ И ОПУБЛИКОВАНИЕ';
+                stepPercent.innerText = '100%';
+            }
+        }
+
+        function selectTrades(val) {
+            reportData.trades = val;
+            goToStep(2);
+        }
+
+        function selectCompliance(type) {
+            reportData.compliance = type;
+            if (type === 'clean') {
+                reportData.error = 'Отсутствуют';
+                goToStep(4);
+            } else {
+                goToStep(3);
+            }
+        }
+
+        function selectError(err) {
+            reportData.error = err;
+            goToStep(4);
+        }
+
+        function goBackFromUpload() {
+            if (reportData.compliance === 'clean') {
+                goToStep(2);
+            } else {
+                goToStep(3);
+            }
+        }
+
+        // Image Handling (High Quality Base64)
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 2500; 
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height && width > maxDim) {
+                        height *= maxDim / width;
+                        width = maxDim;
+                    } else if (height > maxDim) {
+                        width *= maxDim / height;
+                        height = maxDim;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+                    reportData.image = resizedDataUrl;
+
+                    document.getElementById('preview-img').src = resizedDataUrl;
+                    document.getElementById('upload-placeholder').classList.add('hidden');
+                    document.getElementById('upload-preview').classList.remove('hidden');
+                };
+                img.src = e.target.result;
             };
-            reportAttachFailure(30);
+            reader.readAsDataURL(file);
         }
-        </script><script>
-    (function() {
-        if (window.self === window.top) return;
-        var lastUrl = window.location.href;
-        function notify() {
-            var url = window.location.href;
-            if (url === lastUrl) return;
-            lastUrl = url;
-            window.parent.postMessage({ type: 'APP_CHANGED_URL', url: url }, '*');
+
+        function removeImage(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            reportData.image = null;
+            document.getElementById('screenshot-input').value = '';
+            document.getElementById('preview-img').src = '';
+            document.getElementById('upload-placeholder').classList.remove('hidden');
+            document.getElementById('upload-preview').classList.add('hidden');
         }
-        var origPush = history.pushState.bind(history);
-        history.pushState = function() { origPush.apply(history, arguments); notify(); };
-        var origReplace = history.replaceState.bind(history);
-        history.replaceState = function() { origReplace.apply(history, arguments); notify(); };
-        window.addEventListener('popstate', notify);
-        window.parent.postMessage({ type: 'APP_CHANGED_URL', url: window.location.href }, '*');
-    })();
-    </script></head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-    <script src="/node_modules/@base44/vite-plugin/dist/injections/sandbox-mount-observer.js" type="module"></script>
-    <script type="module">if (window.self !== window.top) {
-  const mode = new URLSearchParams(location.search).get("sandbox-bridge");
-  const url = mode === "local"
-    ? "https://localhost:3201/index.mjs"
-    : "/node_modules/@base44/vite-plugin/dist/statics/index.mjs";
-  import(url)
-    .then(mod => {
-      if (typeof mod.setupVisualEditAgent === "function") mod.setupVisualEditAgent();
-    })
-    .catch(e => console.error("[visual-edit-agent] Failed to load:", e));
-}</script>
-  </body>
+
+        // Lightbox Functions
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+        }
+        function closeLightbox() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+        }
+
+        // Submitting Report
+        function submitReport() {
+            if (!reportData.image) {
+                alert('Пожалуйста, прикрепите скриншот ордеров перед публикацией.');
+                return;
+            }
+
+            const timestamp = Date.now();
+            const newEntry = {
+                id: timestamp,
+                author: currentUser,
+                date: formatDate(timestamp),
+                trades: reportData.trades,
+                compliance: reportData.compliance,
+                error: reportData.error,
+                image: reportData.image
+            };
+
+            if (isFirebaseConnected && dbRef) {
+                window.fbSDK.push(dbRef, newEntry).then(() => {
+                    resetWizard();
+                }).catch(err => {
+                    console.error("Firebase push error:", err);
+                    saveLocally(newEntry);
+                });
+            } else {
+                saveLocally(newEntry);
+            }
+        }
+
+        function saveLocally(entry) {
+            reportsHistory.unshift(entry);
+            localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
+            renderReportsFeed();
+            resetWizard();
+        }
+
+        // Custom Modal Delete Logic
+        function requestDeleteReport(id, fbKey) {
+            itemToDelete = { id, fbKey };
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            itemToDelete = null;
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+            if (!itemToDelete) return;
+
+            const { id, fbKey } = itemToDelete;
+
+            if (isFirebaseConnected && fbKey && dbInstance) {
+                const itemRef = window.fbSDK.ref(dbInstance, `reports/${fbKey}`);
+                window.fbSDK.remove(itemRef).catch(err => console.error("Delete error:", err));
+            } else {
+                reportsHistory = reportsHistory.filter(item => item.id !== id);
+                localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
+                renderReportsFeed();
+            }
+
+            closeDeleteModal();
+        });
+
+        function resetWizard() {
+            reportData = { trades: '', compliance: '', error: 'Отсутствуют', image: null, timestamp: '' };
+            removeImage();
+            goToStep(1);
+            document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Render Feed
+        function renderReportsFeed() {
+            const container = document.getElementById('reports-feed');
+            container.innerHTML = '';
+
+            document.getElementById('reports-count').innerText = `${reportsHistory.length} записей`;
+
+            if (reportsHistory.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-panel p-8 text-center text-gray-400 rounded-xl">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 text-gray-600"></i>
+                        <p class="text-xs">Журнал пока пуст. Будьте первым, кто сдаст отчёт за сегодня!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            reportsHistory.forEach(item => {
+                const isClean = item.compliance === 'clean';
+                
+                const badgeHtml = isClean 
+                    ? `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                        <span>Системно</span>
+                       </div>`
+                    : `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">
+                        <i class="fa-solid fa-circle-xmark text-rose-400"></i>
+                        <span>Блок 1 день</span>
+                       </div>`;
+
+                // Логика имён: своё имя остается твоим, чужое отображается как "Брат"
+                const isMyPost = item.author === currentUser;
+                const authorBadge = isMyPost
+                    ? `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user mr-1"></i>${item.author}</span>`
+                    : `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user-group mr-1"></i>Брат</span>`;
+
+                const row = document.createElement('div');
+                row.className = "glass-panel rounded-xl border border-brand-border/80 overflow-hidden transition";
+
+                row.innerHTML = `
+                    <div onclick="toggleAccordion(${item.id})" class="p-4 flex items-center justify-between cursor-pointer hover:bg-white/[0.02] transition">
+                        <div>
+                            <div class="flex items-center space-x-2 text-xs">
+                                ${authorBadge}
+                                <span class="text-gray-400 font-medium">${item.date}</span>
+                            </div>
+                            <div class="text-sm font-semibold text-white mt-1">${item.trades}</div>
+                        </div>
+
+                        <div class="flex items-center space-x-3">
+                            ${badgeHtml}
+                            <i id="chevron-${item.id}" class="fa-solid fa-chevron-down text-gray-500 text-xs transition-transform duration-300"></i>
+                        </div>
+                    </div>
+
+                    <div id="body-${item.id}" class="accordion-body">
+    <div class="border-t border-brand-border/50 p-5 bg-brand-card/40 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="space-y-2">
+                                <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
+                                    <span class="text-gray-400 block mb-1">📊 Количество сделок:</span>
+                                    <span class="font-semibold text-white text-sm">${item.trades}</span>
+                                </div>
+
+                                <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
+                                    <span class="text-gray-400 block mb-1">⚖️ Соблюдение кодекса:</span>
+                                    <span class="font-semibold ${isClean ? 'text-emerald-400' : 'text-rose-400'} text-sm">
+                                        ${isClean ? '✅ 100% По системе' : '❌ Нарушение кодекса'}
+                                    </span>
+                                </div>
+
+                                <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
+                                    <span class="text-gray-400 block mb-1">🔍 Выявленные ошибки:</span>
+                                    <span class="font-semibold text-white text-sm">${item.error}</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-1">
+                                <div class="flex items-center justify-between text-xs text-gray-400">
+                                    <span>📸 Подтверждение ордеров:</span>
+                                    <button onclick="openLightbox('${item.image}')" class="text-amber-400 hover:text-amber-300 flex items-center space-x-1 text-[11px] font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 transition">
+                                        <i class="fa-solid fa-expand"></i>
+                                        <span>Увеличить</span>
+                                    </button>
+                                </div>
+                                <div class="rounded-xl overflow-hidden border border-brand-border bg-black/40 p-1 cursor-pointer" onclick="openLightbox('${item.image}')">
+                                    <img src="${item.image}" class="w-full max-h-56 object-contain rounded-lg hover:opacity-90 transition">
+                                </div>
+                            </div>
+                        </div></div>
+
+                        <!-- Delete Button Footer inside Accordion -->
+                        <div class="border-t border-brand-border/40 flex justify-end">
+                            <button onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="mar6 text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-3 py-1.5 rounded-lg border border-rose-500/20 flex items-center space-x-1.5 transition">
+                                <i class="fa-solid fa-trash-can"></i>
+                                <span>Удалить запись</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(row);
+            });
+        }
+
+        // Плавный аккордеон с лимитом в 2 одновременно открытых отчёта
+        function toggleAccordion(id) {
+            const body = document.getElementById(`body-${id}`);
+            const chevron = document.getElementById(`chevron-${id}`);
+            const isOpen = body.classList.contains('open');
+
+            if (isOpen) {
+                body.classList.remove('open');
+                chevron.classList.remove('rotate-180');
+                openAccordions = openAccordions.filter(item => item !== id);
+            } else {
+                body.classList.add('open');
+                chevron.classList.add('rotate-180');
+                openAccordions.push(id);
+
+                if (openAccordions.length > 2) {
+                    const oldestId = openAccordions.shift();
+                    const oldBody = document.getElementById(`body-${oldestId}`);
+                    const oldChevron = document.getElementById(`chevron-${oldestId}`);
+                    if (oldBody) oldBody.classList.remove('open');
+                    if (oldChevron) oldChevron.classList.remove('rotate-180');
+                }
+            }
+        }
+
+        function toggleRuleModal() {
+            document.getElementById('rule-modal').classList.toggle('hidden');
+        }
+
+        function toggleFirebaseModal() {
+            document.getElementById('firebase-modal').classList.toggle('hidden');
+        }
+
+        // Вшитые настройки для автоматической синхронизации с братом
+        const DEFAULT_CONFIG = {
+            databaseURL: "https://trading-journal-bb826-default-rtdb.firebaseio.com/",
+            apiKey: "AIzaSyBCJAnn1JlzPgfm1Fxd-RRGksk5YdgTjkc",
+            projectId: "trading-journal-bb826"
+        };
+        
+        function loadFirebaseConfig() {
+            let savedConfig = localStorage.getItem('firebase_sync_config');
+            if (!savedConfig) {
+                savedConfig = JSON.stringify(DEFAULT_CONFIG);
+                localStorage.setItem('firebase_sync_config', savedConfig);
+            }
+            
+            if (savedConfig) {
+                try {
+                    const cfg = JSON.parse(savedConfig);
+                    document.getElementById('fb-database-url').value = cfg.databaseURL || '';
+                    document.getElementById('fb-api-key').value = cfg.apiKey || '';
+                    document.getElementById('fb-project-id').value = cfg.projectId || '';
+                    
+                    initFirebase(cfg);
+                } catch (e) {
+                    fallbackToLocal();
+                }
+            } else {
+                fallbackToLocal();
+            }
+        }
+
+        function initFirebase(cfg) {
+            if (!window.fbSDK || !cfg.databaseURL) {
+                fallbackToLocal();
+                return;
+            }
+
+            try {
+                const app = window.fbSDK.initializeApp(cfg, 'tradingApp');
+                dbInstance = window.fbSDK.getDatabase(app);
+                dbRef = window.fbSDK.ref(dbInstance, 'reports');
+
+                window.fbSDK.onValue(dbRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        reportsHistory = Object.entries(data).map(([key, val]) => ({
+                            ...val,
+                            fbKey: key
+                        })).sort((a, b) => b.id - a.id);
+                    } else {
+                        reportsHistory = [];
+                    }
+                    renderReportsFeed();
+                });
+
+                isFirebaseConnected = true;
+                const badge = document.getElementById('sync-status-badge');
+                badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                badge.innerHTML = '<i class="fa-solid fa-wifi mr-1"></i> Live Sync';
+            } catch (err) {
+                console.error("Firebase init failed:", err);
+                fallbackToLocal();
+            }
+        }
+
+        function fallbackToLocal() {
+            isFirebaseConnected = false;
+            dbInstance = null;
+            const badge = document.getElementById('sync-status-badge');
+            badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700";
+            badge.innerHTML = '<i class="fa-solid fa-hard-drive mr-1"></i> Local';
+
+            const localData = localStorage.getItem('local_trading_reports');
+            if (localData) {
+                reportsHistory = JSON.parse(localData).map(item => ({ ...item, fbKey: null }));
+            } else {
+                reportsHistory = [];
+            }
+            renderReportsFeed();
+        }
+
+        function saveFirebaseConfig() {
+            const dbUrl = document.getElementById('fb-database-url').value.trim();
+            const apiKey = document.getElementById('fb-api-key').value.trim();
+            const projId = document.getElementById('fb-project-id').value.trim();
+
+            if (!dbUrl) {
+                alert('Укажите хотя бы Database URL');
+                return;
+            }
+
+            const cfg = { databaseURL: dbUrl, apiKey: apiKey, projectId: projId };
+            localStorage.setItem('firebase_sync_config', JSON.stringify(cfg));
+            toggleFirebaseModal();
+            location.reload();
+        }
+
+        function clearFirebaseConfig() {
+            localStorage.removeItem('firebase_sync_config');
+            toggleFirebaseModal();
+            fallbackToLocal();
+        }
+    </script>
+</body>
 </html>
