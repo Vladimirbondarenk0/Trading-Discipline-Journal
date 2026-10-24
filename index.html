@@ -1095,7 +1095,11 @@
 
             if (isFirebaseConnected && dbRef) {
                 window.fbSDK.push(dbRef, newEntry).then(() => {
+                    // Оптимистично добавляем в локальную историю и сразу переключаем UI
+                    reportsHistory.unshift(newEntry);
+                    renderReportsFeed();
                     resetWizard();
+                    initSessionTimer(); // <--- Мгновенно переключает блок на карточку завершённого дня
                 }).catch(err => {
                     console.error("Firebase push error:", err);
                     saveLocally(newEntry);
@@ -1110,6 +1114,7 @@
             localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
             renderReportsFeed();
             resetWizard();
+            initSessionTimer(); // <--- Мгновенно переключает блок
         }
 
         // Custom Modal Delete Logic
