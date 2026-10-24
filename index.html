@@ -636,10 +636,10 @@
             setInterval(initSessionTimer, 1000); // Обновление таймера каждую секунду
         });
 
-       // Торговая сессия таймер и проверка завершённости дня
+       // Торговая сессия, проверка завершённости дня и логика 1-дневного Блока
         function initSessionTimer() {
             const now = new Date();
-            const dayOfWeek = now.getDay(); // 0 - ВС, 6 - СБ
+            const dayOfWeek = now.getDay(); // 0 - ВС, 1 - ПН, ..., 5 - ПТ, 6 - СБ
             const hours = now.getHours();
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
@@ -648,11 +648,15 @@
             const startSeconds = 9 * 3600;  // 09:00
             const endSeconds = 12 * 3600;   // 12:00
 
-            // Форматирование даты по-русски
+            // Форматирование даты
             const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
             const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-            document.getElementById('session-date-str').innerText = `${days[dayOfWeek]}, ${now.getDate()} ${months[now.getMonth()]}`;
-            document.getElementById('live-clock').innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+            
+            const dateStrEl = document.getElementById('session-date-str');
+            if (dateStrEl) dateStrEl.innerText = `${days[dayOfWeek]}, ${now.getDate()} ${months[now.getMonth()]}`;
+            
+            const liveClockEl = document.getElementById('live-clock');
+            if (liveClockEl) liveClockEl.innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 
             const todayKey = `session_unlocked_${now.getFullYear()}_${now.getMonth()}_${now.getDate()}`;
             const isUnlockedToday = sessionStorage.getItem(todayKey) === 'true';
@@ -661,71 +665,140 @@
             const wizardContainer = document.getElementById('wizard-container');
             const completedCard = document.getElementById('completed-day-card');
 
-            // 1. Проверяем, отправлен ли уже отчёт пользователем сегодня
+            // 1. ПРОВЕРКА НА АКТИВНЫЙ БЛОК С ПРОШЛОЙ СЕССИИ (Защита на следующий день)
+            // Ищем последнюю запись текущего пользователя
+            const lastUserReport = reportsHistory.find(item => item.author === currentUser);
+            
+            if (lastUserReport && lastUserReport.compliance !== 'clean') {
+                const reportDate = new Date(lastUserReport.id);
+                
+                // Вычисляем дату и время точной разблокировки (строго в 09:00 на 2-й торговый день после ошибки)
+                let unlockDate = new Date(reportDate);
+                const repDay = reportDate.getDay();
+
+                // Если ошибка совершена в Пятницу (5) или Субботу (6) -> Блок весь Понедельник, разблокировка во Вторник в 09:00
+                if (repDay === 5 || repDay === 6) {
+                    const daysToAdd = (repDay === 5) ? 4 : 3; // До Вторника
+                    unlockDate.setDate(unlockDate.getDate() + daysToAdd);
+                } else {
+                    // Иначе разблокировка через 2 дня в 09:00 (пропускаем заблокированный день)
+                    unlockDate.setDate(unlockDate.getDate() + 2);
+                }
+                unlockDate.setHours(9, 0, 0, 0);
+
+                // Если текущее время ещё НЕ достигло даты/времени разблокировки — удерживаем БЛОК
+                if (now < unlockDate) {
+                    if (timerCard) timerCard.classList.add('hidden');
+                    if (wizardContainer) wizardContainer.classList.add('hidden');
+                    if (completedCard) completedCard.classList.remove('hidden');
+
+                    const authorInfoEl = document.getElementById('completed-author-info');
+                    if (authorInfoEl) authorInfoEl.innerText = `Дисциплинарный блок (${lastUserReport.author})`;
+
+                    const badgeContainerEl = document.getElementById('completed-badge-container');
+                    if (badgeContainerEl) {
+                        badgeContainerEl.innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">🔒 БЛОК ТОРГОВЛИ 1 ДЕНЬ</span>`;
+                    }
+
+                    const unlockDateStr = `${unlockDate.getDate()} ${months[unlockDate.getMonth()]} в 09:00`;
+                    const thoughtEl = document.getElementById('completed-spiritual-thought');
+                    if (thoughtEl) {
+                        thoughtEl.innerHTML = `
+                            <div class="space-y-2">
+                                <p class="font-semibold text-rose-300">«Почему этот блок необходим и почему наказание настолько строгое?»</p>
+                                <p class="text-gray-300">Даже если завтра Брат заберёт свои +2% профита, а ты останешься позади и лишён этих денег — прими это смиренно как целебное лекарство от гордыни и зависти.</p>
+                                <p class="text-gray-400">Блок на 1 день убивает азарт и иллюзию контроля. Мы учимся радоваться успехам Брата больше, чем собственным процентам, осознавая полную немощь своего «я». Торговля без дисциплины — это бунт против Бога.</p>
+                            </div>
+                        `;
+                    }
+
+                    const countdownTextEl = document.getElementById('next-session-countdown-text');
+                    if (countdownTextEl) {
+                        countdownTextEl.innerHTML = `<span class="text-rose-400 font-bold">Торговля заблокирована. Доступ откроется строго: ${unlockDateStr}</span>`;
+                    }
+                    return; // Полная заморозка, выход из функции
+                }
+            }
+
+            // 2. ПРОВЕРКА: Если отчёт за сегодня уже сдан
             const todayStr = now.toDateString();
             const userTodayReport = reportsHistory.find(item => {
                 return new Date(item.id).toDateString() === todayStr && item.author === currentUser;
             });
 
             if (userTodayReport) {
-                // Если отчёт уже сдан сегодня — скрываем таймер и форму, показываем мудрую карточку
-                timerCard.classList.add('hidden');
-                wizardContainer.classList.add('hidden');
-                completedCard.classList.remove('hidden');
+                if (timerCard) timerCard.classList.add('hidden');
+                if (wizardContainer) wizardContainer.classList.add('hidden');
+                if (completedCard) completedCard.classList.remove('hidden');
 
-                // Заполняем карточку в зависимости от того, было нарушение или чисто
                 const isClean = userTodayReport.compliance === 'clean';
-                document.getElementById('completed-author-info').innerText = `Запись зафиксирована (${userTodayReport.author})`;
+                const authorInfoEl = document.getElementById('completed-author-info');
+                if (authorInfoEl) authorInfoEl.innerText = `Запись зафиксирована (${userTodayReport.author})`;
                 
-                document.getElementById('completed-badge-container').innerHTML = isClean
-                    ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✅ 100% По системе</span>`
-                    : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">❌ Было нарушение</span>`;
-
-                const thoughtEl = document.getElementById('completed-spiritual-thought');
-                if (isClean) {
-                    thoughtEl.innerHTML = `«Слава Богу за победу Духа над плотью! Кодекс соблюден не силой нашей самоуверенной воли, а Его живой праведностью. Пусть это чистое стекло продолжает смиренно отражать свет Мастера, не приписывая себе заслуг».`;
-                } else {
-                    thoughtEl.innerHTML = `«Слава Богу за этот урок и обличительное зеркало истины. Наша немощь открылась во всей красе, чтобы мы перестали надеяться на себя. Поразмышляй в тишине над этой ошибкой, чтобы в следующий раз действовал исключительно Он».`;
+                const badgeContainerEl = document.getElementById('completed-badge-container');
+                if (badgeContainerEl) {
+                    badgeContainerEl.innerHTML = isClean
+                        ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✅ 100% По системе</span>`
+                        : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40">❌ Активирован блок на завтра</span>`;
                 }
 
-                // Расчёт времени до следующего сеанса (если выходной — до понедельника)
+                const thoughtEl = document.getElementById('completed-spiritual-thought');
+                if (thoughtEl) {
+                    if (isClean) {
+                        thoughtEl.innerHTML = `«Слава Богу за победу Духа над плотью! Кодекс соблюдён не силой нашей самоуверенной воли, а Его живой праведностью. Пусть это чистое стекло продолжает смиренно отражать свет Мастера, не приписывая себе заслуг».`;
+                    } else {
+                        thoughtEl.innerHTML = `
+                            <div class="space-y-1">
+                                <p class="font-semibold text-rose-300">«Урок смирения за нарушение кодекса»</p>
+                                <p>Завтрашний день ты пропустишь, пока Брат будет торговать. Это сильное наказание нужно для того, чтобы укротить жадность и страх упущенной выгоды. Поразмышляй в тишине над ошибкой — Истина важнее комфорта.</p>
+                            </div>
+                        `;
+                    }
+                }
+
+                // Расчёт даты снятия
                 let targetDayName = "Завтра в 09:00";
-                if (dayOfWeek === 6) targetDayName = "В понедельник в 09:00"; // Суббота -> Понедельник
-                else if (dayOfWeek === 0) targetDayName = "Завтра в 09:00";    // Воскресенье -> Понедельник
+                if (!isClean) {
+                    if (dayOfWeek === 5 || dayOfWeek === 6) targetDayName = "Во вторник в 09:00";
+                    else targetDayName = "Послезавтра в 09:00";
+                } else {
+                    if (dayOfWeek === 6) targetDayName = "В понедельник в 09:00";
+                }
                 
-                document.getElementById('next-session-countdown-text').innerText = `Следующее торговое окно откроется: ${targetDayName}`;
+                const countdownTextEl = document.getElementById('next-session-countdown-text');
+                if (countdownTextEl) countdownTextEl.innerText = `Следующее торговое окно откроется: ${targetDayName}`;
                 return;
             }
 
-            // 2. Если выходной день (Суббота / Воскресенье) — держим форму скрытой или показываем особый статус (по желанию, таймер идет до понедельника)
+            // 3. Выходной день (Суббота / Воскресенье) без сданного отчёта
             if (dayOfWeek === 6 || dayOfWeek === 0) {
-                timerCard.classList.remove('hidden');
-                wizardContainer.classList.add('hidden');
-                document.getElementById('session-badge-text').innerText = "Выходной день (Рынок закрыт)";
-                document.getElementById('session-remaining-text').innerText = "Ожидание открытия в понедельник в 09:00";
-                document.getElementById('session-progress-bar').style.width = "100%";
+                if (completedCard) completedCard.classList.add('hidden');
+                if (timerCard) timerCard.classList.add('hidden');
+                if (wizardContainer) wizardContainer.classList.remove('hidden');
                 return;
             }
 
-            // 3. Обычный будний день: работа таймера сессии (09:00 - 12:00)
+            // 4. Обычный рабочий день и окно 09:00 - 12:00
             if (totalCurrentSeconds >= startSeconds && totalCurrentSeconds < endSeconds && !isUnlockedToday) {
-                timerCard.classList.remove('hidden');
-                wizardContainer.classList.add('hidden');
-                completedCard.classList.add('hidden');
+                if (timerCard) timerCard.classList.remove('hidden');
+                if (wizardContainer) wizardContainer.classList.add('hidden');
+                if (completedCard) completedCard.classList.add('hidden');
 
                 const elapsed = totalCurrentSeconds - startSeconds;
                 const progressPercent = Math.min(100, Math.max(0, (elapsed / (endSeconds - startSeconds)) * 100));
-                document.getElementById('session-progress-bar').style.width = `${progressPercent}%`;
+                const progressBarEl = document.getElementById('session-progress-bar');
+                if (progressBarEl) progressBarEl.style.width = `${progressPercent}%`;
 
                 const remainingSecs = endSeconds - totalCurrentSeconds;
                 const remHours = Math.floor(remainingSecs / 3600);
                 const remMins = Math.floor((remainingSecs % 3600) / 60);
                 const remSecs = remainingSecs % 60;
-                document.getElementById('session-remaining-text').innerText = `осталось ${remHours} ч ${remMins} мин ${remSecs} сек`;
+                const remTextEl = document.getElementById('session-remaining-text');
+                if (remTextEl) remTextEl.innerText = `осталось ${remHours} ч ${remMins} мин ${remSecs} сек`;
             } else {
-                timerCard.classList.add('hidden');
-                completedCard.classList.add('hidden');
-                wizardContainer.classList.remove('hidden');
+                if (timerCard) timerCard.classList.add('hidden');
+                if (completedCard) completedCard.classList.add('hidden');
+                if (wizardContainer) wizardContainer.classList.remove('hidden');
             }
         }
 
