@@ -43,10 +43,6 @@
             background-image: radial-gradient(circle at 50% 0%, rgba(243, 186, 47, 0.05) 0%, transparent 70%);
         }
 
-        .mar6{
-            margin: 9px;
-        }
-
        /* Плавная анимация аккордеона */
         .accordion-body {
             max-height: 0;
@@ -91,6 +87,31 @@
         .step-transition {
             transition: all 0.4s ease-in-out;
         }
+
+        /* Мобильная адаптация */
+        @media (max-width: 640px) {
+            header .max-w-5xl {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            main {
+                margin-top: 1rem;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            .glass-panel {
+                padding: 1rem !important;
+                border-radius: 1rem !important;
+            }
+            /* Модальные окна на весь экран по ширине */
+            #delete-modal > div,
+            #firebase-modal > div,
+            #rule-modal > div {
+                max-width: 95vw !important;
+                margin: 10px;
+                padding: 1rem !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen pb-16">
@@ -98,32 +119,32 @@
     <!-- Top Navigation Header -->
     <header class="border-b border-brand-border/50 bg-brand-dark/90 backdrop-blur-md sticky top-0 z-40">
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/30 border border-amber-500/30 flex items-center justify-center shadow-lg shadow-amber-500/5">
-                    <i class="fa-solid fa-chart-line text-amber-400 text-lg"></i>
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/30 border border-amber-500/30 flex items-center justify-center shadow-lg shadow-amber-500/5 flex-shrink-0">
+                    <i class="fa-solid fa-chart-line text-amber-400 text-sm sm:text-lg"></i>
                 </div>
-                <div>
-                    <h1 class="font-bold text-white tracking-wide text-base flex items-center gap-2">
+                <div class="min-w-0">
+                    <h1 class="font-bold text-white tracking-wide text-xs sm:text-base flex items-center gap-1.5 truncate">
                         SYSTEM <span class="text-amber-400">AMD</span>
-                        <span id="sync-status-badge" class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
-                            <i class="fa-solid fa-database mr-1"></i> Offline
+                        <span id="sync-status-badge" class="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                            <i class="fa-solid fa-database mr-0.5 sm:mr-1"></i> Offline
                         </span>
                     </h1>
-                    <p class="text-xs text-gray-400">Совместный Дневник Трейдинга</p>
+                    <p class="text-[10px] sm:text-xs text-gray-400 truncate">Совместный Дневник</p>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 sm:space-x-3">
                 <!-- User Selector Button -->
                 <div class="relative">
-                    <button onclick="toggleUserSelector()" id="user-select-btn" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-200 px-3 py-1.5 rounded-lg border border-brand-border flex items-center space-x-2 transition">
+                    <button onclick="toggleUserSelector()" id="user-select-btn" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-200 px-2.5 sm:px-3 py-1.5 rounded-lg border border-brand-border flex items-center space-x-1.5 sm:space-x-2 transition">
                         <i class="fa-solid fa-user-gear text-amber-400"></i>
                         <span id="current-user-name">Vladimir</span>
-                        <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                        <i class="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
                     </button>
 
                     <!-- Dropdown -->
-                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-44 bg-brand-card border border-brand-border rounded-xl shadow-2xl z-50 py-1.5 text-xs">
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-40 sm:w-44 bg-brand-card border border-brand-border rounded-xl shadow-2xl z-50 py-1.5 text-xs">
                         <div class="px-3 py-1.5 text-[10px] uppercase font-bold text-gray-400 tracking-wider">Кто вы сегодня?</div>
                         <button onclick="switchUser('Vladimir')" class="w-full text-left px-3 py-2 text-gray-200 hover:bg-amber-500/10 hover:text-amber-400 flex items-center justify-between">
                             <span>Vladimir</span>
@@ -137,7 +158,7 @@
                 </div>
 
                 <!-- Sync Settings Button -->
-                <button onclick="toggleFirebaseModal()" title="Настройка базы данных" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-300 w-8 h-8 rounded-lg border border-brand-border flex items-center justify-center transition">
+                <button onclick="toggleFirebaseModal()" title="Настройка базы данных" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-300 w-8 h-8 rounded-lg border border-brand-border flex items-center justify-center transition flex-shrink-0">
                     <i class="fa-solid fa-plug text-amber-400"></i>
                 </button>
 
@@ -159,11 +180,11 @@
                         <i class="fa-solid fa-shield-halved"></i>
                         <span>Кодекс Торговой Сессии (9:00 - 12:00)</span>
                     </div>
-                    <h2 class="text-lg font-semibold text-white">Правила дисциплины и рисков</h2>
+                    <h2 class="text-base sm:text-lg font-semibold text-white">Правила дисциплины и рисков</h2>
                     <p class="text-xs text-gray-400">10 главных критериев нашей торговой модели и эмоционального контроля.</p>
                 </div>
                 
-                <button onclick="toggleRuleModal()" class="text-xs bg-brand-card hover:bg-gray-800 text-gray-300 px-4 py-2.5 rounded-xl border border-brand-border flex items-center justify-center space-x-2 transition">
+                <button onclick="toggleRuleModal()" class="w-full md:w-auto text-xs bg-brand-card hover:bg-gray-800 text-gray-300 px-4 py-3 md:py-2.5 rounded-xl border border-brand-border flex items-center justify-center space-x-2 transition">
                     <i class="fa-solid fa-list-check text-amber-400"></i>
                     <span>Проверить 10 Правил</span>
                 </button>
@@ -186,12 +207,12 @@
             <!-- STEP 1: Trades Count -->
             <div id="step-1" class="step-transition space-y-6">
                 <div>
-                    <h3 class="text-xl font-bold text-white">Сколько сделок было открыто сегодня?</h3>
+                    <h3 class="text-lg sm:text-xl font-bold text-white">Сколько сделок было открыто сегодня?</h3>
                     <p class="text-xs text-gray-400 mt-1">Выберите соответствующий вариант согласно вашему лимиту.</p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <button onclick="selectTrades('0 сделок')" class="glass-card p-5 rounded-xl text-left border border-brand-border hover:border-amber-400/50 group focus:outline-none">
+                    <button onclick="selectTrades('0 сделок')" class="glass-card p-5 rounded-xl text-left border border-brand-border hover:border-amber-400/50 group focus:outline-none w-full">
                         <div class="w-10 h-10 rounded-lg bg-gray-800/80 flex items-center justify-center text-amber-400 mb-3 group-hover:bg-amber-500/20 transition">
                             <span class="font-bold text-lg">0</span>
                         </div>
@@ -199,7 +220,7 @@
                         <div class="text-xs text-gray-400 mt-1">Сессия без входов в рынок</div>
                     </button>
 
-                    <button onclick="selectTrades('1 сделка')" class="glass-card p-5 rounded-xl text-left border border-brand-border hover:border-amber-400/50 group focus:outline-none">
+                    <button onclick="selectTrades('1 сделка')" class="glass-card p-5 rounded-xl text-left border border-brand-border hover:border-amber-400/50 group focus:outline-none w-full">
                         <div class="w-10 h-10 rounded-lg bg-gray-800/80 flex items-center justify-center text-amber-400 mb-3 group-hover:bg-amber-500/20 transition">
                             <span class="font-bold text-lg">1</span>
                         </div>
@@ -207,7 +228,7 @@
                         <div class="text-xs text-gray-400 mt-1">Стандартный рабочий сетап</div>
                     </button>
 
-                    <button onclick="selectTrades('2 сделки (основная + перезаход)')" class="glass-card p-5 rounded-xl text-left border border-brand-border hover:border-amber-400/50 group focus:outline-none">
+                    <button onclick="selectTrades('2 сделки (основная + перезаход)')" class="glass-card p-5 rounded-xl text-left border border-brand-border hover:border-amber-400/50 group focus:outline-none w-full">
                         <div class="w-10 h-10 rounded-lg bg-gray-800/80 flex items-center justify-center text-amber-400 mb-3 group-hover:bg-amber-500/20 transition">
                             <span class="font-bold text-lg">2</span>
                         </div>
@@ -220,13 +241,13 @@
             <!-- STEP 2: Codex Compliance (Split Logic) -->
             <div id="step-2" class="step-transition hidden space-y-6">
                 <div>
-                    <h3 class="text-xl font-bold text-white">Соблюдение торгового кодекса</h3>
+                    <h3 class="text-lg sm:text-xl font-bold text-white">Соблюдение торгового кодекса</h3>
                     <p class="text-xs text-gray-400 mt-1">Были ли допущены эмоциональные или технические отклонения от системы?</p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <!-- 100% System Option -->
-                    <button onclick="selectCompliance('clean')" class="glass-card p-6 rounded-xl text-left border border-emerald-500/30 hover:border-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 group focus:outline-none">
+                    <button onclick="selectCompliance('clean')" class="glass-card p-6 rounded-xl text-left border border-emerald-500/30 hover:border-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 group focus:outline-none w-full">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">
                                 <i class="fa-solid fa-circle-check"></i>
@@ -238,7 +259,7 @@
                     </button>
 
                     <!-- Violation Option -->
-                    <button onclick="selectCompliance('violation')" class="glass-card p-6 rounded-xl text-left border border-rose-500/30 hover:border-rose-400 bg-rose-500/5 hover:bg-rose-500/10 group focus:outline-none">
+                    <button onclick="selectCompliance('violation')" class="glass-card p-6 rounded-xl text-left border border-rose-500/30 hover:border-rose-400 bg-rose-500/5 hover:bg-rose-500/10 group focus:outline-none w-full">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-2xl">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
@@ -251,7 +272,7 @@
                 </div>
 
                 <div class="pt-4 flex justify-start">
-                    <button onclick="goToStep(1)" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1">
+                    <button onclick="goToStep(1)" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1 py-2">
                         <i class="fa-solid fa-arrow-left"></i> <span>Назад</span>
                     </button>
                 </div>
@@ -260,7 +281,7 @@
             <!-- STEP 3: Error Stage (Appears only if Violation) -->
             <div id="step-3-error" class="step-transition hidden space-y-6">
                 <div>
-                    <h3 class="text-xl font-bold text-white text-rose-400">Выявленные ошибки</h3>
+                    <h3 class="text-lg sm:text-xl font-bold text-white text-rose-400">Выявленные ошибки</h3>
                     <p class="text-xs text-gray-400 mt-1">Укажите ключевую причину сбоя дисциплины во время сессии.</p>
                 </div>
 
@@ -269,7 +290,7 @@
                 </div>
 
                 <div class="pt-4 flex justify-between items-center">
-                    <button onclick="goToStep(2)" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1">
+                    <button onclick="goToStep(2)" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1 py-2">
                         <i class="fa-solid fa-arrow-left"></i> <span>Назад</span>
                     </button>
                 </div>
@@ -278,11 +299,11 @@
             <!-- STEP 4: Screenshot Upload & Final Submission -->
             <div id="step-4-upload" class="step-transition hidden space-y-6">
                 <div>
-                    <h3 class="text-xl font-bold text-white">Прикрепите скриншот истории ордеров</h3>
+                    <h3 class="text-lg sm:text-xl font-bold text-white">Прикрепите скриншот истории ордеров</h3>
                     <p class="text-xs text-gray-400 mt-1">Загрузите или перетащите изображение с подтверждением сделок.</p>
                 </div>
 
-                <div class="border-2 border-dashed border-brand-border hover:border-amber-400/60 rounded-2xl p-8 text-center bg-brand-card/40 transition cursor-pointer relative" id="drop-zone">
+                <div class="border-2 border-dashed border-brand-border hover:border-amber-400/60 rounded-2xl p-6 sm:p-8 text-center bg-brand-card/40 transition cursor-pointer relative" id="drop-zone">
                     <input type="file" id="screenshot-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleFileSelect(event)">
                     
                     <div id="upload-placeholder" class="space-y-3">
@@ -302,12 +323,12 @@
                     </div>
                 </div>
 
-                <div class="pt-4 flex justify-between items-center">
-                    <button onclick="goBackFromUpload()" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1">
+                <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <button onclick="goBackFromUpload()" class="w-full sm:w-auto text-xs text-gray-400 hover:text-white flex items-center justify-center space-x-1 py-2">
                         <i class="fa-solid fa-arrow-left"></i> <span>Назад</span>
                     </button>
 
-                    <button onclick="submitReport()" id="submit-btn" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold px-6 py-3 rounded-xl text-sm shadow-lg shadow-amber-500/10 flex items-center space-x-2 transition">
+                    <button onclick="submitReport()" id="submit-btn" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold px-6 py-3 rounded-xl text-sm shadow-lg shadow-amber-500/10 flex items-center justify-center space-x-2 transition">
                         <i class="fa-solid fa-paper-plane"></i>
                         <span>Опубликовать Отчёт</span>
                     </button>
@@ -319,7 +340,7 @@
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <h2 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
                         <span>Совместный Журнал Сессий</span>
                         <span class="text-xs bg-brand-card border border-brand-border text-gray-400 font-normal px-2.5 py-0.5 rounded-full" id="reports-count">0 записей</span>
                     </h2>
@@ -349,10 +370,10 @@
                 </p>
             </div>
             <div class="flex items-center space-x-3 pt-2">
-                <button onclick="closeDeleteModal()" class="w-1/2 bg-brand-card hover:bg-gray-800 text-gray-300 py-2.5 rounded-xl border border-brand-border text-xs transition">
+                <button onclick="closeDeleteModal()" class="w-1/2 bg-brand-card hover:bg-gray-800 text-gray-300 py-3 sm:py-2.5 rounded-xl border border-brand-border text-xs transition">
                     Отмена
                 </button>
-                <button id="confirm-delete-btn" class="w-1/2 bg-rose-600 hover:bg-rose-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-rose-600/20">
+                <button id="confirm-delete-btn" class="w-1/2 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 sm:py-2.5 rounded-xl text-xs transition shadow-lg shadow-rose-600/20">
                     Удалить
                 </button>
             </div>
@@ -376,11 +397,11 @@
     <div id="rule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel max-w-xl w-full rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-brand-border pb-3">
-                <h3 class="font-bold text-white text-lg flex items-center space-x-2">
+                <h3 class="font-bold text-white text-base sm:text-lg flex items-center space-x-2">
                     <i class="fa-solid fa-book-bookmark text-amber-400"></i>
                     <span>Кодекс Дисциплины (10 Критериев)</span>
                 </h3>
-                <button onclick="toggleRuleModal()" class="text-gray-400 hover:text-white text-lg">
+                <button onclick="toggleRuleModal()" class="text-gray-400 hover:text-white text-lg p-1">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -389,7 +410,7 @@
                 <!-- Rules populated via JS -->
             </ol>
 
-            <button onclick="toggleRuleModal()" class="w-full bg-brand-card hover:bg-gray-800 text-white font-medium py-2.5 rounded-xl border border-brand-border text-xs transition">
+            <button onclick="toggleRuleModal()" class="w-full bg-brand-card hover:bg-gray-800 text-white font-medium py-3 sm:py-2.5 rounded-xl border border-brand-border text-xs transition">
                 Понятно, закрыть
             </button>
         </div>
@@ -403,7 +424,7 @@
                     <i class="fa-solid fa-cloud text-amber-400"></i>
                     <span>Синхронизация через Firebase</span>
                 </h3>
-                <button onclick="toggleFirebaseModal()" class="text-gray-400 hover:text-white text-lg">
+                <button onclick="toggleFirebaseModal()" class="text-gray-400 hover:text-white text-lg p-1">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -429,7 +450,7 @@
 
             <div class="flex items-center justify-end space-x-2 pt-2">
                 <button onclick="clearFirebaseConfig()" class="text-xs text-rose-400 hover:text-rose-300 px-3 py-2">Сбросить</button>
-                <button onclick="saveFirebaseConfig()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2 rounded-xl text-xs">Сохранить и Синхронизировать</button>
+                <button onclick="saveFirebaseConfig()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2.5 rounded-xl text-xs">Сохранить и Синхронизировать</button>
             </div>
         </div>
     </div>
@@ -537,7 +558,7 @@
             errorContainer.innerHTML = '';
             errorOptions.forEach(err => {
                 const btn = document.createElement('button');
-                btn.className = "glass-card p-3 rounded-xl text-left border border-brand-border hover:border-rose-400/50 text-xs text-gray-300 hover:text-white font-medium hover:bg-rose-500/10 transition";
+                btn.className = "glass-card p-3 rounded-xl text-left border border-brand-border hover:border-rose-400/50 text-xs text-gray-300 hover:text-white font-medium hover:bg-rose-500/10 transition w-full";
                 btn.innerText = err;
                 btn.onclick = () => selectError(err);
                 errorContainer.appendChild(btn);
@@ -757,11 +778,11 @@
                 const isClean = item.compliance === 'clean';
                 
                 const badgeHtml = isClean 
-                    ? `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    ? `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/35">
                         <i class="fa-solid fa-circle-check text-emerald-400"></i>
                         <span>Системно</span>
                        </div>`
-                    : `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">
+                    : `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/35">
                         <i class="fa-solid fa-circle-xmark text-rose-400"></i>
                         <span>Блок 1 день</span>
                        </div>`;
@@ -792,47 +813,48 @@
                     </div>
 
                     <div id="body-${item.id}" class="accordion-body">
-    <div class="border-t border-brand-border/50 p-5 bg-brand-card/40 space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                            <div class="space-y-2">
-                                <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
-                                    <span class="text-gray-400 block mb-1">📊 Количество сделок:</span>
-                                    <span class="font-semibold text-white text-sm">${item.trades}</span>
+                        <div class="border-t border-brand-border/50 p-4 sm:p-5 bg-brand-card/40 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                <div class="space-y-2">
+                                    <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
+                                        <span class="text-gray-400 block mb-1">📊 Количество сделок:</span>
+                                        <span class="font-semibold text-white text-sm">${item.trades}</span>
+                                    </div>
+
+                                    <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
+                                        <span class="text-gray-400 block mb-1">⚖️ Соблюдение кодекса:</span>
+                                        <span class="font-semibold ${isClean ? 'text-emerald-400' : 'text-rose-400'} text-sm">
+                                            ${isClean ? '✅ 100% По системе' : '❌ Нарушение кодекса'}
+                                        </span>
+                                    </div>
+
+                                    <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
+                                        <span class="text-gray-400 block mb-1">🔍 Выявленные ошибки:</span>
+                                        <span class="font-semibold text-white text-sm">${item.error}</span>
+                                    </div>
                                 </div>
 
-                                <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
-                                    <span class="text-gray-400 block mb-1">⚖️ Соблюдение кодекса:</span>
-                                    <span class="font-semibold ${isClean ? 'text-emerald-400' : 'text-rose-400'} text-sm">
-                                        ${isClean ? '✅ 100% По системе' : '❌ Нарушение кодекса'}
-                                    </span>
-                                </div>
-
-                                <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
-                                    <span class="text-gray-400 block mb-1">🔍 Выявленные ошибки:</span>
-                                    <span class="font-semibold text-white text-sm">${item.error}</span>
+                                <div class="space-y-1">
+                                    <div class="flex items-center justify-between text-xs text-gray-400">
+                                        <span>📸 Подтверждение ордеров:</span>
+                                        <button onclick="openLightbox('${item.image}')" class="text-amber-400 hover:text-amber-300 flex items-center space-x-1 text-[11px] font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 transition">
+                                            <i class="fa-solid fa-expand"></i>
+                                            <span>Увеличить</span>
+                                        </button>
+                                    </div>
+                                    <div class="rounded-xl overflow-hidden border border-brand-border bg-black/40 p-1 cursor-pointer" onclick="openLightbox('${item.image}')">
+                                        <img src="${item.image}" class="w-full max-h-56 object-contain rounded-lg hover:opacity-90 transition">
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="space-y-1">
-                                <div class="flex items-center justify-between text-xs text-gray-400">
-                                    <span>📸 Подтверждение ордеров:</span>
-                                    <button onclick="openLightbox('${item.image}')" class="text-amber-400 hover:text-amber-300 flex items-center space-x-1 text-[11px] font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 transition">
-                                        <i class="fa-solid fa-expand"></i>
-                                        <span>Увеличить</span>
-                                    </button>
-                                </div>
-                                <div class="rounded-xl overflow-hidden border border-brand-border bg-black/40 p-1 cursor-pointer" onclick="openLightbox('${item.image}')">
-                                    <img src="${item.image}" class="w-full max-h-56 object-contain rounded-lg hover:opacity-90 transition">
-                                </div>
+                            <!-- Delete Button Footer inside Accordion with proper spacing -->
+                            <div class="pt-3 border-t border-brand-border/40 flex justify-end">
+                                <button onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="w-full sm:w-auto text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-4 py-2.5 sm:py-1.5 rounded-lg border border-rose-500/20 flex items-center justify-center space-x-1.5 transition">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span>Удалить запись</span>
+                                </button>
                             </div>
-                        </div></div>
-
-                        <!-- Delete Button Footer inside Accordion -->
-                        <div class="border-t border-brand-border/40 flex justify-end">
-                            <button onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="mar6 text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-3 py-1.5 rounded-lg border border-rose-500/20 flex items-center space-x-1.5 transition">
-                                <i class="fa-solid fa-trash-can"></i>
-                                <span>Удалить запись</span>
-                            </button>
                         </div>
                     </div>
                 `;
@@ -930,7 +952,7 @@
 
                 isFirebaseConnected = true;
                 const badge = document.getElementById('sync-status-badge');
-                badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/35";
                 badge.innerHTML = '<i class="fa-solid fa-wifi mr-1"></i> Live Sync';
             } catch (err) {
                 console.error("Firebase init failed:", err);
