@@ -202,6 +202,69 @@
             </div>
         </section>
 
+        <!-- MONTHLY DISCIPLINE STATS CARD -->
+        <section class="glass-panel rounded-2xl p-6 border border-brand-border/80 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-brand-border/40 pb-3">
+                <h3 class="font-bold text-white text-base flex items-center space-x-2">
+                    <i class="fa-solid fa-chart-pie text-amber-400"></i>
+                    <span id="monthly-stats-title">Статистика дисциплины (Текущий месяц)</span>
+                </h3>
+                <span class="text-xs text-gray-400 font-medium">Учет за месяц</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Vladimir Stats -->
+                <div class="glass-card p-4 rounded-xl border border-brand-border space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-white text-sm flex items-center space-x-2">
+                            <i class="fa-solid fa-user text-amber-400"></i>
+                            <span>Vladimir</span>
+                        </span>
+                        <span id="vladimir-score" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">0 системных дней</span>
+                    </div>
+                    <div class="space-y-1 text-xs text-gray-300">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Успешных сессий:</span>
+                            <span id="vladimir-clean-count" class="font-bold text-emerald-400">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Нарушений кодекса:</span>
+                            <span id="vladimir-violation-count" class="font-bold text-rose-400">0</span>
+                        </div>
+                    </div>
+                    <!-- Progress bar -->
+                    <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
+                        <div id="vladimir-progress-bar" class="bg-gradient-to-r from-emerald-500 to-amber-400 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <!-- Max Stats -->
+                <div class="glass-card p-4 rounded-xl border border-brand-border space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-white text-sm flex items-center space-x-2">
+                            <i class="fa-solid fa-user-group text-blue-400"></i>
+                            <span>Max</span>
+                        </span>
+                        <span id="max-score" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">0 системных дней</span>
+                    </div>
+                    <div class="space-y-1 text-xs text-gray-300">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Успешных сессий:</span>
+                            <span id="max-clean-count" class="font-bold text-emerald-400">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Нарушений кодекса:</span>
+                            <span id="max-violation-count" class="font-bold text-rose-400">0</span>
+                        </div>
+                    </div>
+                    <!-- Progress bar -->
+                    <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
+                        <div id="max-progress-bar" class="bg-gradient-to-r from-emerald-500 to-amber-400 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- SESSION TIMER VIEW (Active during trading hours 09:00 - 12:00 unless unlocked) -->
         <section id="session-timer-card" class="glass-panel rounded-2xl p-6 sm:p-8 border border-brand-border shadow-2xl relative overflow-hidden hidden">
             <div class="flex flex-col space-y-6">
@@ -1084,8 +1147,57 @@
             document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
         }
 
+        // Функция расчета и рендеринга статистики за текущий месяц
+        function updateMonthlyStats() {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            const monthsNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+            const titleEl = document.getElementById('monthly-stats-title');
+            if (titleEl) titleEl.innerText = `Статистика дисциплины (${monthsNames[currentMonth]} ${currentYear})`;
+
+            let stats = {
+                'Vladimir': { clean: 0, violation: 0, total: 0 },
+                'Max': { clean: 0, violation: 0, total: 0 }
+            };
+
+            // Фильтруем записи строго за текущий месяц и год
+            reportsHistory.forEach(item => {
+                const itemDate = new Date(item.id);
+                if (itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear) {
+                    const author = item.author;
+                    if (stats[author]) {
+                        stats[author].total++;
+                        if (item.compliance === 'clean') {
+                            stats[author].clean++;
+                        } else {
+                            stats[author].violation++;
+                        }
+                    }
+                }
+            });
+
+            // Обновляем UI для Vladimir
+            const vladData = stats['Vladimir'];
+            document.getElementById('vladimir-clean-count').innerText = vladData.clean;
+            document.getElementById('vladimir-violation-count').innerText = vladData.violation;
+            document.getElementById('vladimir-score').innerText = `${vladData.clean} системных дней`;
+            const vladPercent = vladData.total > 0 ? (vladData.clean / vladData.total) * 100 : 0;
+            document.getElementById('vladimir-progress-bar').style.width = `${vladPercent}%`;
+
+            // Обновляем UI для Max
+            const maxData = stats['Max'];
+            document.getElementById('max-clean-count').innerText = maxData.clean;
+            document.getElementById('max-violation-count').innerText = maxData.violation;
+            document.getElementById('max-score').innerText = `${maxData.clean} системных дней`;
+            const maxPercent = maxData.total > 0 ? (maxData.clean / maxData.total) * 100 : 0;
+            document.getElementById('max-progress-bar').style.width = `${maxPercent}%`;
+        }
+
         // Render Feed
         function renderReportsFeed() {
+            updateMonthlyStats();
             const container = document.getElementById('reports-feed');
             container.innerHTML = '';
 
