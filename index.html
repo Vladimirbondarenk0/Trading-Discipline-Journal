@@ -47,18 +47,10 @@
         .accordion-body {
             max-height: 0;
             overflow: hidden;
-            padding-top: 0;
-            padding-bottom: 0;
-            border-top-width: 0;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease, border-width 0.4s ease, opacity 0.3s ease;
-            opacity: 0;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .accordion-body.open {
             max-height: 2000px;
-            padding-top: 1.25rem; /* возвращает p-5 */
-            padding-bottom: 1.25rem;
-            border-top-width: 1px;
-            opacity: 1;
         }
 
         /* Glassmorphism Effect */
@@ -795,7 +787,8 @@
                         </div>
                     </div>
 
-                    <div id="body-${item.id}" class="accordion-body border-t border-brand-border/50 p-5 bg-brand-card/40 space-y-4">
+                    <div id="body-${item.id}" class="accordion-body">
+    <div class="border-t border-brand-border/50 p-5 bg-brand-card/40 space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                             <div class="space-y-2">
                                 <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
@@ -828,7 +821,7 @@
                                     <img src="${item.image}" class="w-full max-h-56 object-contain rounded-lg hover:opacity-90 transition">
                                 </div>
                             </div>
-                        </div>
+                        </div></div>
 
                         <!-- Delete Button Footer inside Accordion -->
                         <div class="pt-3 border-t border-brand-border/40 flex justify-end">
