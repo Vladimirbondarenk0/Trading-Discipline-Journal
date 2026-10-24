@@ -431,6 +431,7 @@
         let currentUser = localStorage.getItem('trading_journal_user') || 'Владимир';
         let currentStep = 1;
         let dbRef = null;
+        let dbInstance = null; // Экземпляр базы для корректного удаления
         let isFirebaseConnected = false;
         let itemToDelete = null;
 
@@ -699,8 +700,8 @@
 
             const { id, fbKey } = itemToDelete;
 
-            if (isFirebaseConnected && fbKey) {
-                const itemRef = window.fbSDK.ref(window.fbSDK.getDatabase(), `reports/${fbKey}`);
+            if (isFirebaseConnected && fbKey && dbInstance) {
+                const itemRef = window.fbSDK.ref(dbInstance, `reports/${fbKey}`);
                 window.fbSDK.remove(itemRef).catch(err => console.error("Delete error:", err));
             } else {
                 reportsHistory = reportsHistory.filter(item => item.id !== id);
@@ -879,8 +880,8 @@
 
             try {
                 const app = window.fbSDK.initializeApp(cfg, 'tradingApp');
-                const db = window.fbSDK.getDatabase(app);
-                dbRef = window.fbSDK.ref(db, 'reports');
+                dbInstance = window.fbSDK.getDatabase(app); // Сохраняем экземпляр базы
+                dbRef = window.fbSDK.ref(dbInstance, 'reports');
 
                 window.fbSDK.onValue(dbRef, (snapshot) => {
                     const data = snapshot.val();
@@ -907,6 +908,7 @@
 
         function fallbackToLocal() {
             isFirebaseConnected = false;
+            dbInstance = null;
             const badge = document.getElementById('sync-status-badge');
             badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700";
             badge.innerHTML = '<i class="fa-solid fa-hard-drive mr-1"></i> Local';
