@@ -242,7 +242,7 @@
                 <div class="glass-card p-4 rounded-xl border border-brand-border space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="font-bold text-white text-sm flex items-center space-x-2">
-                            <i class="fa-solid fa-user-group text-blue-400"></i>
+                            <i class="fa-solid fa-user text-blue-400"></i>
                             <span>Max</span>
                         </span>
                         <span id="max-score" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">0 системных дней</span>
@@ -477,7 +477,7 @@
                 </div>
 
                 <!-- Мудрая и глубокая мысль (рефлексия) -->
-                <div class="p-5 rounded-xl bg-brand-dark/50 border border-brand-border/60 text-xs sm:text-sm text-gray-200 leading-relaxed italic" id="completed-spiritual-thought">
+                <div class="p-5 rounded-xl bg-brand-dark/50 border border-brand-border/60 text-xs sm:text-sm text-gray-200 leading-relaxed" id="completed-spiritual-thought">
                     <!-- Текст мысли подставляется динамически -->
                 </div>
 
@@ -760,7 +760,7 @@
 
                     const badgeContainerEl = document.getElementById('completed-badge-container');
                     if (badgeContainerEl) {
-                        badgeContainerEl.innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">🔒 БЛОК ТОРГОВЛИ 1 ДЕНЬ</span>`;
+                        badgeContainerEl.innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse" style="animation-duration: 3s;"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>БЛОК ТОРГОВЛИ 1 ДЕНЬ</span>`;
                     }
 
                     const unlockDateStr = `${unlockDate.getDate()} ${months[unlockDate.getMonth()]} в 09:00`;
@@ -768,7 +768,7 @@
                     if (thoughtEl) {
                         thoughtEl.innerHTML = `
                             <div class="space-y-2">
-                                <p class="font-semibold text-rose-300">«Почему этот блок необходим и почему наказание настолько строгое?»</p>
+                                <p class="font-semibold text-rose-300">Почему этот блок необходим и почему наказание настолько строгое?</p>
                                 <p class="text-gray-300">Даже если завтра Брат заберёт свои +2% профита, а ты останешься позади и лишён этих денег — прими это смиренно как целебное лекарство от гордыни и зависти.</p>
                                 <p class="text-gray-400">Блок на 1 день убивает азарт и иллюзию контроля. Мы учимся радоваться успехам Брата больше, чем собственным процентам, осознавая полную немощь своего «я». Торговля без дисциплины — это результат легкомысленности. Поэтому у тебя есть время поразмыслить над ошибкой, и зафиксировать ее в своем разуме как что-то, к чему точчно не стоит возвращаться.</p>
                             </div>
@@ -798,12 +798,12 @@
                 const authorInfoEl = document.getElementById('completed-author-info');
                 if (authorInfoEl) authorInfoEl.innerText = `Запись зафиксирована (${userTodayReport.author})`;
                 
-                const badgeContainerEl = document.getElementById('completed-badge-container');
-                if (badgeContainerEl) {
-                    badgeContainerEl.innerHTML = isClean
-                        ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✅ 100% По системе</span>`
-                        : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40">❌ Активирован блок на завтра</span>`;
-                }
+               const badgeContainerEl = document.getElementById('completed-badge-container');
+            if (badgeContainerEl) {
+                badgeContainerEl.innerHTML = isClean
+                    ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✅ 100% По системе</span>`
+                    : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse" style="animation-duration: 3s;"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>БЛОК ТОРГОВЛИ 1 ДЕНЬ</span>`;
+            }
 
                 const thoughtEl = document.getElementById('completed-spiritual-thought');
                 if (thoughtEl) {
