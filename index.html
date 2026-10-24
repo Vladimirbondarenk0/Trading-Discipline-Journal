@@ -67,9 +67,15 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .glass-card:hover {
-            border-color: rgba(243, 186, 47, 0.3);
-            transform: translateY(-2px);
+        /* Ховер работает только на десктопах с мышкой, на тач-устройствах отключен */
+        @media (hover: hover) {
+            .glass-card:hover {
+                border-color: rgba(243, 186, 47, 0.3);
+                transform: translateY(-2px);
+            }
+            .record-header:hover {
+                background-color: rgba(255, 255, 255, 0.02);
+            }
         }
 
         /* Custom Scrollbar */
@@ -89,6 +95,7 @@
         }
 
         /* Мобильная адаптация */
+        /* Мобильная адаптация */
         @media (max-width: 640px) {
             header .max-w-5xl {
                 padding-left: 10px;
@@ -102,6 +109,10 @@
             .glass-panel {
                 padding: 1rem !important;
                 border-radius: 1rem !important;
+            }
+            /* Убираем лишний внешний отступ у карточек записей в журнале */
+            #reports-feed .glass-panel {
+                padding: 0 !important;
             }
             /* Модальные окна на весь экран по ширине */
             #delete-modal > div,
@@ -798,7 +809,7 @@
                 row.className = "glass-panel rounded-xl border border-brand-border/80 overflow-hidden transition";
 
                 row.innerHTML = `
-                    <div onclick="toggleAccordion(${item.id})" class="flex items-center justify-between cursor-pointer hover:bg-white/[0.02] transition">
+                    <div onclick="toggleAccordion(${item.id})" class="p-4 flex items-center justify-between cursor-pointer record-header transition">
                         <div>
                             <div class="flex items-center space-x-2 text-xs">
                                 ${authorBadge}
