@@ -764,8 +764,10 @@
                         <span>Блок 1 день</span>
                        </div>`;
 
-                const authorBadge = item.author === 'Владимир'
-                    ? `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user mr-1"></i>Владимир</span>`
+                // Логика имён: своё имя остается твоим, чужое отображается как "Брат"
+                const isMyPost = item.author === currentUser;
+                const authorBadge = isMyPost
+                    ? `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user mr-1"></i>${item.author}</span>`
                     : `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user-group mr-1"></i>Брат</span>`;
 
                 const row = document.createElement('div');
