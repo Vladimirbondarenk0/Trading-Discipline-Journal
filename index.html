@@ -43,6 +43,18 @@
             background-image: radial-gradient(circle at 50% 0%, rgba(243, 186, 47, 0.05) 0%, transparent 70%);
         }
 
+        /* Плавная анимация аккордеона */
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            opacity: 0;
+        }
+        .accordion-body.open {
+            max-height: 2000px;
+            opacity: 1;
+        }
+
         /* Glassmorphism Effect */
         .glass-panel {
             background: rgba(21, 25, 33, 0.8);
@@ -826,16 +838,33 @@
             });
         }
 
+        let reportsHistory = [];
+        let openAccordions = [] // Массив для отслеживания открытых карточек
+
         function toggleAccordion(id) {
             const body = document.getElementById(`body-${id}`);
             const chevron = document.getElementById(`chevron-${id}`);
-            
-            if (body.classList.contains('hidden')) {
-                body.classList.remove('hidden');
-                chevron.classList.add('rotate-180');
-            } else {
-                body.classList.add('hidden');
+            const isOpen = body.classList.contains('open');
+
+            if (isOpen) {
+                // Если уже открыта — закрываем
+                body.classList.remove('open');
                 chevron.classList.remove('rotate-180');
+                openAccordions = openAccordions.filter(item => item !== id);
+            } else {
+                // Если закрыта — открываем
+                body.classList.add('open');
+                chevron.classList.add('rotate-180');
+                openAccordions.push(id);
+
+                // Если открыто больше 2, автоматически закрываем самую первую (старую)
+                if (openAccordions.length > 2) {
+                    const oldestId = openAccordions.shift();
+                    const oldBody = document.getElementById(`body-${oldestId}`);
+                    const oldChevron = document.getElementById(`chevron-${oldestId}`);
+                    if (oldBody) oldBody.classList.remove('open');
+                    if (oldChevron) oldChevron.classList.remove('rotate-180');
+                }
             }
         }
 
