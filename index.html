@@ -125,17 +125,16 @@
         }
 
        @keyframes smoothFade {
-           0%, 100% {
-    opacity: 0.3; /* Начальная и конечная точка (плавное затухание) */
-    transform: scale(0.98); 
-  }
-  50% {
-    opacity: 1; /* Пик яркости в середине цикла */
-    transform: scale(1.02); 
-  }
+            0%, 100% {
+                opacity: 0.35;
+            }
+            50% {
+                opacity: 1;
+            }
         }
         .pulse-smooth {
             animation: smoothFade 6s infinite ease-in-out;
+            will-change: opacity;
         }
     </style>
 </head>
