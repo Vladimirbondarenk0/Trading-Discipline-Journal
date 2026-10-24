@@ -395,6 +395,40 @@
             </div>
         </section>
 
+        <!-- CARD: Запись за сегодня уже сделана -->
+        <section id="completed-day-card" class="glass-panel rounded-2xl p-6 sm:p-8 border border-brand-border shadow-2xl relative overflow-hidden hidden">
+            <div class="flex flex-col space-y-6 text-center sm:text-left">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-border/40 pb-4">
+                    <div class="flex items-center space-x-3 justify-center sm:justify-start">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl border border-amber-500/20">
+                            <i class="fa-solid fa-check-double"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base sm:text-lg font-bold text-white">Отчёт за сегодня зафиксирован</h3>
+                            <p id="completed-author-info" class="text-xs text-gray-400">Запись успешно внесена в совместный журнал</p>
+                        </div>
+                    </div>
+                    <div id="completed-badge-container">
+                        <!-- Динамический бейдж (Системно / Нарушение) -->
+                    </div>
+                </div>
+
+                <!-- Мудрая и глубокая мысль (рефлексия) -->
+                <div class="p-5 rounded-xl bg-brand-dark/50 border border-brand-border/60 text-xs sm:text-sm text-gray-200 leading-relaxed italic" id="completed-spiritual-thought">
+                    <!-- Текст мысли подставляется динамически -->
+                </div>
+
+                <!-- Таймер до следующего открытия (утро / понедельник) -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs text-gray-400">
+                    <div class="flex items-center space-x-2 justify-center sm:justify-start">
+                        <i class="fa-solid fa-hourglass-half text-amber-400 animate-spin" style="animation-duration: 8s;"></i>
+                        <span id="next-session-countdown-text">Следующее торговое окно откроется: Завтра в 09:00</span>
+                    </div>
+                    <div class="text-[11px] text-gray-500">На выходных сессия отдыхает — покой и тишина.</div>
+                </div>
+            </div>
+        </section>
+
         <!-- SESSION FEED / HISTORY SECTION -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
@@ -602,9 +636,10 @@
             setInterval(initSessionTimer, 1000); // Обновление таймера каждую секунду
         });
 
-        // Торговая сессия таймер (09:00 - 12:00)
+       // Торговая сессия таймер и проверка завершённости дня
         function initSessionTimer() {
             const now = new Date();
+            const dayOfWeek = now.getDay(); // 0 - ВС, 6 - СБ
             const hours = now.getHours();
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
@@ -613,42 +648,83 @@
             const startSeconds = 9 * 3600;  // 09:00
             const endSeconds = 12 * 3600;   // 12:00
 
-            // Форматирование даты по-русски (например, "Суббота, 24 октября")
+            // Форматирование даты по-русски
             const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
             const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-            const dateStr = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]}`;
-            document.getElementById('session-date-str').innerText = dateStr;
+            document.getElementById('session-date-str').innerText = `${days[dayOfWeek]}, ${now.getDate()} ${months[now.getMonth()]}`;
+            document.getElementById('live-clock').innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 
-            // Часы в реальном времени
-            const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-            document.getElementById('live-clock').innerText = timeStr;
-
-            // Проверка ключа разблокировки на сегодня в sessionStorage
             const todayKey = `session_unlocked_${now.getFullYear()}_${now.getMonth()}_${now.getDate()}`;
             const isUnlockedToday = sessionStorage.getItem(todayKey) === 'true';
 
             const timerCard = document.getElementById('session-timer-card');
             const wizardContainer = document.getElementById('wizard-container');
+            const completedCard = document.getElementById('completed-day-card');
 
-            // Логика отображения во время сессии (09:00 - 12:00) и если не разблокировано досрочно
+            // 1. Проверяем, отправлен ли уже отчёт пользователем сегодня
+            const todayStr = now.toDateString();
+            const userTodayReport = reportsHistory.find(item => {
+                return new Date(item.id).toDateString() === todayStr && item.author === currentUser;
+            });
+
+            if (userTodayReport) {
+                // Если отчёт уже сдан сегодня — скрываем таймер и форму, показываем мудрую карточку
+                timerCard.classList.add('hidden');
+                wizardContainer.classList.add('hidden');
+                completedCard.classList.remove('hidden');
+
+                // Заполняем карточку в зависимости от того, было нарушение или чисто
+                const isClean = userTodayReport.compliance === 'clean';
+                document.getElementById('completed-author-info').innerText = `Запись зафиксирована (${userTodayReport.author})`;
+                
+                document.getElementById('completed-badge-container').innerHTML = isClean
+                    ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✅ 100% По системе</span>`
+                    : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">❌ Было нарушение</span>`;
+
+                const thoughtEl = document.getElementById('completed-spiritual-thought');
+                if (isClean) {
+                    thoughtEl.innerHTML = `«Слава Богу за победу Духа над плотью! Кодекс соблюден не силой нашей самоуверенной воли, а Его живой праведностью. Пусть это чистое стекло продолжает смиренно отражать свет Мастера, не приписывая себе заслуг».`;
+                } else {
+                    thoughtEl.innerHTML = `«Слава Богу за этот урок и обличительное зеркало истины. Наша немощь открылась во всей красе, чтобы мы перестали надеяться на себя. Поразмышляй в тишине над этой ошибкой, чтобы в следующий раз действовал исключительно Он».`;
+                }
+
+                // Расчёт времени до следующего сеанса (если выходной — до понедельника)
+                let targetDayName = "Завтра в 09:00";
+                if (dayOfWeek === 6) targetDayName = "В понедельник в 09:00"; // Суббота -> Понедельник
+                else if (dayOfWeek === 0) targetDayName = "Завтра в 09:00";    // Воскресенье -> Понедельник
+                
+                document.getElementById('next-session-countdown-text').innerText = `Следующее торговое окно откроется: ${targetDayName}`;
+                return;
+            }
+
+            // 2. Если выходной день (Суббота / Воскресенье) — держим форму скрытой или показываем особый статус (по желанию, таймер идет до понедельника)
+            if (dayOfWeek === 6 || dayOfWeek === 0) {
+                timerCard.classList.remove('hidden');
+                wizardContainer.classList.add('hidden');
+                document.getElementById('session-badge-text').innerText = "Выходной день (Рынок закрыт)";
+                document.getElementById('session-remaining-text').innerText = "Ожидание открытия в понедельник в 09:00";
+                document.getElementById('session-progress-bar').style.width = "100%";
+                return;
+            }
+
+            // 3. Обычный будний день: работа таймера сессии (09:00 - 12:00)
             if (totalCurrentSeconds >= startSeconds && totalCurrentSeconds < endSeconds && !isUnlockedToday) {
                 timerCard.classList.remove('hidden');
                 wizardContainer.classList.add('hidden');
+                completedCard.classList.add('hidden');
 
-                // Расчет прогресса (3 часа = 10800 секунд)
                 const elapsed = totalCurrentSeconds - startSeconds;
                 const progressPercent = Math.min(100, Math.max(0, (elapsed / (endSeconds - startSeconds)) * 100));
                 document.getElementById('session-progress-bar').style.width = `${progressPercent}%`;
 
-                // Оставшееся время
                 const remainingSecs = endSeconds - totalCurrentSeconds;
                 const remHours = Math.floor(remainingSecs / 3600);
                 const remMins = Math.floor((remainingSecs % 3600) / 60);
                 const remSecs = remainingSecs % 60;
                 document.getElementById('session-remaining-text').innerText = `осталось ${remHours} ч ${remMins} мин ${remSecs} сек`;
             } else {
-                // Вне торгового времени или если сессия разблокирована досрочно паролем
                 timerCard.classList.add('hidden');
+                completedCard.classList.add('hidden');
                 wizardContainer.classList.remove('hidden');
             }
         }
