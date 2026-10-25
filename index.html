@@ -754,7 +754,7 @@
                 </div>
             </div>
 
-            <!-- 4. Статистика за эти выходные (Шкала текущих выходных) -->
+            <!-- 4. ПОлный прогресс за эти выходные -->
             <div class="p-3 rounded-xl bg-brand-dark/40 border border-brand-border/60 space-y-2">
                 <div class="flex items-center justify-between text-xs">
                     <span class="text-gray-300 font-medium">Прогресс за эти выходные:</span>
@@ -763,6 +763,53 @@
                 <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
                     <div id="weekend-session-bar" class="bg-gradient-to-r from-amber-500 to-emerald-400 h-full w-0 transition-all duration-500"></div>
                 </div>
+            </div>
+            <!-- 4.1 Статистика бэктестов за эти выходные (Отдельно для Владимира и Макса) -->
+            <div class="p-4 rounded-xl bg-brand-dark/80 border border-brand-border space-y-3">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>Статистика бэктестов зв эти выходные</span> <!--вместо "зв эти выходные" добавь два числа выходных, к примеру за 25 и 26 октября.  -->
+                    </h4>
+                    <span class="text-[10px] text-gray-400">Независимый учет</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <!-- Колонки для Владимира -->
+                    <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
+                        <div class="font-bold text-white flex items-center justify-between">
+                            <span>Vladimir</span>
+                            <span id="vlad-backtest-count" class="text-amber-400">0 месяцев</span>
+                        </div>
+                        <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
+                            <div id="vlad-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
+                        </div>
+                        <div class="text-[10px] text-gray-400" id="vlad-backtest-status">Цель: 2 месяца за эти выходные</div>
+                    </div>
+
+                    <!-- Колонки для Макса -->
+                    <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
+                        <div class="font-bold text-white flex items-center justify-between">
+                            <span>Max</span>
+                            <span id="max-backtest-count" class="text-amber-400">0 месяцев</span>
+                        </div>
+                        <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
+                            <div id="max-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
+                        </div>
+                        <div class="text-[10px] text-gray-400" id="max-backtest-status">Цель: 2 месяца за эти выходные</div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Footer & Шкала полезности -->
+            <div class="pt-2 border-t border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs text-gray-400">
+                    Уровень твоей полезности: <span id="weekend-usefulness-score" class="font-bold text-amber-400">0%</span>
+                </div>
+                <button onclick="saveWeekendActivity()" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-check"></i>
+                    <span>Зафиксировать и Сохранить</span>
+                </button>
             </div>
 
             <!-- 5. Квартальная статистика бэктестов (Отдельно для Владимира и Макса, ниже) -->
@@ -802,52 +849,22 @@
                 </div>
             </div>
 
-            <!-- Footer & Шкала полезности -->
-            <div class="pt-2 border-t border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div class="text-xs text-gray-400">
-                    Уровень твоей полезности: <span id="weekend-usefulness-score" class="font-bold text-amber-400">0%</span>
-                </div>
-                <button onclick="saveWeekendActivity()" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5">
-                    <i class="fa-solid fa-check"></i>
-                    <span>Зафиксировать и Сохранить</span>
-                </button>
-            </div>
-            <!-- 4. Квартальная статистика бэктестов (Отдельно для Владимира и Макса) -->
-            <div class="p-4 rounded-xl bg-brand-dark/80 border border-brand-border space-y-3">
+           
+
+            <!-- 6. Архив скриншотов бэктестов (История по неделям/выходным) -->
+            <div class="p-4 rounded-xl bg-brand-dark/60 border border-brand-border space-y-3">
                 <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
-                        <i class="fa-solid fa-chart-column"></i>
-                        <span>Статистика бэктестов (Квартал / 3 месяца)</span>
+                    <h4 class="text-xs font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-images text-amber-400"></i>
+                        <span>Архив скриншотов бэктестов (История)</span>
                     </h4>
-                    <span class="text-[10px] text-gray-400">Независимый учет</span>
+                    <span class="text-[10px] text-gray-400">Нажмите для просмотра</span>
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    <!-- Колонки для Владимира -->
-                    <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
-                        <div class="font-bold text-white flex items-center justify-between">
-                            <span>Vladimir</span>
-                            <span id="vlad-backtest-count" class="text-amber-400">0 месяцев</span>
-                        </div>
-                        <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
-                            <div id="vlad-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
-                        </div>
-                        <div class="text-[10px] text-gray-400" id="vlad-backtest-status">Цель: 2 месяца за эти выходные</div>
-                    </div>
-
-                    <!-- Колонки для Макса -->
-                    <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
-                        <div class="font-bold text-white flex items-center justify-between">
-                            <span>Max</span>
-                            <span id="max-backtest-count" class="text-amber-400">0 месяцев</span>
-                        </div>
-                        <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
-                            <div id="max-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
-                        </div>
-                        <div class="text-[10px] text-gray-400" id="max-backtest-status">Цель: 2 месяца за эти выходные</div>
-                    </div>
+                <div id="backtest-history-feed" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Заполняется динамически через JS -->
                 </div>
             </div>
+            
         </div>
     </div>
 
@@ -1768,6 +1785,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
         // Открытие модального окна полезных выходных (с блокировкой скролла страницы)
         function openWeekendModal() {
+            renderBacktestHistory();
             // 1. Блокируем прокрутку основного сайта
             document.body.style.overflow = 'hidden';
 
@@ -1854,6 +1872,8 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
                 alert('Пожалуйста, загрузите хотя бы один скриншот бэктеста FX Replay.');
                 return;
             }
+
+            renderBacktestHistory();
 
             const timestamp = Date.now();
             let backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
@@ -1943,6 +1963,56 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             document.getElementById('max-backtest-count').innerText = `${maxCount} / ${maxQuarterTarget} мес.`;
             const maxPercent = Math.min(100, (maxCount / maxQuarterTarget) * 100);
             document.getElementById('max-backtest-bar').style.width = `${maxPercent}%`;
+        }
+
+        // Рендер истории скриншотов бэктестов для текущего пользователя, сгруппированных по выходным
+        function renderBacktestHistory() {
+            const feed = document.getElementById('backtest-history-feed');
+            if (!feed) return;
+            feed.innerHTML = '';
+
+            const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            
+            // Фильтруем строго для текущего пользователя
+            const userBacktests = backtests.filter(item => item.author === currentUser);
+
+            if (userBacktests.length === 0) {
+                feed.innerHTML = '<div class="text-xs text-gray-500 text-center py-2">Нет сохраненных скриншотов бэктестов. Загрузите их за текущие выходные.</div>';
+                return;
+            }
+
+            // Группируем по дате (выходным)
+            let grouped = {};
+            userBacktests.forEach(item => {
+                if (!grouped[item.date]) grouped[item.date] = [];
+                grouped[item.date].push(item);
+            });
+
+            Object.entries(grouped).forEach(([dateStr, items]) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = "p-2.5 rounded-lg bg-brand-card/50 border border-brand-border/40 space-y-2 text-xs";
+                
+                let imagesHtml = '';
+                items.forEach((item, idx) => {
+                    imagesHtml += `
+                        <div class="relative group cursor-pointer inline-block mr-2 mb-2" onclick="openLightbox('${item.image}')" title="Кликните для увеличения">
+                            <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg border border-brand-border group-hover:border-amber-400 transition shadow-md">
+                            <span class="absolute bottom-0.5 right-0.5 bg-black/80 text-[9px] text-amber-300 px-1 rounded font-mono">#${idx + 1}</span>
+                        </div>
+                    `;
+                });
+
+                groupDiv.innerHTML = `
+                    <div class="flex items-center justify-between text-gray-400 font-medium text-[11px]">
+                        <span>📅 Выходные: ${dateStr}</span>
+                        <span class="text-amber-400 font-semibold">${items.length} скриншот(а)</span>
+                    </div>
+                    <div class="flex flex-wrap items-center pt-1">
+                        ${imagesHtml}
+                    </div>
+                `;
+                feed.appendChild(groupDiv);
+            });
         }
     </script>
 </body>
