@@ -1973,6 +1973,28 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             }
         }
 
+        function handleBacktestImage(slot, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (slot === 1) {
+                    backtestImage1 = e.target.result;
+                    document.getElementById('backtest-img-1').src = backtestImage1;
+                    document.getElementById('backtest-ph-1').classList.add('hidden');
+                    document.getElementById('backtest-prev-wrap-1').classList.remove('hidden');
+                } else if (slot === 2 && backtestImage1) {
+                    backtestImage2 = e.target.result;
+                    document.getElementById('backtest-img-2').src = backtestImage2;
+                    document.getElementById('backtest-ph-2').classList.add('hidden');
+                    document.getElementById('backtest-prev-wrap-2').classList.remove('hidden');
+                }
+                updateWeekendProgress();
+            };
+            reader.readAsDataURL(file);
+        }
+
         function saveWeekendActivity() {
             if (!backtestImage1 && !backtestImage2) {
                 const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
