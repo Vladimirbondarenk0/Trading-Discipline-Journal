@@ -1920,14 +1920,19 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             if (backtestImage1) score += 15;
             if (backtestImage2) score += 15;
 
+            // Проверяем, сохранены ли уже бэктесты за сегодня в архиве
             const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
             const now = new Date();
             const todayStr = formatDate(now.getTime());
             const weekendSaved = backtests.filter(item => item.date === todayStr && item.author === currentUser);
 
-            if (weekendSaved.length >= 2 && totalChecks === 3) {
-                score = 100;
+            // Если уже есть сохраненные скриншоты за сегодня, берем максимальный зафиксированный процент или считаем по факту
+            if (weekendSaved.length > 0) {
+                let savedScore = Math.round((totalChecks / 3) * 70) + (Math.min(2, weekendSaved.length) * 15);
+                score = Math.max(score, savedScore);
             }
+
+            if (score > 100) score = 100;
 
             document.getElementById('weekend-usefulness-score').innerText = `${score}%`;
             
@@ -1939,7 +1944,9 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
                 if (score === 100) {
                     sessionStatus.innerHTML = '<span class="text-emerald-400 font-bold">🔥 Максимальная польза (100%)!</span>';
                 } else if (weekendSaved.length > 0) {
-                    sessionStatus.innerHTML = '<span class="text-amber-400 font-bold">Результаты зафиксированы</span>';
+                    sessionStatus.innerHTML = `<span class="text-amber-400 font-bold">Слава Богу! Результаты выходных зафиксированы. (${score}%)</span>`;
+                } else if (score >= 85) {
+                    sessionStatus.innerHTML = '<span class="text-amber-300">Загрузите 2-й месяц для 100%</span>';
                 } else {
                     sessionStatus.innerText = 'Загрузите бэктесты';
                 }
@@ -1950,7 +1957,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             const slotText2 = document.getElementById('slot-text-2');
             
             if (slot2 && slotIcon2 && slotText2) {
-                if (backtestImage1) {
+                if (backtestImage1 || weekendSaved.length >= 1) {
                     slot2.classList.remove('slot-locked');
                     slot2.classList.add('slot-unlocked');
                     slotIcon2.className = "fa-solid fa-file-circle-plus text-amber-400 text-lg animate-bounce";
@@ -1964,29 +1971,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             }
         }
 
-        function handleBacktestImage(slot, event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                if (slot === 1) {
-                    backtestImage1 = e.target.result;
-                    document.getElementById('backtest-img-1').src = backtestImage1;
-                    document.getElementById('backtest-ph-1').classList.add('hidden');
-                    document.getElementById('backtest-prev-wrap-1').classList.remove('hidden');
-                } else if (slot === 2 && backtestImage1) {
-                    backtestImage2 = e.target.result;
-                    document.getElementById('backtest-img-2').src = backtestImage2;
-                    document.getElementById('backtest-ph-2').classList.add('hidden');
-                    document.getElementById('backtest-prev-wrap-2').classList.remove('hidden');
-                }
-                updateWeekendProgress();
-            };
-            reader.readAsDataURL(file);
-        }
-
-       function saveWeekendActivity() {
+        function saveWeekendActivity() {
             if (!backtestImage1 && !backtestImage2) {
                 alert('Пожалуйста, загрузите хотя бы один скриншот бэктеста FX Replay.');
                 return;
@@ -2011,11 +1996,6 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             renderBacktestStats();
             renderBacktestHistory();
             checkAndTransformBacktestSection();
-
-            const sessionStatus = document.getElementById('weekend-session-status');
-            if (sessionStatus) {
-                sessionStatus.innerHTML = '<span class="text-emerald-400 font-bold">Слава Богу! Результаты выходных зафиксированы.</span>';
-            }
         }
 
         function renderBacktestStats() {
