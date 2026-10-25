@@ -2048,27 +2048,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             renderBacktestHistory();
         }
 
-        // Состояние режима редактирования для архивов
-        let archiveEditState = {
-            'Vladimir': false,
-            'Max': false
-        };
-
-        function toggleArchiveEdit(author) {
-            archiveEditState[author] = !archiveEditState[author];
-            renderBacktestHistory();
-        }
-
-        function deleteArchivedBacktest(event, id) {
-            if (event && event.stopPropagation) event.stopPropagation();
-
-            let backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
-            backtests = backtests.filter(item => String(item.id) !== String(id));
-            localStorage.setItem('local_backtest_reports', JSON.stringify(backtests));
-
-            renderBacktestStats();
-            renderBacktestHistory();
-        }
+       
 
         // Рендер архива: текущий пользователь всегда первый (жёлтый акцент), брат — второй (синий акцент)
         function renderBacktestHistory() {
