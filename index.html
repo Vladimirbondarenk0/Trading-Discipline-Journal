@@ -773,12 +773,12 @@
           <!-- 3. Секция Бэктестинга (С последовательной анимацией и блокировкой 2-го слота) -->
             <div class="p-4 rounded-xl bg-brand-dark/60 border border-brand-border space-y-4">
                 <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold text-white flex items-center space-x-2">
-                        <i class="fa-solid fa-desktop text-amber-400"></i>
-                        <span>Практика Бэктестов (FX Replay — Цель: 2 месяца)</span>
-                    </h4>
-                    <span class="s-pt4 text-[10px] text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 animate-pulse">Идет сессия выходных</span>
-                </div>
+    <h4 class="text-xs font-bold text-white flex items-center space-x-2">
+        <i class="fa-solid fa-desktop text-amber-400"></i>
+        <span>Практика Бэктестов (FX Replay — Цель: 2 месяца)</span>
+    </h4>
+    <span id="weekend-status-pill" class="text-[10px] text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 animate-pulse">Бектесты тебя ждут</span>
+</div>
 
                 <p class="text-xs text-gray-300 leading-relaxed">
                     Пройди 2 исторических месяца на FX Replay за эти выходные. Загрузи скриншоты раздельно для фиксации максимальной полезности.
@@ -1916,17 +1916,20 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             const c3 = document.getElementById('chk-3')?.checked ? 1 : 0;
             const totalChecks = c1 + c2 + c3;
 
-            let score = Math.round((totalChecks / 3) * 70);
-            if (backtestImage1) score += 15;
-            if (backtestImage2) score += 15;
-
             // Проверяем, сохранены ли уже бэктесты за сегодня в архиве
             const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
             const now = new Date();
             const todayStr = formatDate(now.getTime());
             const weekendSaved = backtests.filter(item => item.date === todayStr && item.author === currentUser);
 
-            // Если уже есть сохраненные скриншоты за сегодня, учитываем их в процентах шкалы
+            // Общее количество фото (сохраненные + те, что сейчас в памяти перед сохранением)
+            let totalPhotos = weekendSaved.length;
+            if (backtestImage1) totalPhotos++;
+            if (backtestImage2) totalPhotos++;
+
+            let score = Math.round((totalChecks / 3) * 70);
+            score += Math.min(2, totalPhotos) * 15;
+
             if (weekendSaved.length > 0) {
                 let savedScore = Math.round((totalChecks / 3) * 70) + (Math.min(2, weekendSaved.length) * 15);
                 score = Math.max(score, savedScore);
@@ -1941,6 +1944,21 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             const sessionStatus = document.getElementById('weekend-session-status');
             if (sessionBar) sessionBar.style.width = `${score}%`;
             
+            // Динамический текст в плашке статуса бэктестов
+            const pillEl = document.getElementById('weekend-status-pill');
+            if (pillEl) {
+                if (totalPhotos === 0) {
+                    pillEl.innerText = "Бектесты тебя ждут";
+                    pillEl.className = "text-[10px] text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 animate-pulse";
+                } else if (totalPhotos === 1) {
+                    pillEl.innerText = "Неплохо было бы еще один";
+                    pillEl.className = "text-[10px] text-amber-300 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 animate-pulse";
+                } else {
+                    pillEl.innerText = "Слава Богу! Цель выполнена 🔥";
+                    pillEl.className = "text-[10px] text-emerald-400 font-semibold bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30";
+                }
+            }
+
             if (sessionStatus) {
                 if (score === 100) {
                     sessionStatus.innerHTML = '<span class="text-emerald-400 font-bold">🔥 Максимальная польза (100%)!</span>';
@@ -1958,7 +1976,6 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             const slotText2 = document.getElementById('slot-text-2');
             
             if (slot2 && slotIcon2 && slotText2) {
-                // Разблокируем второй слот, если загружен первый (в памяти или уже сохранен в архиве за сегодня)
                 if (backtestImage1 || weekendSaved.length >= 1) {
                     slot2.classList.remove('slot-locked');
                     slot2.classList.add('slot-unlocked');
