@@ -140,6 +140,36 @@
         transition: all 0.4s ease;
     }
 
+        /* Стили для выделения чекбокса при checked */
+    .custom-checkbox-wrap input[type="checkbox"]:checked + .custom-checkbox {
+        background-color: #F3BA2F;
+        border-color: #F3BA2F;
+        box-shadow: 0 0 12px rgba(243, 186, 47, 0.45);
+        transform: scale(1.08);
+    }
+    .custom-checkbox-wrap input[type="checkbox"]:checked + .custom-checkbox i {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .custom-checkbox {
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Состояния заблокированных и разблокированных блоков */
+    .checklist-step-locked {
+        opacity: 0.4;
+        pointer-events: none;
+        filter: grayscale(60%);
+        transition: all 0.4s ease;
+    }
+    .checklist-step-unlocked {
+        opacity: 1;
+        pointer-events: auto;
+        filter: none;
+        transition: all 0.4s ease;
+        cursor: pointer;
+    }
+
         /* Мобильная адаптация */
         @media (max-width: 640px) {
             header .max-w-5xl {
@@ -731,12 +761,12 @@
 
                <!-- 2. Чек-лист микронапоминаний с последовательным таймером чтения -->
                 <div class="space-y-3" id="weekend-checklist-container">
-                    <!-- Блок 1 (Всегда активен) -->
-                    <div id="check-block-1" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all">
+                    <!-- Блок 1 (Всегда активен, клик по всему блоку) -->
+                    <div id="check-block-1" onclick="handleBlockClick(1)" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all cursor-pointer hover:border-amber-400/40">
                         <div class="flex items-start space-x-3">
                             <div class="custom-checkbox-wrap mt-0.5">
-                                <input type="checkbox" id="chk-1" onchange="handleCheckChange(1)" class="hidden">
-                                <label for="chk-1" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-pointer transition-all">
+                                <input type="checkbox" id="chk-1" class="hidden">
+                                <label for="chk-1" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-pointer transition-all pointer-events-none">
                                     <i class="fa-solid fa-check text-[10px] text-black opacity-0 scale-50 transition-all"></i>
                                 </label>
                             </div>
@@ -747,12 +777,12 @@
                         </div>
                     </div>
 
-                    <!-- Блок 2 (Изначально заблокирован, открывается после 1-го) -->
-                    <div id="check-block-2" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all checklist-step-locked">
+                    <!-- Блок 2 (Изначально заблокирован) -->
+                    <div id="check-block-2" onclick="handleBlockClick(2)" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all checklist-step-locked cursor-not-allowed">
                         <div class="flex items-start space-x-3">
                             <div class="custom-checkbox-wrap mt-0.5">
-                                <input type="checkbox" id="chk-2" onchange="handleCheckChange(2)" class="hidden" disabled>
-                                <label for="chk-2" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-pointer transition-all">
+                                <input type="checkbox" id="chk-2" class="hidden" disabled>
+                                <label for="chk-2" id="label-chk-2" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-not-allowed transition-all pointer-events-none">
                                     <i class="fa-solid fa-check text-[10px] text-black opacity-0 scale-50 transition-all"></i>
                                 </label>
                             </div>
@@ -761,16 +791,16 @@
                                 <p id="desc-2" class="text-xs text-gray-500 italic">Отметься в предыдущем напоминании, чтобы открыть этот блок.</p>
                             </div>
                         </div>
-                        <!-- Линия таймера чтения -->
+                        <!-- Линия таймера чтения снизу -->
                         <div class="absolute bottom-0 left-0 h-[2px] bg-amber-500 w-0" id="timer-line-2"></div>
                     </div>
 
-                    <!-- Блок 3 (Изначально заблокирован, открывается после 2-го) -->
-                    <div id="check-block-3" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all checklist-step-locked">
+                    <!-- Блок 3 (Изначально заблокирован) -->
+                    <div id="check-block-3" onclick="handleBlockClick(3)" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all checklist-step-locked cursor-not-allowed">
                         <div class="flex items-start space-x-3">
                             <div class="custom-checkbox-wrap mt-0.5">
-                                <input type="checkbox" id="chk-3" onchange="handleCheckChange(3)" class="hidden" disabled>
-                                <label for="chk-3" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-pointer transition-all">
+                                <input type="checkbox" id="chk-3" class="hidden" disabled>
+                                <label for="chk-3" id="label-chk-3" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-not-allowed transition-all pointer-events-none">
                                     <i class="fa-solid fa-check text-[10px] text-black opacity-0 scale-50 transition-all"></i>
                                 </label>
                             </div>
@@ -779,7 +809,7 @@
                                 <p id="desc-3" class="text-xs text-gray-500 italic">Отметься в предыдущем напоминании, чтобы открыть этот блок.</p>
                             </div>
                         </div>
-                        <!-- Линия таймера чтения -->
+                        <!-- Линия таймера чтения снизу -->
                         <div class="absolute bottom-0 left-0 h-[2px] bg-amber-500 w-0" id="timer-line-3"></div>
                     </div>
                 </div>
@@ -2249,6 +2279,76 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
                 chk.disabled = false;
                 timerLine.style.backgroundColor = '#10B981'; // Зеленеет по завершении чтения
             }, 3500);
+        }
+
+        const weekendBlockData = {
+            2: {
+                title: "2. Жесткий лимит риска (1% = $50)",
+                desc: "Риск зафиксирован для полного устранения азарта и сохранения эмоциональной устойчивости."
+            },
+            3: {
+                title: "3. Вход строго по правилу AMD",
+                desc: "Только после полного снятия ликвидности Азии и подтверждения инвертированным имбалансом."
+            }
+        };
+
+        // Обработка клика по блоку или чекбоксу
+        function handleBlockClick(num) {
+            const chk = document.getElementById(`chk-${num}`);
+            if (chk.disabled) return;
+
+            // Переключаем состояние чекбокса
+            chk.checked = !chk.checked;
+
+            // Визуальное оформление блока
+            const block = document.getElementById(`check-block-${num}`);
+            if (chk.checked) {
+                block.classList.add('border-amber-400/60', 'bg-amber-500/10');
+            } else {
+                block.classList.remove('border-amber-400/60', 'bg-amber-500/10');
+            }
+
+            updateWeekendProgress();
+
+            // Если отметили первый блок — плавно открываем второй
+            if (num === 1 && chk.checked) {
+                unlockBlock(2);
+            } 
+            // Если отметили второй блок — плавно открываем третий
+            else if (num === 2 && chk.checked) {
+                unlockBlock(3);
+            }
+        }
+
+        function unlockBlock(nextNum) {
+            const block = document.getElementById(`check-block-${nextNum}`);
+            const title = document.getElementById(`title-${nextNum}`);
+            const desc = document.getElementById(`desc-${nextNum}`);
+            const timerLine = document.getElementById(`timer-line-${nextNum}`);
+            const chk = document.getElementById(`chk-${nextNum}`);
+
+            if (!block.classList.contains('checklist-step-locked')) return;
+
+            // Разблокируем визуальное отображение блока и текст
+            block.classList.remove('checklist-step-locked', 'cursor-not-allowed');
+            block.classList.add('checklist-step-unlocked', 'hover:border-amber-400/40');
+
+            title.innerText = weekendBlockData[nextNum].title;
+            title.className = "text-white text-xs block mb-0.5";
+            desc.innerText = weekendBlockData[nextNum].desc;
+            desc.className = "text-xs text-gray-300 leading-relaxed";
+
+            // Запускаем линию таймера чтения (например, 3 секунды)
+            timerLine.style.width = '0%';
+            void timerLine.offsetWidth; // сброс анимации
+            timerLine.style.transition = 'width 3s linear';
+            timerLine.style.width = '100%';
+
+            // По окончании таймера активируем чекбокс для нажатия
+            setTimeout(() => {
+                chk.disabled = false;
+                timerLine.style.backgroundColor = '#10B981'; // Линия становится зеленой
+            }, 3000);
         }
     </script>
 </body>
