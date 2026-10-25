@@ -1025,7 +1025,11 @@
             initRulesAndErrors();
             loadFirebaseConfig();
             initSessionTimer();
-            setInterval(initSessionTimer, 1000); // Обновление таймера каждую секунду
+            updateWeekendCountdown(); // <--- Запускаем сразу при загрузке
+            setInterval(() => {
+                initSessionTimer();
+                updateWeekendCountdown(); // <--- Обновляем каждую секунду вместе с остальными
+            }, 1000); 
         });
 
         // Таймер обратного отсчета до старта сессии (понедельник, 09:00)
@@ -1903,6 +1907,128 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
                 }
             }
         }
+ 
+
+        function handleChecklistChange(index) {
+            const cb = document.getElementById(`cb-${index}`);
+            if (!cb) return;
+            checklistState[index] = cb.checked;
+            
+            if (cb.checked && index < 3) {
+                const nextIdx = index + 1;
+                const nextCard = document.getElementById(`check-card-${nextIdx}`);
+                const nextText = document.getElementById(`text-${nextIdx}`);
+                const fullTexts = {
+                    2: "Риск зафиксирован для полного устранения азарта и сохранения эмоциональной устойчивости.",
+                    3: "Только после полного снятия ликвидности Азии и подтверждения инвертированным имбалансом."
+                };
+                
+                if (nextCard && nextText) {
+                    nextCard.classList.remove('opacity-60', 'bg-brand-dark/30');
+                    nextCard.classList.add('bg-brand-dark/50');
+                    nextText.classList.remove('text-gray-500', 'italic');
+                    nextText.classList.add('text-gray-300');
+                    nextText.innerText = fullTexts[nextIdx];
+                    startReadingTimer(nextIdx);
+                }
+            }
+            updateWeekendProgress();
+        }
+
+
+        // ПОСЛЕДНИЙ БЛОК ЗАМЕНЫ
+
+        // Безопасное чтение бэктестов из localStorage (защита от зависания и сбоев)
+        function getSavedBacktests() {
+            try {
+                const data = localStorage.getItem('local_backtest_reports');
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                console.error("Local storage parse error, resetting safely:", e);
+                return [];
+            }
+        }
+
+        // Запуск при загрузке страницы (инициализация таймеров и интерфейса)
+        window.addEventListener('load', () => {
+            updateUserUI();
+            initRulesAndErrors();
+            loadFirebaseConfig();
+            initSessionTimer();
+            updateWeekendCountdown(); // Запускаем таймер выходных сразу
+            setInterval(() => {
+                initSessionTimer();
+                updateWeekendCountdown(); // Обновляем таймер каждую секунду
+            }, 1000); 
+        });
+
+        let checklistState = { 1: false, 2: false, 3: false };
+        let backtestImage1 = null;
+        let backtestImage2 = null;
+        let extraBacktestImage = null;
+
+        function openWeekendModal() {
+            document.body.style.overflow = 'hidden';
+            const userReports = reportsHistory.filter(item => item.author === currentUser);
+            const lastViolation = userReports.find(item => item.compliance !== 'clean');
+
+            const focusBox = document.getElementById('personal-error-focus-box');
+            const focusText = document.getElementById('personal-error-text');
+
+            if (lastViolation && lastViolation.error && lastViolation.error !== 'Отсутствуют') {
+                focusText.innerText = `Внимание к детали: "${lastViolation.error}". Проанализируй этот момент перед открытием сессии в понедельник.`;
+                focusBox.classList.remove('hidden');
+            } else {
+                focusBox.classList.add('hidden');
+            }
+
+            initChecklist();
+            updateWeekendTitle();
+            renderBacktestUploadSection();
+            updateWeekendProgress();
+            renderBacktestStats();
+            renderBacktestHistory();
+            document.getElementById('weekend-modal').classList.remove('hidden');
+        }
+
+        function closeWeekendModal() {
+            document.body.style.overflow = '';
+            document.getElementById('weekend-modal').classList.add('hidden');
+        }
+
+        // Инициализация чек-листа с таймерами чтения
+        function initChecklist() {
+            checklistState = { 1: false, 2: false, 3: false };
+            backtestImage1 = null;
+            backtestImage2 = null;
+            extraBacktestImage = null;
+
+            for (let i = 1; i <= 3; i++) {
+                const cb = document.getElementById(`cb-${i}`);
+                const card = document.getElementById(`check-card-${i}`);
+                const line = document.getElementById(`timer-line-${i}`);
+                const textSpan = document.getElementById(`text-${i}`);
+                
+                if (!cb) continue;
+                cb.checked = false;
+                cb.disabled = true;
+                line.style.width = '0%';
+                
+                if (i === 1) {
+                    card.classList.remove('opacity-60', 'bg-brand-dark/30');
+                    card.classList.add('bg-brand-dark/50');
+                    textSpan.classList.remove('text-gray-500', 'italic');
+                    textSpan.classList.add('text-gray-300');
+                    textSpan.innerText = "Передача результата и контроля в руки Мастера. Моё «я» не ищет самоутверждения в профите.";
+                    startReadingTimer(1);
+                } else {
+                    card.classList.add('opacity-60', 'bg-brand-dark/30');
+                    card.classList.remove('bg-brand-dark/50');
+                    textSpan.classList.add('text-gray-500', 'italic');
+                    textSpan.innerText = "🔒 Пройди и отметься в предыдущем блоке...";
+                }
+            }
+        }
 
         // Запуск линии таймера чтения для блока
         function startReadingTimer(index) {
@@ -1952,7 +2078,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             const container = document.getElementById('backtest-upload-section-container');
             if (!container) return;
 
-            const userBacktests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            const userBacktests = getSavedBacktests();
             const todayStr = formatDate(Date.now());
             const savedToday = userBacktests.filter(item => item.author === currentUser && item.date === todayStr);
 
@@ -2029,7 +2155,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             let score = Math.round((checkedCount / 3) * 70);
             
-            const userBacktests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            const userBacktests = getSavedBacktests();
             const todayStr = formatDate(Date.now());
             const savedTodayCount = userBacktests.filter(item => item.author === currentUser && item.date === todayStr).length;
 
@@ -2117,7 +2243,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
         function saveWeekendActivity() {
             const timestamp = Date.now();
-            let backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            let backtests = getSavedBacktests();
             
             let added = false;
             if (backtestImage1) {
@@ -2159,7 +2285,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
         }
 
         function renderBacktestStats() {
-            const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            const backtests = getSavedBacktests();
             const now = new Date();
             const currentQuarter = Math.floor(now.getMonth() / 3);
             const currentYear = now.getFullYear();
@@ -2198,7 +2324,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             vladFeed.innerHTML = '';
             maxFeed.innerHTML = '';
 
-            const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            const backtests = getSavedBacktests();
             const ordinalWords = ['Первые', 'Вторые', 'Третьи', 'Четвертые', 'Пятые', 'Шестые', 'Седьмые', 'Восьмые', 'Девятые', 'Десятые'];
 
             function populateColumn(feedEl, authorName) {
@@ -2293,7 +2419,6 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             populateColumn(maxFeed, 'Max');
         }
 
-        // Также обязательно убедись, что функции сохранения конфигурации Firebase (если они были в твоем файле) сохранены:
         function fallbackToLocal() {
             isFirebaseConnected = false;
             dbInstance = null;
@@ -2331,6 +2456,8 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             toggleFirebaseModal();
             fallbackToLocal();
         }
+
+        
     </script>
 </body>
 </html>
