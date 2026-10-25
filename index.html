@@ -2208,10 +2208,69 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             onStepCheckboxChange(num);
         }
 
+        // Восстановление состояния чекбоксов из localStorage
+        function loadSavedChecklistState() {
+            const savedState = JSON.parse(localStorage.getItem(`weekend_checklist_${currentUser}`) || '{}');
+            
+            [1, 2, 3].forEach(num => {
+                const chk = document.getElementById(`chk-${num}`);
+                const box = document.getElementById(`step-box-${num}`);
+                const titleEl = document.getElementById(`title-${num}`);
+                const descEl = document.getElementById(`desc-${num}`);
+                const timerLine = document.getElementById(`timer-line-${num}`);
+
+                if (savedState[`chk_${num}`]) {
+                    if (chk) {
+                        chk.disabled = false;
+                        chk.checked = true;
+                    }
+                    if (box) {
+                        box.classList.remove('opacity-40', 'pointer-events-none', 'filter', 'grayscale');
+                        box.classList.add('border-amber-400/60', 'bg-amber-500/10');
+                    }
+                    if (num > 1 && stepLessons[num]) {
+                        if (titleEl) {
+                            titleEl.innerText = stepLessons[num].title;
+                            titleEl.className = "text-white text-xs block mb-0.5";
+                        }
+                        if (descEl) {
+                            descEl.innerText = stepLessons[num].desc;
+                            descEl.className = "text-xs text-gray-300 leading-relaxed";
+                        }
+                        if (timerLine) {
+                            timerLine.style.width = '100%';
+                            timerLine.style.backgroundColor = '#10B981';
+                        }
+                    }
+                } else if (num > 1 && (savedState[`chk_${num-1}`] || (num === 2 && savedState['chk_1']))) {
+                    // Если предыдущий чекбокс был пройден ранее
+                    if (box) box.classList.remove('opacity-40', 'pointer-events-none', 'filter', 'grayscale');
+                    if (titleEl) {
+                        titleEl.innerText = stepLessons[num].title;
+                        titleEl.className = "text-white text-xs block mb-0.5";
+                    }
+                    if (descEl) {
+                        descEl.innerText = stepLessons[num].desc;
+                        descEl.className = "text-xs text-gray-300 leading-relaxed";
+                    }
+                    if (chk) chk.disabled = false;
+                    if (timerLine) {
+                        timerLine.style.width = '100%';
+                        timerLine.style.backgroundColor = '#10B981';
+                    }
+                }
+            });
+        }
+
         function onStepCheckboxChange(num, event) {
             if (event) event.stopPropagation();
             const chk = document.getElementById(`chk-${num}`);
             const box = document.getElementById(`step-box-${num}`);
+
+            // Сохраняем состояние чекбокса
+            let savedState = JSON.parse(localStorage.getItem(`weekend_checklist_${currentUser}`) || '{}');
+            savedState[`chk_${num}`] = chk.checked;
+            localStorage.setItem(`weekend_checklist_${currentUser}`, JSON.stringify(savedState));
 
             if (chk.checked) {
                 box.classList.add('border-amber-400/60', 'bg-amber-500/10');
@@ -2241,18 +2300,26 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             descEl.innerText = stepLessons[nextNum].desc;
             descEl.className = "text-xs text-gray-300 leading-relaxed";
 
-            // Линия таймера чтения плавно дойдет до конца за 17 секунд
+            // Линия таймера чтения за 17 секунд
             timerLine.style.width = '0%';
             void timerLine.offsetWidth;
             timerLine.style.transition = 'width 17s linear';
             timerLine.style.width = '100%';
 
-            // Чекбокс станет активным ровно через 17 секунд
             setTimeout(() => {
                 chk.disabled = false;
-                timerLine.style.backgroundColor = '#10B981'; // Линия станет зеленой по завершении
+                timerLine.style.backgroundColor = '#10B981';
             }, 17000);
         }
+
+        // Обновляем вызов открытия модального окна, чтобы подгружать сохраненные чекбоксы
+        const originalOpenWeekendModal = openWeekendModal;
+        openWeekendModal = function() {
+            originalOpenWeekendModal();
+            loadSavedChecklistState();
+            updateWeekendProgress();
+            checkAndTransformBacktestSection();
+        };
 
         function checkAndTransformBacktestSection() {
             const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
