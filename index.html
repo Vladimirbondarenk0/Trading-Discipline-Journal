@@ -911,8 +911,18 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             }
         }
 
-        // Модальное окно пароля для досрочного ввода
+        // Модальное окно пароля для досрочного ввода с проверкой сессии и выходных
         function openUnlockModal() {
+            const now = new Date();
+            const dayOfWeek = now.getDay(); // 0 - ВС, 6 - СБ
+            const hours = now.getHours();
+
+            // Проверка: если выходной день (Сб/Вс) или вне часов торговой сессии (09:00 - 12:00)
+            if (dayOfWeek === 0 || dayOfWeek === 6 || hours < 9 || hours >= 12) {
+                alert('Досрочная разблокировка доступна только во время торговой сессии (Пн–Пт, 09:00 — 12:00). В выходные дни рынок закрыт для покоя.');
+                return;
+            }
+
             document.getElementById('unlock-password-input').value = '';
             document.getElementById('unlock-modal').classList.remove('hidden');
             document.getElementById('unlock-password-input').focus();
