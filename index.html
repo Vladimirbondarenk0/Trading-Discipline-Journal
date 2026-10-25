@@ -987,12 +987,17 @@
             "10. Перезаход"
         ];
 
+        // Запуск при загрузке страницы (инициализация таймеров и интерфейса)
         window.addEventListener('load', () => {
             updateUserUI();
             initRulesAndErrors();
             loadFirebaseConfig();
             initSessionTimer();
-            setInterval(initSessionTimer, 1000); // Обновление таймера каждую секунду
+            updateWeekendCountdown(); // Запускаем таймер выходных сразу
+            setInterval(() => {
+                initSessionTimer();
+                updateWeekendCountdown(); // Обновляем таймер каждую секунду
+            }, 1000); 
         });
 
        // Торговая сессия, проверка завершённости дня и логика 1-дневного Блока
