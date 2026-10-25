@@ -401,7 +401,7 @@
                             </div>
                             <span class="text-xs bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-1 rounded-full border border-emerald-500/30">БЕЗ ОШИБОК</span>
                         </div>
-                        <div class="font-bold text-lg text-white group-hover:text-emerald-300 transition">✅ 100% По системе</div>
+                        <div class="font-bold text-lg text-white group-hover:text-emerald-300 transition">100% По системе</div>
                         <div class="text-xs text-gray-300 mt-1 leading-relaxed">Полное следование алгоритму. Пропускает этап выбора ошибок и ведет сразу к скриншоту.</div>
                     </button>
 
@@ -413,7 +413,7 @@
                             </div>
                             <span class="text-xs bg-rose-500/20 text-rose-300 font-bold px-2.5 py-1 rounded-full border border-rose-500/30">БЛОК 1 ДЕНЬ</span>
                         </div>
-                        <div class="font-bold text-lg text-white group-hover:text-rose-300 transition">❌ Нарушение</div>
+                        <div class="font-bold text-lg text-white group-hover:text-rose-300 transition">Нарушение</div>
                         <div class="text-xs text-gray-300 mt-1 leading-relaxed">Была допущена ошибка. Потребуется выбрать конкретную причину сбоя.</div>
                     </button>
                 </div>
@@ -829,7 +829,8 @@
                         <i class="fa-solid fa-chart-column"></i>
                         <span>Статистика бэктестов (Квартал / 3 месяца)</span>
                     </h4>
-                    <span class="text-[10px] text-gray-400">Накопительный итог</span>
+                    <!-- Добавили id, чтобы менять текст через JavaScript -->
+                    <span id="quarter-dates-label" class="text-[10px] text-gray-400">Накопительный итог</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -864,7 +865,7 @@
                         <i class="fa-solid fa-images text-amber-400"></i>
                         <span>Архив скриншотов бэктестов (История)</span>
                     </h4>
-                    <span class="text-[10px] text-gray-400">Нажмите для просмотра</span>
+                    <span class="text-[10px] text-gray-400">История</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="backtest-archive-grid">
@@ -1096,7 +1097,7 @@ const badgeType = isClean ? 'clean' : 'blocked';
 
 if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
     badgeContainerEl.innerHTML = isClean
-    ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✅ 100% По системе</span>`
+    ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">100% По системе</span>`
     : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-smooth"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>БЛОК ТОРГОВЛИ: 1 ДЕНЬ</span>`;
     badgeContainerEl.dataset.badgeType = badgeType;
 }
@@ -1625,14 +1626,14 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                                 <div class="space-y-2">
                                     <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
-                                        <span class="text-gray-400 block mb-1">📊 Количество сделок:</span>
+                                        <span class="text-gray-400 block mb-1">Количество сделок:</span>
                                         <span class="font-semibold text-white text-sm">${item.trades}</span>
                                     </div>
 
                                     <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
                                         <span class="text-gray-400 block mb-1">⚖️ Соблюдение кодекса:</span>
                                         <span class="font-semibold ${isClean ? 'text-emerald-400' : 'text-rose-400'} text-sm">
-                                            ${isClean ? '✅ 100% По системе' : '❌ Нарушение кодекса'}
+                                            ${isClean ? '100% По системе' : 'Нарушение кодекса'}
                                         </span>
                                     </div>
 
@@ -1992,7 +1993,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             checkAndTransformBacktestSection();
         }
 
-        function renderBacktestStats() {
+      function renderBacktestStats() {
             const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
             const now = new Date();
             const currentQuarter = Math.floor(now.getMonth() / 3);
@@ -2024,6 +2025,18 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             document.getElementById('max-backtest-count').innerText = `${maxCount} / ${maxQuarterTarget} мес.`;
             document.getElementById('max-backtest-bar').style.width = `${Math.min(100, (maxCount / maxQuarterTarget) * 100)}%`;
+
+            // Динамический вывод месяцев текущего квартала вместо «Накопительный итог»
+            const quarterLabels = [
+                "Январь — Март",
+                "Апрель — Июнь",
+                "Июль — Сентябрь",
+                "Октябрь — Декабрь"
+            ];
+            const quarterLabelEl = document.getElementById('quarter-dates-label');
+            if (quarterLabelEl) {
+                quarterLabelEl.innerText = quarterLabels[currentQuarter];
+            }
         }
 
         // Состояние режима редактирования для архивов
