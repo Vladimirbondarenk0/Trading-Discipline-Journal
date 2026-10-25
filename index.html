@@ -710,31 +710,94 @@
                 </div>
             </div>
 
-            <!-- 3. Секция Бэктестинга (2 месяца на FX Replay) -->
-            <div class="p-4 rounded-xl bg-brand-dark/60 border border-brand-border space-y-3">
+            <!-- 3. Секция Бэктестинга (2 месяца за выходные: Месяц 1 и Месяц 2) -->
+            <div class="p-4 rounded-xl bg-brand-dark/60 border border-brand-border space-y-4">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold text-white flex items-center space-x-2">
                         <i class="fa-solid fa-desktop text-amber-400"></i>
-                        <span>Практика Бэктестов (FX Replay — мин. 2 месяца)</span>
+                        <span>Практика Бэктестов (FX Replay — Цель: 2 месяца)</span>
                     </h4>
-                    <span class="text-[10px] text-gray-400">Наработка навыка</span>
+                    <span class="text-[10px] text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 animate-pulse">Идет сессия выходных</span>
                 </div>
 
                 <p class="text-xs text-gray-300 leading-relaxed">
-                    Пройди минимум 2 исторических месяца на FX Replay за эти выходные для закрепления механики движения цены и приминения системы. Не забудь зафиксировать отчёт, сделав скриншот пройденого месяца с аналитикой на FX Replay.
+                    Пройди 2 исторических месяца на FX Replay за эти выходные. Загрузи скриншоты раздельно для фиксации максимальной полезности.
                 </p>
 
-                <!-- Загрузка скриншота бэктеста -->
-                <div class="border-2 border-dashed border-brand-border hover:border-amber-400/50 rounded-xl p-4 text-center bg-brand-card/30 transition cursor-pointer relative" id="backtest-drop-zone">
-                    <input type="file" id="backtest-screenshot-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBacktestImage(event)">
-                    
-                    <div id="backtest-upload-placeholder" class="space-y-1">
-                        <i class="fa-solid fa-file-image text-amber-400 text-xl"></i>
-                        <div class="text-xs text-gray-200 font-medium">Загрузить скриншот пройденного месяца FX Replay</div>
+                <!-- Две зоны загрузки: Месяц 1 и Месяц 2 -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Бэктест 1 -->
+                    <div class="border-2 border-dashed border-brand-border hover:border-amber-400/50 rounded-xl p-3 text-center bg-brand-card/30 transition cursor-pointer relative">
+                        <input type="file" id="backtest-input-1" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBacktestImage(1, event)">
+                        <div id="backtest-ph-1" class="space-y-1">
+                            <i class="fa-solid fa-file-image text-amber-400 text-lg"></i>
+                            <div class="text-[11px] text-gray-200 font-medium">Скриншот: Месяц 1 (+15%)</div>
+                        </div>
+                        <div id="backtest-prev-wrap-1" class="hidden relative inline-block">
+                            <img id="backtest-img-1" src="" class="max-h-24 rounded-lg border border-brand-border object-contain">
+                            <span class="absolute bottom-1 right-1 bg-emerald-500 text-black text-[9px] font-bold px-1.5 rounded">Готово</span>
+                        </div>
                     </div>
 
-                    <div id="backtest-upload-preview" class="hidden relative inline-block">
-                        <img id="backtest-preview-img" src="" class="max-h-36 rounded-lg border border-brand-border object-contain">
+                    <!-- Бэктест 2 (с мотивацией) -->
+                    <div class="border-2 border-dashed border-brand-border hover:border-amber-400/50 rounded-xl p-3 text-center bg-brand-card/30 transition cursor-pointer relative">
+                        <input type="file" id="backtest-input-2" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBacktestImage(2, event)">
+                        <div id="backtest-ph-2" class="space-y-1">
+                            <i class="fa-solid fa-file-circle-plus text-amber-400 text-lg animate-bounce"></i>
+                            <div class="text-[11px] text-amber-300 font-medium">Месяц 2 — для 100% пользы! (+15%)</div>
+                        </div>
+                        <div id="backtest-prev-wrap-2" class="hidden relative inline-block">
+                            <img id="backtest-img-2" src="" class="max-h-24 rounded-lg border border-brand-border object-contain">
+                            <span class="absolute bottom-1 right-1 bg-emerald-500 text-black text-[9px] font-bold px-1.5 rounded">Готово</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Статистика за эти выходные (Шкала текущих выходных) -->
+            <div class="p-3 rounded-xl bg-brand-dark/40 border border-brand-border/60 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-gray-300 font-medium">Прогресс за эти выходные:</span>
+                    <span id="weekend-session-status" class="text-amber-400 font-bold">Загрузите бэктесты</span>
+                </div>
+                <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
+                    <div id="weekend-session-bar" class="bg-gradient-to-r from-amber-500 to-emerald-400 h-full w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+
+            <!-- 5. Квартальная статистика бэктестов (Отдельно для Владимира и Макса, ниже) -->
+            <div class="p-4 rounded-xl bg-brand-dark/80 border border-brand-border space-y-3">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>Статистика бэктестов (Квартал / 3 месяца)</span>
+                    </h4>
+                    <span class="text-[10px] text-gray-400">Накопительный итог</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <!-- Колонки для Владимира -->
+                    <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
+                        <div class="font-bold text-white flex items-center justify-between">
+                            <span>Vladimir</span>
+                            <span id="vlad-backtest-count" class="text-amber-400">0 мес.</span>
+                        </div>
+                        <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
+                            <div id="vlad-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
+                        </div>
+                        <div class="text-[10px] text-gray-400" id="vlad-backtest-status">План квартала (макс. 24 мес.)</div>
+                    </div>
+
+                    <!-- Колонки для Макса -->
+                    <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
+                        <div class="font-bold text-white flex items-center justify-between">
+                            <span>Max</span>
+                            <span id="max-backtest-count" class="text-amber-400">0 мес.</span>
+                        </div>
+                        <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
+                            <div id="max-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
+                        </div>
+                        <div class="text-[10px] text-gray-400" id="max-backtest-status">План квартала (макс. 24 мес.)</div>
                     </div>
                 </div>
             </div>
@@ -742,7 +805,7 @@
             <!-- Footer & Шкала полезности -->
             <div class="pt-2 border-t border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div class="text-xs text-gray-400">
-                    Уровень полезности: <span id="weekend-usefulness-score" class="font-bold text-amber-400">0%</span>
+                    Уровень твоей полезности: <span id="weekend-usefulness-score" class="font-bold text-amber-400">0%</span>
                 </div>
                 <button onclick="saveWeekendActivity()" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5">
                     <i class="fa-solid fa-check"></i>
@@ -769,7 +832,7 @@
                         <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
                             <div id="vlad-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
                         </div>
-                        <div class="text-[10px] text-gray-400" id="vlad-backtest-status">Цель: 2 месяца за выходные</div>
+                        <div class="text-[10px] text-gray-400" id="vlad-backtest-status">Цель: 2 месяца за эти выходные</div>
                     </div>
 
                     <!-- Колонки для Макса -->
@@ -781,7 +844,7 @@
                         <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
                             <div id="max-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
                         </div>
-                        <div class="text-[10px] text-gray-400" id="max-backtest-status">Цель: 2 месяца за выходные</div>
+                        <div class="text-[10px] text-gray-400" id="max-backtest-status">Цель: 2 месяца за эти выходные</div>
                     </div>
                 </div>
             </div>
@@ -1700,7 +1763,10 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
         }
         let backtestImageData = null;
 
-       // Открытие модального окна полезных выходных (с блокировкой скролла страницы)
+       let backtestImage1 = null;
+        let backtestImage2 = null;
+
+        // Открытие модального окна полезных выходных (с блокировкой скролла страницы)
         function openWeekendModal() {
             // 1. Блокируем прокрутку основного сайта
             document.body.style.overflow = 'hidden';
@@ -1720,6 +1786,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             }
 
             renderBacktestStats(); // Обновляем квартальную статистику в модалке
+            updateWeekendProgress();
             document.getElementById('weekend-modal').classList.remove('hidden');
         }
 
@@ -1729,66 +1796,95 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             document.getElementById('weekend-modal').classList.add('hidden');
         }
 
-        // Обновление индекса полезности (проценты)
+        // Обновление индекса полезности (70% чек-лист + 15% за 1-й месяц + 15% за 2-й месяц = 100%)
         function updateWeekendProgress() {
             const checkboxes = document.querySelectorAll('.weekend-check');
             let checkedCount = 0;
             checkboxes.forEach(cb => { if (cb.checked) checkedCount++; });
 
-            let score = Math.round((checkedCount / checkboxes.length) * 70); // 70% за чек-лист
-            if (backtestImageData) score += 30; // 30% за загруженный бэктест
+            let score = Math.round((checkedCount / checkboxes.length) * 70); // до 70% за чек-лист
+            
+            if (backtestImage1) score += 15; // +15% за первый месяц (итог 85% с чек-листом)
+            if (backtestImage2) score += 15; // +15% за второй месяц (итог 100%)
 
             document.getElementById('weekend-usefulness-score').innerText = `${score}%`;
+            
+            // Обновляем шкалу прогресса за эти выходные в модалке
+            const sessionBar = document.getElementById('weekend-session-bar');
+            const sessionStatus = document.getElementById('weekend-session-status');
+            if (sessionBar) sessionBar.style.width = `${score}%`;
+            
+            if (sessionStatus) {
+                if (score === 100) {
+                    sessionStatus.innerHTML = '<span class="text-emerald-400">🔥 Максимальная польза (100%)!</span>';
+                } else if (score >= 85) {
+                    sessionStatus.innerHTML = '<span class="text-amber-300">Загрузите 2-й месяц для 100%</span>';
+                } else {
+                    sessionStatus.innerText = 'Загрузите бэктесты';
+                }
+            }
         }
 
-        // Загрузка скриншота бэктеста
-        function handleBacktestImage(event) {
+        // Обработка загрузки скриншотов бэктеста (1 или 2)
+        function handleBacktestImage(slot, event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                backtestImageData = e.target.result;
-                document.getElementById('backtest-preview-img').src = backtestImageData;
-                document.getElementById('backtest-upload-placeholder').classList.add('hidden');
-                document.getElementById('backtest-upload-preview').classList.remove('hidden');
+                if (slot === 1) {
+                    backtestImage1 = e.target.result;
+                    document.getElementById('backtest-img-1').src = backtestImage1;
+                    document.getElementById('backtest-ph-1').classList.add('hidden');
+                    document.getElementById('backtest-prev-wrap-1').classList.remove('hidden');
+                } else {
+                    backtestImage2 = e.target.result;
+                    document.getElementById('backtest-img-2').src = backtestImage2;
+                    document.getElementById('backtest-ph-2').classList.add('hidden');
+                    document.getElementById('backtest-prev-wrap-2').classList.remove('hidden');
+                }
                 updateWeekendProgress();
             };
             reader.readAsDataURL(file);
         }
 
-        // Сохранение бэктеста выходного дня (изолированно от торговых отчётов)
+        // Сохранение активности выходного дня
         function saveWeekendActivity() {
-            if (!backtestImageData) {
-                alert('Пожалуйста, загрузите скриншот пройденного месяца FX Replay.');
+            if (!backtestImage1 && !backtestImage2) {
+                alert('Пожалуйста, загрузите хотя бы один скриншот бэктеста FX Replay.');
                 return;
             }
 
             const timestamp = Date.now();
-            const backtestEntry = {
-                id: timestamp,
-                author: currentUser,
-                date: formatDate(timestamp),
-                image: backtestImageData
-            };
-
-            // Читаем отдельную историю бэктестов
             let backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
-            backtests.unshift(backtestEntry);
+            
+            if (backtestImage1) {
+                backtests.unshift({ id: timestamp, author: currentUser, date: formatDate(timestamp), image: backtestImage1 });
+            }
+            if (backtestImage2) {
+                backtests.unshift({ id: timestamp + 1, author: currentUser, date: formatDate(timestamp), image: backtestImage2 });
+            }
+
             localStorage.setItem('local_backtest_reports', JSON.stringify(backtests));
 
-            backtestImageData = null;
-            document.getElementById('backtest-upload-placeholder').classList.remove('hidden');
-            document.getElementById('backtest-upload-preview').classList.add('hidden');
-            document.getElementById('backtest-screenshot-input').value = '';
+            // Сброс полей текущих выходных
+            backtestImage1 = null;
+            backtestImage2 = null;
+            document.getElementById('backtest-prev-wrap-1').classList.add('hidden');
+            document.getElementById('backtest-ph-1').classList.remove('hidden');
+            document.getElementById('backtest-input-1').value = '';
+
+            document.getElementById('backtest-prev-wrap-2').classList.add('hidden');
+            document.getElementById('backtest-ph-2').classList.remove('hidden');
+            document.getElementById('backtest-input-2').value = '';
 
             updateWeekendProgress();
             renderBacktestStats();
 
-            // Красивое мягкое сообщение внутри модалки вместо уродливого системного alert
+            // Мягкое сообщение внутри модалки вместо alert
             const scoreEl = document.getElementById('weekend-usefulness-score');
             if (scoreEl) {
-                scoreEl.innerHTML = '<span class="text-emerald-400">Слава Богу! Бэктест успешно зафиксирован.</span>';
+                scoreEl.innerHTML = '<span class="text-emerald-400">Слава Богу! Результаты выходных зафиксированы.</span>';
             }
         }
 
@@ -1797,7 +1893,6 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             const now = new Date();
             const day = now.getDay();
             
-            // Вычисляем следующий Понедельник 09:00
             let target = new Date(now);
             let daysUntilMonday = (1 - day + 7) % 7;
             if (daysUntilMonday === 0 && now.getHours() >= 9) daysUntilMonday = 7;
@@ -1821,7 +1916,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
         // Запуск таймера каждую секунду
         setInterval(updateWeekendCountdown, 1000);
 
-        // Рендер статистики бэктестов за квартал (3 месяца) в модалке
+        // Рендер статистики бэктестов за квартал (3 месяца, база до 24 месяцев) в модалке
         function renderBacktestStats() {
             const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
             
@@ -1837,15 +1932,16 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             let vladCount = quarterBacktests.filter(i => i.author === 'Vladimir').length;
             let maxCount = quarterBacktests.filter(i => i.author === 'Max').length;
+            const maxQuarterTarget = 24; // План квартала (макс. 24 месяца)
 
             // Vladimir stats UI
-            document.getElementById('vlad-backtest-count').innerText = `${vladCount} мес. пройдено`;
-            const vladPercent = Math.min(100, (vladCount / 2) * 100);
+            document.getElementById('vlad-backtest-count').innerText = `${vladCount} / ${maxQuarterTarget} мес.`;
+            const vladPercent = Math.min(100, (vladCount / maxQuarterTarget) * 100);
             document.getElementById('vlad-backtest-bar').style.width = `${vladPercent}%`;
 
             // Max stats UI
-            document.getElementById('max-backtest-count').innerText = `${maxCount} мес. пройдено`;
-            const maxPercent = Math.min(100, (maxCount / 2) * 100);
+            document.getElementById('max-backtest-count').innerText = `${maxCount} / ${maxQuarterTarget} мес.`;
+            const maxPercent = Math.min(100, (maxCount / maxQuarterTarget) * 100);
             document.getElementById('max-backtest-bar').style.width = `${maxPercent}%`;
         }
     </script>
