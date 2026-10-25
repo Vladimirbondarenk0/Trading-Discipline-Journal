@@ -221,9 +221,14 @@
             <div class="flex items-center justify-between border-b border-brand-border/40 pb-3">
                 <h3 class="font-bold text-white text-base flex items-center space-x-2">
                     <i class="fa-solid fa-chart-pie text-amber-400"></i>
-                    <span id="monthly-stats-title">Статистика дисциплины (Текущий месяц)</span>
+                    <span id="monthly-stats-title">Склонность к системной торговле (Текущий месяц)</span>
                 </h3>
-                <span class="text-xs text-gray-400 font-medium">Учет за месяц</span>
+                <span class="text-xs text-gray-400 font-medium">Индекс дисциплины</span>
+            </div>
+
+            <!-- Поясняющая мысль о логике шкалы -->
+            <div class="p-3 rounded-xl bg-brand-dark/40 border border-brand-border/60 text-xs text-gray-300 leading-relaxed">
+                <span class="text-amber-400 font-semibold">Принцип шкалы:</span> 1 день по системе = +10% к шкале. Серия побед укрепляет индекс (до 100%). День внесистемности не сбрасывает шкалу в ноль, а мягко корректирует её на -30%, приучая разум к непрерывному учету ошибок без отчаяния.
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -234,7 +239,7 @@
                             <i class="fa-solid fa-user text-amber-400"></i>
                             <span>Vladimir</span>
                         </span>
-                        <span id="vladimir-score" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">0 системных дней</span>
+                        <span id="vladimir-verdict" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Оценка...</span>
                     </div>
                     <div class="space-y-1 text-xs text-gray-300">
                         <div class="flex justify-between">
@@ -259,7 +264,7 @@
                             <i class="fa-solid fa-user text-blue-400"></i>
                             <span>Max</span>
                         </span>
-                        <span id="max-score" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">0 системных дней</span>
+                        <span id="max-verdict" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Оценка...</span>
                     </div>
                     <div class="space-y-1 text-xs text-gray-300">
                         <div class="flex justify-between">
@@ -1178,7 +1183,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Функция расчета и рендеринга статистики за текущий месяц
+        // Функция расчета и рендеринга статистики склонности к системной торговле за текущий месяц
         function updateMonthlyStats() {
             const now = new Date();
             const currentMonth = now.getMonth();
@@ -1186,44 +1191,73 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             const monthsNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
             const titleEl = document.getElementById('monthly-stats-title');
-            if (titleEl) titleEl.innerText = `Статистика дисциплины (${monthsNames[currentMonth]} ${currentYear})`;
+            if (titleEl) titleEl.innerText = `Склонность к системной торговле (${monthsNames[currentMonth]} ${currentYear})`;
+
+            // Сортируем историю от старых к новым для правильного хронологического расчёта шкалы
+            const sortedReports = [...reportsHistory].sort((a, b) => a.id - b.id);
 
             let stats = {
-                'Vladimir': { clean: 0, violation: 0, total: 0 },
-                'Max': { clean: 0, violation: 0, total: 0 }
+                'Vladimir': { clean: 0, violation: 0, score: 0 },
+                'Max': { clean: 0, violation: 0, score: 0 }
             };
 
-            // Фильтруем записи строго за текущий месяц и год
-            reportsHistory.forEach(item => {
+            sortedReports.forEach(item => {
                 const itemDate = new Date(item.id);
                 if (itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear) {
                     const author = item.author;
                     if (stats[author]) {
-                        stats[author].total++;
                         if (item.compliance === 'clean') {
                             stats[author].clean++;
+                            // +10% за каждый системный день, максимум 100%
+                            stats[author].score = Math.min(100, stats[author].score + 10);
                         } else {
                             stats[author].violation++;
+                            // Снижение на 30% от текущего значения при нарушении
+                            stats[author].score = Math.max(0, Math.round(stats[author].score * 0.7));
                         }
                     }
                 }
             });
 
-            // Обновляем UI для Vladimir
+            // Рендер для Vladimir
             const vladData = stats['Vladimir'];
             document.getElementById('vladimir-clean-count').innerText = vladData.clean;
             document.getElementById('vladimir-violation-count').innerText = vladData.violation;
-            document.getElementById('vladimir-score').innerText = `${vladData.clean} системных дней`;
-            const vladPercent = vladData.total > 0 ? (vladData.clean / vladData.total) * 100 : 0;
-            document.getElementById('vladimir-progress-bar').style.width = `${vladPercent}%`;
+            document.getElementById('vladimir-progress-bar').style.width = `${vladData.score}%`;
+            
+            const vladVerdictEl = document.getElementById('vladimir-score') || document.getElementById('vladimir-verdict');
+            if (vladVerdictEl) {
+                if (vladData.score >= 70) {
+                    vladVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                    vladVerdictEl.innerText = `Системный (${vladData.score}%)`;
+                } else if (vladData.score >= 40) {
+                    vladVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    vladVerdictEl.innerText = `Умеренный (${vladData.score}%)`;
+                } else {
+                    vladVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                    vladVerdictEl.innerText = `Вне системы (${vladData.score}%)`;
+                }
+            }
 
-            // Обновляем UI для Max
+            // Рендер для Max
             const maxData = stats['Max'];
             document.getElementById('max-clean-count').innerText = maxData.clean;
             document.getElementById('max-violation-count').innerText = maxData.violation;
-            document.getElementById('max-score').innerText = `${maxData.clean} системных дней`;
-            const maxPercent = maxData.total > 0 ? (maxData.clean / maxData.total) * 100 : 0;
-            document.getElementById('max-progress-bar').style.width = `${maxPercent}%`;
+            document.getElementById('max-progress-bar').style.width = `${maxData.score}%`;
+
+            const maxVerdictEl = document.getElementById('max-score') || document.getElementById('max-verdict');
+            if (maxVerdictEl) {
+                if (maxData.score >= 70) {
+                    maxVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                    maxVerdictEl.innerText = `Системный (${maxData.score}%)`;
+                } else if (maxData.score >= 40) {
+                    maxVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    maxVerdictEl.innerText = `Умеренный (${maxData.score}%)`;
+                } else {
+                    maxVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                    maxVerdictEl.innerText = `Вне системы (${maxData.score}%)`;
+                }
+            }
         }
 
         // Render Feed
