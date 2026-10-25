@@ -995,6 +995,44 @@
             setInterval(initSessionTimer, 1000); // Обновление таймера каждую секунду
         });
 
+        // Таймер обратного отсчета до старта сессии (понедельник, 09:00)
+        function updateWeekendCountdown() {
+            const now = new Date();
+            const day = now.getDay(); // 0 - ВС, 1 - ПН, ..., 6 - СБ
+            const hours = now.getHours();
+
+            let target = new Date(now);
+            let daysToAdd = (1 - day + 7) % 7;
+
+            if (day === 1 && hours >= 9) {
+                daysToAdd = 7;
+            } else if (day === 1 && hours < 9) {
+                daysToAdd = 0;
+            } else if (day === 0) {
+                daysToAdd = 1; // Воскресенье -> до понедельника 1 день
+            } else if (day === 6) {
+                daysToAdd = 2; // Суббота -> до понедельника 2 дня
+            }
+
+            target.setDate(now.getDate() + daysToAdd);
+            target.setHours(9, 0, 0, 0);
+
+            const diff = target - now;
+            const timerEl = document.getElementById('weekend-countdown-timer');
+            if (!timerEl) return;
+
+            if (diff <= 0) {
+                timerEl.innerText = "00ч 00мин 00сек";
+                return;
+            }
+
+            const totalHours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            timerEl.innerText = `${String(totalHours).padStart(2, '0')}ч ${String(minutes).padStart(2, '0')}мин ${String(seconds).padStart(2, '0')}сек`;
+        }
+
        // Торговая сессия, проверка завершённости дня и логика 1-дневного Блока
         function initSessionTimer() {
             const now = new Date();
