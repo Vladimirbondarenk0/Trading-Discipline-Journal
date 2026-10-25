@@ -557,6 +557,26 @@
         </div>
     </div>
 
+    <!-- Custom Notice Modal for Out-of-Session / Weekends -->
+    <div id="notice-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-sm w-full rounded-2xl p-6 border border-amber-500/30 text-center space-y-4 shadow-2xl">
+            <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl border border-amber-500/30">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-white text-base">Сессия закрыта</h3>
+                <p id="notice-modal-text" class="text-xs text-gray-300 mt-2 leading-relaxed">
+                    Досрочная разблокировка доступна только во время торговой сессии (Пн–Пт, 09:00 — 12:00). В выходные дни рынок закрыт для покоя.
+                </p>
+            </div>
+            <div class="pt-2">
+                <button onclick="closeNoticeModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 sm:py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20">
+                    Понятно
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Custom Delete Confirmation Modal -->
     <div id="delete-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel max-w-sm w-full rounded-2xl p-6 border border-rose-500/30 text-center space-y-4 shadow-2xl">
@@ -911,7 +931,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             }
         }
 
-        // Модальное окно пароля для досрочного ввода с проверкой сессии и выходных
+       // Модальное окно пароля для досрочного ввода с проверкой сессии и выходных
         function openUnlockModal() {
             const now = new Date();
             const dayOfWeek = now.getDay(); // 0 - ВС, 6 - СБ
@@ -919,13 +939,19 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             // Проверка: если выходной день (Сб/Вс) или вне часов торговой сессии (09:00 - 12:00)
             if (dayOfWeek === 0 || dayOfWeek === 6 || hours < 9 || hours >= 12) {
-                alert('Досрочная разблокировка доступна только во время торговой сессии (Пн–Пт, 09:00 — 12:00). В выходные дни рынок закрыт для покоя.');
+                const noticeModal = document.getElementById('notice-modal');
+                if (noticeModal) noticeModal.classList.remove('hidden');
                 return;
             }
 
             document.getElementById('unlock-password-input').value = '';
             document.getElementById('unlock-modal').classList.remove('hidden');
             document.getElementById('unlock-password-input').focus();
+        }
+
+        function closeNoticeModal() {
+            const noticeModal = document.getElementById('notice-modal');
+            if (noticeModal) noticeModal.classList.add('hidden');
         }
 
         function closeUnlockModal() {
