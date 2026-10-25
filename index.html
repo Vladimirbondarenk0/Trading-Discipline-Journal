@@ -1926,7 +1926,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             const todayStr = formatDate(now.getTime());
             const weekendSaved = backtests.filter(item => item.date === todayStr && item.author === currentUser);
 
-            // Если уже есть сохраненные скриншоты за сегодня, берем максимальный зафиксированный процент или считаем по факту
+            // Если уже есть сохраненные скриншоты за сегодня, учитываем их в процентах шкалы
             if (weekendSaved.length > 0) {
                 let savedScore = Math.round((totalChecks / 3) * 70) + (Math.min(2, weekendSaved.length) * 15);
                 score = Math.max(score, savedScore);
@@ -1934,7 +1934,8 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             if (score > 100) score = 100;
 
-            document.getElementById('weekend-usefulness-score').innerText = `${score}%`;
+            const scoreEl = document.getElementById('weekend-usefulness-score');
+            if (scoreEl) scoreEl.innerText = `${score}%`;
             
             const sessionBar = document.getElementById('weekend-session-bar');
             const sessionStatus = document.getElementById('weekend-session-status');
@@ -1957,6 +1958,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             const slotText2 = document.getElementById('slot-text-2');
             
             if (slot2 && slotIcon2 && slotText2) {
+                // Разблокируем второй слот, если загружен первый (в памяти или уже сохранен в архиве за сегодня)
                 if (backtestImage1 || weekendSaved.length >= 1) {
                     slot2.classList.remove('slot-locked');
                     slot2.classList.add('slot-unlocked');
@@ -1973,8 +1975,15 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
         function saveWeekendActivity() {
             if (!backtestImage1 && !backtestImage2) {
-                alert('Пожалуйста, загрузите хотя бы один скриншот бэктеста FX Replay.');
-                return;
+                const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+                const now = new Date();
+                const todayStr = formatDate(now.getTime());
+                const weekendSaved = backtests.filter(item => item.date === todayStr && item.author === currentUser);
+                
+                if (weekendSaved.length === 0) {
+                    alert('Пожалуйста, загрузите хотя бы один скриншот бэктеста FX Replay.');
+                    return;
+                }
             }
 
             const timestamp = Date.now();
@@ -1989,6 +1998,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             localStorage.setItem('local_backtest_reports', JSON.stringify(backtests));
 
+            // Очищаем временные переменные загрузки только ПОСЛЕ успешного сохранения в localStorage
             backtestImage1 = null;
             backtestImage2 = null;
 
