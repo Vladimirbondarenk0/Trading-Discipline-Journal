@@ -109,6 +109,37 @@
             transition: all 0.4s ease-in-out;
         }
 
+        /* ==========================================
+       СТИЛЬНЫЕ АНИМИРОВАННЫЕ ЧЕКБОКСЫ И ТАЙМЕР
+       ========================================== */
+    .custom-checkbox-wrap input[type="checkbox"]:checked + .custom-checkbox {
+        background-color: #F3BA2F;
+        border-color: #F3BA2F;
+        box-shadow: 0 0 12px rgba(243, 186, 47, 0.45);
+        transform: scale(1.08);
+    }
+    .custom-checkbox-wrap input[type="checkbox"]:checked + .custom-checkbox i {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .custom-checkbox {
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Плавное появление последовательных блоков */
+    .checklist-step-locked {
+        opacity: 0.4;
+        pointer-events: none;
+        filter: grayscale(60%);
+        transition: all 0.4s ease;
+    }
+    .checklist-step-unlocked {
+        opacity: 1;
+        pointer-events: auto;
+        filter: none;
+        transition: all 0.4s ease;
+    }
+
         /* Мобильная адаптация */
         @media (max-width: 640px) {
             header .max-w-5xl {
@@ -698,30 +729,59 @@
                     <span>Чек-лист духовного и технического настроя</span>
                 </h4>
 
-                <div class="space-y-2 text-xs" id="weekend-checklist-container">
-                    <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
-                        <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
-                        <span class="text-gray-300 leading-relaxed">
-                            <strong class="text-white block mb-0.5">1. Молитва Капитуляции и покой духа</strong>
-                            Передача результата и контроля в руки Мастера. Моё «я» не ищет самоутверждения в профите.
-                        </span>
-                    </label>
+               <!-- 2. Чек-лист микронапоминаний с последовательным таймером чтения -->
+                <div class="space-y-3" id="weekend-checklist-container">
+                    <!-- Блок 1 (Всегда активен) -->
+                    <div id="check-block-1" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all">
+                        <div class="flex items-start space-x-3">
+                            <div class="custom-checkbox-wrap mt-0.5">
+                                <input type="checkbox" id="chk-1" onchange="handleCheckChange(1)" class="hidden">
+                                <label for="chk-1" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-pointer transition-all">
+                                    <i class="fa-solid fa-check text-[10px] text-black opacity-0 scale-50 transition-all"></i>
+                                </label>
+                            </div>
+                            <div class="flex-1">
+                                <strong class="text-white text-xs block mb-0.5">1. Молитва Капитуляции и покой духа</strong>
+                                <p class="text-xs text-gray-300 leading-relaxed">Передача результата и контроля в руки Мастера. Моё «я» не ищет самоутверждения в профите.</p>
+                            </div>
+                        </div>
+                    </div>
 
-                    <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
-                        <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
-                        <span class="text-gray-300 leading-relaxed">
-                            <strong class="text-white block mb-0.5">2. Жесткий лимит риска (1% = $50)</strong>
-                            Риск зафиксирован для полного устранения азарта и сохранения эмоциональной устойчивости.
-                        </span>
-                    </label>
+                    <!-- Блок 2 (Изначально заблокирован, открывается после 1-го) -->
+                    <div id="check-block-2" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all checklist-step-locked">
+                        <div class="flex items-start space-x-3">
+                            <div class="custom-checkbox-wrap mt-0.5">
+                                <input type="checkbox" id="chk-2" onchange="handleCheckChange(2)" class="hidden" disabled>
+                                <label for="chk-2" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-pointer transition-all">
+                                    <i class="fa-solid fa-check text-[10px] text-black opacity-0 scale-50 transition-all"></i>
+                                </label>
+                            </div>
+                            <div class="flex-1">
+                                <strong id="title-2" class="text-gray-400 text-xs block mb-0.5">2. Жесткий лимит риска (1% = $50)</strong>
+                                <p id="desc-2" class="text-xs text-gray-500 italic">Отметься в предыдущем напоминании, чтобы открыть этот блок.</p>
+                            </div>
+                        </div>
+                        <!-- Линия таймера чтения -->
+                        <div class="absolute bottom-0 left-0 h-[2px] bg-amber-500 w-0" id="timer-line-2"></div>
+                    </div>
 
-                    <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
-                        <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
-                        <span class="text-gray-300 leading-relaxed">
-                            <strong class="text-white block mb-0.5">3. Вход строго по правилу AMD</strong>
-                            Только после полного снятия ликвидности Азии и подтверждения инвертированным имбалансом.
-                        </span>
-                    </label>
+                    <!-- Блок 3 (Изначально заблокирован, открывается после 2-го) -->
+                    <div id="check-block-3" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all checklist-step-locked">
+                        <div class="flex items-start space-x-3">
+                            <div class="custom-checkbox-wrap mt-0.5">
+                                <input type="checkbox" id="chk-3" onchange="handleCheckChange(3)" class="hidden" disabled>
+                                <label for="chk-3" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-pointer transition-all">
+                                    <i class="fa-solid fa-check text-[10px] text-black opacity-0 scale-50 transition-all"></i>
+                                </label>
+                            </div>
+                            <div class="flex-1">
+                                <strong id="title-3" class="text-gray-400 text-xs block mb-0.5">3. Вход строго по правилу AMD</strong>
+                                <p id="desc-3" class="text-xs text-gray-500 italic">Отметься в предыдущем напоминании, чтобы открыть этот блок.</p>
+                            </div>
+                        </div>
+                        <!-- Линия таймера чтения -->
+                        <div class="absolute bottom-0 left-0 h-[2px] bg-amber-500 w-0" id="timer-line-3"></div>
+                    </div>
                 </div>
             </div>
 
@@ -1856,14 +1916,29 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             }
         }
 
-        function updateWeekendProgress() {
-            const checkboxes = document.querySelectorAll('.weekend-check');
+     function updateWeekendProgress() {
+            const checkboxes = document.querySelectorAll('.weekend-check, #chk-1, #chk-2, #chk-3');
             let checkedCount = 0;
-            checkboxes.forEach(cb => { if (cb.checked) checkedCount++; });
+            checkboxes.forEach(cb => { if (cb.checked) cbCount++; });
+            
+            // Проверяем через чекбоксы
+            const c1 = document.getElementById('chk-1')?.checked ? 1 : 0;
+            const c2 = document.getElementById('chk-2')?.checked ? 1 : 0;
+            const c3 = document.getElementById('chk-3')?.checked ? 1 : 0;
+            const totalChecks = c1 + c2 + c3;
 
-            let score = Math.round((checkedCount / checkboxes.length) * 70);
+            let score = Math.round((totalChecks / 3) * 70);
             if (backtestImage1) score += 15;
             if (backtestImage2) score += 15;
+
+            // Проверяем, сохранены ли уже бэктесты в localStorage за сегодня
+            const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            const now = new Date();
+            const todayStr = formatDate(now.getTime());
+            const weekendSaved = backtests.filter(item => item.date === todayStr);
+            if (weekendSaved.length >= 2 && totalChecks === 3) {
+                score = 100;
+            }
 
             document.getElementById('weekend-usefulness-score').innerText = `${score}%`;
             
@@ -1876,52 +1951,38 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
                     sessionStatus.innerHTML = '<span class="text-emerald-400">🔥 Максимальная польза (100%)!</span>';
                 } else if (score >= 85) {
                     sessionStatus.innerHTML = '<span class="text-amber-300">Загрузите 2-й месяц для 100%</span>';
+                } else if (weekendSaved.length > 0) {
+                    sessionStatus.innerHTML = '<span class="text-amber-400 font-bold">Результат зафиксирован</span>';
                 } else {
                     sessionStatus.innerText = 'Загрузите бэктесты';
                 }
             }
 
-            // Управление анимацией и разблокировкой 2-го слота
+            // Управление разблокировкой 2-го слота бэктестов
             const slot2 = document.getElementById('slot-container-2');
             const slotIcon2 = document.getElementById('slot-icon-2');
             const slotText2 = document.getElementById('slot-text-2');
             
-            if (backtestImage1) {
-                slot2.classList.remove('slot-locked');
-                slot2.classList.add('slot-unlocked');
-                if (slotIcon2) slotIcon2.className = "fa-solid fa-file-circle-plus text-amber-400 text-lg animate-bounce";
-                if (slotText2) slotText2.innerText = "Месяц 2 — для 100% пользы! (+15%)";
-            } else {
-                slot2.classList.remove('slot-unlocked');
-                slot2.classList.add('slot-locked');
-                if (slotIcon2) slotIcon2.className = "fa-solid fa-lock text-gray-400 text-lg";
-                if (slotText2) slotText2.innerText = "Сначала загрузите Месяц 1";
+            if (slot2 && slotIcon2 && slotText2) {
+                if (backtestImage1) {
+                    slot2.classList.remove('slot-locked');
+                    slot2.classList.add('slot-unlocked');
+                    slotIcon2.className = "fa-solid fa-file-circle-plus text-amber-400 text-lg animate-bounce";
+                    slotText2.innerText = "Месяц 2 — для 100% пользы! (+15%)";
+                } else {
+                    slot2.classList.remove('slot-unlocked');
+                    slot2.classList.add('slot-locked');
+                    slotIcon2.className = "fa-solid fa-lock text-gray-400 text-lg";
+                    slotText2.innerText = "Сначала загрузите Месяц 1";
+                }
             }
         }
 
-        function handleBacktestImage(slot, event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                if (slot === 1) {
-                    backtestImage1 = e.target.result;
-                    document.getElementById('backtest-img-1').src = backtestImage1;
-                    document.getElementById('backtest-ph-1').classList.add('hidden');
-                    document.getElementById('backtest-prev-wrap-1').classList.remove('hidden');
-                } else if (slot === 2 && backtestImage1) {
-                    backtestImage2 = e.target.result;
-                    document.getElementById('backtest-img-2').src = backtestImage2;
-                    document.getElementById('backtest-ph-2').classList.add('hidden');
-                    document.getElementById('backtest-prev-wrap-2').classList.remove('hidden');
-                }
-                updateWeekendProgress();
-            };
-            reader.readAsDataURL(file);
-        }
-
         function saveWeekendActivity() {
+            const c1 = document.getElementById('chk-1')?.checked;
+            const c2 = document.getElementById('chk-2')?.checked;
+            const c3 = document.getElementById('chk-3')?.checked;
+
             if (!backtestImage1 && !backtestImage2) {
                 alert('Пожалуйста, загрузите хотя бы один скриншот бэктеста FX Replay.');
                 return;
@@ -1941,22 +2002,62 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             backtestImage1 = null;
             backtestImage2 = null;
-            document.getElementById('backtest-prev-wrap-1').classList.add('hidden');
-            document.getElementById('backtest-ph-1').classList.remove('hidden');
-            document.getElementById('backtest-input-1').value = '';
-
-            document.getElementById('backtest-prev-wrap-2').classList.add('hidden');
-            document.getElementById('backtest-ph-2').classList.remove('hidden');
-            document.getElementById('backtest-input-2').value = '';
 
             updateWeekendProgress();
             renderBacktestStats();
             renderBacktestHistory();
+            checkAndTransformBacktestSlots();
 
             const scoreEl = document.getElementById('weekend-usefulness-score');
             if (scoreEl) {
                 scoreEl.innerHTML = '<span class="text-emerald-400">Слава Богу! Результаты выходных зафиксированы.</span>';
             }
+        }
+
+        // Проверка и замена двух стандартных слотов на один блок дополнительных при сохранении 2+ скринов
+        function checkAndTransformBacktestSlots() {
+            const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            const now = new Date();
+            const todayStr = formatDate(now.getTime());
+            const weekendSaved = backtests.filter(item => item.date === todayStr);
+
+            const slotsContainer = document.getElementById('backtest-slots-container');
+            if (!slotsContainer) return;
+
+            if (weekendSaved.length >= 2) {
+                slotsContainer.innerHTML = `
+                    <div class="col-span-2 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2 text-xs">
+                        <div class="font-bold text-amber-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-star text-amber-400"></i>
+                            <span>Дополнительные бэктесты для улучшения насмотренности</span>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed">Цель за выходные (2 месяца) успешно выполнена! Если есть время и возможности, дополнительные месяцы можно загружать здесь — они будут автоматически вестись в архиве и общей квартальной статистике.</p>
+                        <div class="pt-1">
+                            <input type="file" id="extra-backtest-input" accept="image/*" class="hidden" onchange="handleExtraBacktest(event)">
+                            <button onclick="document.getElementById('extra-backtest-input').click()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2 rounded-lg text-xs transition shadow-md">
+                                <i class="fa-solid fa-plus mr-1"></i> Загрузить дополнительный месяц
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function handleExtraBacktest(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const timestamp = Date.now();
+                let backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+                backtests.unshift({ id: timestamp, author: currentUser, date: formatDate(timestamp), image: e.target.result });
+                localStorage.setItem('local_backtest_reports', JSON.stringify(backtests));
+                renderBacktestStats();
+                renderBacktestHistory();
+                alert('Дополнительный бэктест успешно добавлен в архив и квартальную статистику!');
+            };
+            reader.readAsDataURL(file);
         }
 
         function renderBacktestStats() {
@@ -2097,6 +2198,57 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             populateColumn(vladFeed, 'Vladimir');
             populateColumn(maxFeed, 'Max');
+        }
+
+        // Тексты для последовательных блоков
+        const weekendBlockData = {
+            2: {
+                title: "2. Жесткий лимит риска (1% = $50)",
+                desc: "Риск зафиксирован для полного устранения азарта и сохранения эмоциональной устойчивости."
+            },
+            3: {
+                title: "3. Вход строго по правилу AMD",
+                desc: "Только после полного снятия ликвидности Азии и подтверждения инвертированным имбалансом."
+            }
+        };
+
+        function handleCheckChange(num) {
+            const chk = document.getElementById(`chk-${num}`);
+            if (!chk.checked) return;
+
+            updateWeekendProgress();
+
+            if (num === 1) {
+                unlockSequentialBlock(2);
+            } else if (num === 2) {
+                unlockSequentialBlock(3);
+            }
+        }
+
+        function unlockSequentialBlock(nextNum) {
+            const block = document.getElementById(`check-block-${nextNum}`);
+            const title = document.getElementById(`title-${nextNum}`);
+            const desc = document.getElementById(`desc-${nextNum}`);
+            const timerLine = document.getElementById(`timer-line-${nextNum}`);
+
+            // Показываем текст урока
+            title.innerText = weekendBlockData[nextNum].title;
+            title.className = "text-white text-xs block mb-0.5";
+            desc.innerText = weekendBlockData[nextNum].desc;
+            desc.className = "text-xs text-gray-300 leading-relaxed";
+
+            block.classList.remove('checklist-step-locked');
+            block.classList.add('checklist-step-unlocked', 'border-amber-400/40');
+
+            // Запускаем плавную линию таймера чтения (продолжительность 3.5 секунды)
+            timerLine.style.transition = 'width 3.5s linear';
+            timerLine.style.width = '100%';
+
+            setTimeout(() => {
+                const chk = document.getElementById(`chk-${nextNum}`);
+                chk.disabled = false;
+                timerLine.style.backgroundColor = '#10B981'; // Зеленеет по завершении чтения
+            }, 3500);
         }
     </script>
 </body>
