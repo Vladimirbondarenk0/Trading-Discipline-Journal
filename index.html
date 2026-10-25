@@ -95,20 +95,6 @@
             transition: all 0.4s ease-in-out;
         }
 
-        /* Блокировка второго слота бэктеста */
-        .slot-locked {
-            opacity: 0.4;
-            pointer-events: none;
-            filter: grayscale(80%);
-            transition: all 0.4s ease;
-        }
-        .slot-unlocked {
-            opacity: 1;
-            pointer-events: auto;
-            filter: none;
-            transition: all 0.4s ease;
-        }
-
         /* Мобильная адаптация */
         @media (max-width: 640px) {
             header .max-w-5xl {
@@ -124,9 +110,11 @@
                 padding: 1rem !important;
                 border-radius: 1rem !important;
             }
+            /* Убираем лишний внешний отступ у карточек записей в журнале */
             #reports-feed .glass-panel {
                 padding: 0 !important;
             }
+            /* Модальные окна на весь экран по ширине */
             #delete-modal > div,
             #firebase-modal > div,
             #rule-modal > div,
@@ -239,6 +227,7 @@
                 <span class="text-xs text-gray-400 font-medium">Индекс дисциплины</span>
             </div>
 
+            <!-- Поясняющая мысль о логике шкалы -->
             <div class="p-3 rounded-xl bg-brand-dark/40 border border-brand-border/60 text-xs text-gray-300 leading-relaxed">
                 <span class="text-amber-400 font-semibold">Принцип шкалы:</span> 1 день по системе = +10% к шкале. Серия побед укрепляет индекс (до 100%). День внесистемности не сбрасывает шкалу в ноль, а мягко корректирует её на -30%, приучая разум к непрерывному учету ошибок без отчаяния.
             </div>
@@ -263,6 +252,7 @@
                             <span id="vladimir-violation-count" class="font-bold text-rose-400">0</span>
                         </div>
                     </div>
+                    <!-- Progress bar -->
                     <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
                         <div id="vladimir-progress-bar" class="bg-gradient-to-r from-emerald-500 to-amber-400 h-full w-0 transition-all duration-500"></div>
                     </div>
@@ -287,6 +277,7 @@
                             <span id="max-violation-count" class="font-bold text-rose-400">0</span>
                         </div>
                     </div>
+                    <!-- Progress bar -->
                     <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
                         <div id="max-progress-bar" class="bg-gradient-to-r from-emerald-500 to-amber-400 h-full w-0 transition-all duration-500"></div>
                     </div>
@@ -294,9 +285,10 @@
             </div>
         </section>
 
-        <!-- SESSION TIMER VIEW -->
+        <!-- SESSION TIMER VIEW (Active during trading hours 09:00 - 12:00 unless unlocked) -->
         <section id="session-timer-card" class="glass-panel rounded-2xl p-6 sm:p-8 border border-brand-border shadow-2xl relative overflow-hidden hidden">
             <div class="flex flex-col space-y-6">
+                <!-- Top Info Line -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <div class="text-[11px] font-bold tracking-widest text-gray-400 uppercase">
@@ -313,6 +305,7 @@
                     </div>
                 </div>
 
+                <!-- Main Live Clock & Remaining Time -->
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 py-2">
                     <div>
                         <div id="live-clock" class="text-4xl sm:text-6xl font-light tracking-tight text-white font-mono">
@@ -356,6 +349,7 @@
 
         <!-- WIZARD STEP CONTAINER -->
         <section id="wizard-container" class="glass-panel rounded-2xl p-6 sm:p-8 border border-brand-border shadow-2xl relative overflow-hidden">
+            <!-- Step Progress Indicator -->
             <div class="mb-8">
                 <div class="flex items-center justify-between text-xs text-gray-400 mb-2 font-medium">
                     <span id="step-indicator-text">ШАГ 1 ИЗ 4: КОЛИЧЕСТВО СДЕЛОК</span>
@@ -366,6 +360,7 @@
                 </div>
             </div>
 
+            <!-- STEP 1: Trades Count -->
             <div id="step-1" class="step-transition space-y-6">
                 <div>
                     <h3 class="text-lg sm:text-xl font-bold text-white">Сколько сделок было открыто сегодня?</h3>
@@ -399,6 +394,7 @@
                 </div>
             </div>
 
+            <!-- STEP 2: Codex Compliance (Split Logic) -->
             <div id="step-2" class="step-transition hidden space-y-6">
                 <div>
                     <h3 class="text-lg sm:text-xl font-bold text-white">Соблюдение торгового кодекса</h3>
@@ -406,6 +402,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <!-- 100% System Option -->
                     <button onclick="selectCompliance('clean')" class="glass-card p-6 rounded-xl text-left border border-emerald-500/30 hover:border-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 group focus:outline-none w-full">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">
@@ -417,6 +414,7 @@
                         <div class="text-xs text-gray-300 mt-1 leading-relaxed">Полное следование алгоритму. Пропускает этап выбора ошибок и ведет сразу к скриншоту.</div>
                     </button>
 
+                    <!-- Violation Option -->
                     <button onclick="selectCompliance('violation')" class="glass-card p-6 rounded-xl text-left border border-rose-500/30 hover:border-rose-400 bg-rose-500/5 hover:bg-rose-500/10 group focus:outline-none w-full">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-2xl">
@@ -436,13 +434,16 @@
                 </div>
             </div>
 
+            <!-- STEP 3: Error Stage (Appears only if Violation) -->
             <div id="step-3-error" class="step-transition hidden space-y-6">
                 <div>
                     <h3 class="text-lg sm:text-xl font-bold text-white text-rose-400">Выявленные ошибки</h3>
                     <p class="text-xs text-gray-400 mt-1">Укажите ключевую причину сбоя дисциплины во время сессии.</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2" id="error-list"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2" id="error-list">
+                    <!-- Populated via JS -->
+                </div>
 
                 <div class="pt-4 flex justify-between items-center">
                     <button onclick="goToStep(2)" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1 py-2">
@@ -451,6 +452,7 @@
                 </div>
             </div>
 
+            <!-- STEP 4: Screenshot Upload & Final Submission -->
             <div id="step-4-upload" class="step-transition hidden space-y-6">
                 <div>
                     <h3 class="text-lg sm:text-xl font-bold text-white">Прикрепите скриншот истории ордеров</h3>
@@ -468,6 +470,7 @@
                         <div class="text-xs text-gray-500">PNG, JPG или WEBP (макс. 5MB)</div>
                     </div>
 
+                    <!-- Image Preview Area -->
                     <div id="upload-preview" class="hidden relative inline-block">
                         <img id="preview-img" src="" class="max-h-56 rounded-xl border border-brand-border object-contain shadow-lg">
                         <button onclick="removeImage(event)" class="absolute -top-3 -right-3 bg-rose-500 text-white w-7 h-7 rounded-full text-xs hover:bg-rose-600 shadow-md flex items-center justify-center">
@@ -502,11 +505,17 @@
                             <p id="completed-author-info" class="text-xs text-gray-400">Запись успешно внесена в совместный журнал</p>
                         </div>
                     </div>
-                    <div id="completed-badge-container"></div>
+                    <div id="completed-badge-container">
+                        <!-- Динамический бейдж (Системно / Нарушение) -->
+                    </div>
                 </div>
 
-                <div class="p-5 rounded-xl bg-brand-dark/50 border border-brand-border/60 text-xs sm:text-sm text-gray-200 leading-relaxed" id="completed-spiritual-thought"></div>
+                <!-- Мудрая и глубокая мысль (рефлексия) -->
+                <div class="p-5 rounded-xl bg-brand-dark/50 border border-brand-border/60 text-xs sm:text-sm text-gray-200 leading-relaxed" id="completed-spiritual-thought">
+                    <!-- Текст мысли подставляется динамически -->
+                </div>
 
+                <!-- Таймер до следующего открытия (утро / понедельник) -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs text-gray-400">
                     <div class="flex items-center space-x-2 justify-center sm:justify-start">
                         <i class="fa-solid fa-hourglass-half text-amber-400 animate-spin" style="animation-duration: 8s;"></i>
@@ -529,12 +538,15 @@
                 </div>
             </div>
 
-            <div id="reports-feed" class="space-y-3"></div>
+            <!-- List of Expandable Accordion Rows -->
+            <div id="reports-feed" class="space-y-3">
+                <!-- Dynamically Inserted Reports -->
+            </div>
         </section>
 
     </main>
 
-    <!-- Modals -->
+    <!-- Password Unlock Modal for Early Session Submission -->
     <div id="unlock-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel max-w-sm w-full rounded-2xl p-6 border border-amber-500/30 text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl border border-amber-500/30">
@@ -542,18 +554,25 @@
             </div>
             <div>
                 <h3 class="font-bold text-white text-base">Досрочный разблокировщик</h3>
-                <p class="text-xs text-gray-300 mt-1 leading-relaxed">Сессия ещё идёт. Введите пароль для принудительного открытия формы отчёта:</p>
+                <p class="text-xs text-gray-300 mt-1 leading-relaxed">
+                    Сессия ещё идёт. Введите пароль для принудительного открытия формы отчёта:
+                </p>
             </div>
             <div>
                 <input type="password" id="unlock-password-input" placeholder="Введите пароль..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-3 text-white text-xs focus:border-amber-400 outline-none text-center">
             </div>
             <div class="flex items-center space-x-3 pt-2">
-                <button onclick="closeUnlockModal()" class="w-1/2 bg-brand-card hover:bg-gray-800 text-gray-300 py-3 sm:py-2.5 rounded-xl border border-brand-border text-xs transition">Отмена</button>
-                <button onclick="verifyUnlockPassword()" class="w-1/2 bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 sm:py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20">Разблокировать</button>
+                <button onclick="closeUnlockModal()" class="w-1/2 bg-brand-card hover:bg-gray-800 text-gray-300 py-3 sm:py-2.5 rounded-xl border border-brand-border text-xs transition">
+                    Отмена
+                </button>
+                <button onclick="verifyUnlockPassword()" class="w-1/2 bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 sm:py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20">
+                    Разблокировать
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Custom Notice Modal for Out-of-Session / Weekends -->
     <div id="notice-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel max-w-sm w-full rounded-2xl p-6 border border-amber-500/30 text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl border border-amber-500/30">
@@ -561,14 +580,19 @@
             </div>
             <div>
                 <h3 class="font-bold text-white text-base">Сессия закрыта</h3>
-                <p id="notice-modal-text" class="text-xs text-gray-300 mt-2 leading-relaxed">Досрочная разблокировка доступна только во время торговой сессии (Пн–Пт, 09:00 — 12:00). В выходные дни рынок закрыт для покоя.</p>
+                <p id="notice-modal-text" class="text-xs text-gray-300 mt-2 leading-relaxed">
+                    Досрочная разблокировка доступна только во время торговой сессии (Пн–Пт, 09:00 — 12:00). В выходные дни рынок закрыт для покоя.
+                </p>
             </div>
             <div class="pt-2">
-                <button onclick="closeNoticeModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 sm:py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20">Понятно</button>
+                <button onclick="closeNoticeModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 sm:py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20">
+                    Понятно
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Custom Delete Confirmation Modal -->
     <div id="delete-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel max-w-sm w-full rounded-2xl p-6 border border-rose-500/30 text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 mx-auto rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl border border-rose-500/30">
@@ -576,17 +600,24 @@
             </div>
             <div>
                 <h3 class="font-bold text-white text-base">Подтверждение удаления</h3>
-                <p class="text-xs text-gray-300 mt-2 leading-relaxed">Вы точно хотите удалить запись?<br><span class="text-amber-400 font-medium">Удалить можно только если запись была сделана по ошибке.</span></p>
+                <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+                    Вы точно хотите удалить запись?<br>
+                    <span class="text-amber-400 font-medium">Удалить можно только если запись была сделана по ошибке.</span>
+                </p>
             </div>
             <div class="flex items-center space-x-3 pt-2">
-                <button onclick="closeDeleteModal()" class="w-1/2 bg-brand-card hover:bg-gray-800 text-gray-300 py-3 sm:py-2.5 rounded-xl border border-brand-border text-xs transition">Отмена</button>
-                <button id="confirm-delete-btn" class="w-1/2 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 sm:py-2.5 rounded-xl text-xs transition shadow-lg shadow-rose-600/20">Удалить</button>
+                <button onclick="closeDeleteModal()" class="w-1/2 bg-brand-card hover:bg-gray-800 text-gray-300 py-3 sm:py-2.5 rounded-xl border border-brand-border text-xs transition">
+                    Отмена
+                </button>
+                <button id="confirm-delete-btn" class="w-1/2 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 sm:py-2.5 rounded-xl text-xs transition shadow-lg shadow-rose-600/20">
+                    Удалить
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Lightbox Modal (z-60 для отображения поверх модалки выходных) -->
-    <div id="lightbox-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[60] flex items-center justify-center p-2 sm:p-6 hidden cursor-zoom-out" onclick="closeLightbox()">
+    <!-- Lightbox Modal for Fullscreen Image View -->
+    <div id="lightbox-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-6 hidden cursor-zoom-out" onclick="closeLightbox()">
         <div class="relative max-w-full max-h-full flex items-center justify-center" onclick="event.stopPropagation()">
             <img id="lightbox-img" src="" class="max-w-[98vw] max-h-[96vh] object-contain rounded-lg shadow-2xl border border-white/10">
             <button onclick="closeLightbox()" title="Закрыть (Esc)" class="absolute top-3 right-3 bg-black/50 hover:bg-rose-600/80 text-white/80 hover:text-white w-10 h-10 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center shadow-2xl transition-all transform hover:scale-110">
@@ -595,6 +626,7 @@
         </div>
     </div>
 
+    <!-- Modal Checklist for 10 Rules -->
     <div id="rule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel max-w-xl w-full rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-brand-border pb-3">
@@ -602,16 +634,25 @@
                     <i class="fa-solid fa-book-bookmark text-amber-400"></i>
                     <span>Кодекс Дисциплины (10 Критериев)</span>
                 </h3>
-                <button onclick="toggleRuleModal()" class="text-gray-400 hover:text-white text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="toggleRuleModal()" class="text-gray-400 hover:text-white text-lg p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <ol class="space-y-3 text-xs text-gray-300 list-decimal list-inside leading-relaxed" id="modal-rules-list"></ol>
-            <button onclick="toggleRuleModal()" class="w-full bg-brand-card hover:bg-gray-800 text-white font-medium py-3 sm:py-2.5 rounded-xl border border-brand-border text-xs transition">Понятно, закрыть</button>
+
+            <ol class="space-y-3 text-xs text-gray-300 list-decimal list-inside leading-relaxed" id="modal-rules-list">
+                <!-- Rules populated via JS -->
+            </ol>
+
+            <button onclick="toggleRuleModal()" class="w-full bg-brand-card hover:bg-gray-800 text-white font-medium py-3 sm:py-2.5 rounded-xl border border-brand-border text-xs transition">
+                Понятно, закрыть
+            </button>
         </div>
     </div>
 
     <!-- MODAL: Проводим выходные с пользой -->
     <div id="weekend-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="glass-panel max-w-2xl w-full rounded-2xl p-5 sm:p-6 border border-brand-border space-y-5 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <!-- Header -->
             <div class="flex items-center justify-between border-b border-brand-border/60 pb-3">
                 <div class="flex items-center space-x-3">
                     <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
@@ -622,9 +663,12 @@
                         <p class="text-[11px] text-gray-400">Подготовка разума, проработка ошибок и бэктесты (FX Replay)</p>
                     </div>
                 </div>
-                <button onclick="closeWeekendModal()" class="text-gray-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeWeekendModal()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
             </div>
 
+            <!-- 1. Персональная работа над ошибкой недели -->
             <div id="personal-error-focus-box" class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 space-y-1.5 hidden">
                 <div class="text-xs font-bold text-rose-300 flex items-center space-x-1.5">
                     <i class="fa-solid fa-bullseye"></i>
@@ -633,11 +677,13 @@
                 <p id="personal-error-text" class="text-xs text-gray-200 leading-relaxed font-medium"></p>
             </div>
 
+            <!-- 2. Чек-лист микронапоминаний перед новой неделей -->
             <div class="space-y-3">
                 <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
                     <i class="fa-solid fa-list-check"></i>
                     <span>Чек-лист духовного и технического настроя</span>
                 </h4>
+
                 <div class="space-y-2 text-xs" id="weekend-checklist-container">
                     <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
                         <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
@@ -646,6 +692,7 @@
                             Передача результата и контроля в руки Мастера. Моё «я» не ищет самоутверждения в профите.
                         </span>
                     </label>
+
                     <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
                         <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
                         <span class="text-gray-300 leading-relaxed">
@@ -653,6 +700,7 @@
                             Риск зафиксирован для полного устранения азарта и сохранения эмоциональной устойчивости.
                         </span>
                     </label>
+
                     <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
                         <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
                         <span class="text-gray-300 leading-relaxed">
@@ -663,7 +711,7 @@
                 </div>
             </div>
 
-            <!-- Секция Бэктестинга (Месяц 1 и Месяц 2 с последовательной анимацией) -->
+            <!-- 3. Секция Бэктестинга (2 месяца за выходные: Месяц 1 и Месяц 2) -->
             <div class="p-4 rounded-xl bg-brand-dark/60 border border-brand-border space-y-4">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold text-white flex items-center space-x-2">
@@ -674,12 +722,13 @@
                 </div>
 
                 <p class="text-xs text-gray-300 leading-relaxed">
-                    Пройди 2 исторических месяца на FX Replay за эти выходные. Загрузи скриншоты раздельно для фиксации максимальной пользы.
+                    Пройди 2 исторических месяца на FX Replay за эти выходные. Загрузи скриншоты раздельно для фиксации максимальной полезности.
                 </p>
 
+                <!-- Две зоны загрузки: Месяц 1 и Месяц 2 -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Бэктест 1 (всегда активен) -->
-                    <div id="slot-container-1" class="border-2 border-dashed border-brand-border hover:border-amber-400/50 rounded-xl p-3 text-center bg-brand-card/30 transition cursor-pointer relative">
+                    <!-- Бэктест 1 -->
+                    <div class="border-2 border-dashed border-brand-border hover:border-amber-400/50 rounded-xl p-3 text-center bg-brand-card/30 transition cursor-pointer relative">
                         <input type="file" id="backtest-input-1" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBacktestImage(1, event)">
                         <div id="backtest-ph-1" class="space-y-1">
                             <i class="fa-solid fa-file-image text-amber-400 text-lg"></i>
@@ -691,12 +740,12 @@
                         </div>
                     </div>
 
-                    <!-- Бэктест 2 (заблокирован до загрузки 1-го) -->
-                    <div id="slot-container-2" class="border-2 border-dashed border-brand-border rounded-xl p-3 text-center bg-brand-card/30 transition cursor-pointer relative slot-locked">
+                    <!-- Бэктест 2 (с мотивацией) -->
+                    <div class="border-2 border-dashed border-brand-border hover:border-amber-400/50 rounded-xl p-3 text-center bg-brand-card/30 transition cursor-pointer relative">
                         <input type="file" id="backtest-input-2" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBacktestImage(2, event)">
                         <div id="backtest-ph-2" class="space-y-1">
-                            <i id="slot-icon-2" class="fa-solid fa-lock text-gray-400 text-lg"></i>
-                            <div id="slot-text-2" class="text-[11px] text-gray-400 font-medium">Сначала загрузите Месяц 1</div>
+                            <i class="fa-solid fa-file-circle-plus text-amber-400 text-lg animate-bounce"></i>
+                            <div class="text-[11px] text-amber-300 font-medium">Месяц 2 — для 100% пользы! (+15%)</div>
                         </div>
                         <div id="backtest-prev-wrap-2" class="hidden relative inline-block">
                             <img id="backtest-img-2" src="" class="max-h-24 rounded-lg border border-brand-border object-contain">
@@ -706,6 +755,7 @@
                 </div>
             </div>
 
+            <!-- 4. ПОлный прогресс за эти выходные -->
             <div class="p-3 rounded-xl bg-brand-dark/40 border border-brand-border/60 space-y-2">
                 <div class="flex items-center justify-between text-xs">
                     <span class="text-gray-300 font-medium">Прогресс за эти выходные:</span>
@@ -715,42 +765,44 @@
                     <div id="weekend-session-bar" class="bg-gradient-to-r from-amber-500 to-emerald-400 h-full w-0 transition-all duration-500"></div>
                 </div>
             </div>
-
-            <!-- Статистика за эти выходные -->
+            <!-- 4.1 Статистика бэктестов за эти выходные (Отдельно для Владимира и Макса) -->
             <div class="p-4 rounded-xl bg-brand-dark/80 border border-brand-border space-y-3">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
                         <i class="fa-solid fa-chart-column"></i>
-                        <span id="current-weekend-title">Статистика бэктестов за эти выходные</span>
+                        <span>Статистика бэктестов зв эти выходные</span> <!--вместо "зв эти выходные" добавь два числа выходных, к примеру за 25 и 26 октября.  -->
                     </h4>
                     <span class="text-[10px] text-gray-400">Независимый учет</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <!-- Колонки для Владимира -->
                     <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
                         <div class="font-bold text-white flex items-center justify-between">
                             <span>Vladimir</span>
-                            <span id="vlad-weekend-count" class="text-amber-400">0 мес.</span>
+                            <span id="vlad-backtest-count" class="text-amber-400">0 месяцев</span>
                         </div>
                         <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
-                            <div id="vlad-weekend-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
+                            <div id="vlad-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
                         </div>
-                        <div class="text-[10px] text-gray-400">Цель: 2 месяца за эти выходные</div>
+                        <div class="text-[10px] text-gray-400" id="vlad-backtest-status">Цель: 2 месяца за эти выходные</div>
                     </div>
 
+                    <!-- Колонки для Макса -->
                     <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
                         <div class="font-bold text-white flex items-center justify-between">
                             <span>Max</span>
-                            <span id="max-weekend-count" class="text-amber-400">0 мес.</span>
+                            <span id="max-backtest-count" class="text-amber-400">0 месяцев</span>
                         </div>
                         <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
-                            <div id="max-weekend-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
+                            <div id="max-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
                         </div>
-                        <div class="text-[10px] text-gray-400">Цель: 2 месяца за эти выходные</div>
+                        <div class="text-[10px] text-gray-400" id="max-backtest-status">Цель: 2 месяца за эти выходные</div>
                     </div>
                 </div>
             </div>
 
+             <!-- Footer & Шкала полезности -->
             <div class="pt-2 border-t border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div class="text-xs text-gray-400">
                     Уровень твоей полезности: <span id="weekend-usefulness-score" class="font-bold text-amber-400">0%</span>
@@ -761,7 +813,7 @@
                 </button>
             </div>
 
-            <!-- Квартальная статистика бэктестов -->
+            <!-- 5. Квартальная статистика бэктестов (Отдельно для Владимира и Макса, ниже) -->
             <div class="p-4 rounded-xl bg-brand-dark/80 border border-brand-border space-y-3">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
@@ -772,6 +824,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <!-- Колонки для Владимира -->
                     <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
                         <div class="font-bold text-white flex items-center justify-between">
                             <span>Vladimir</span>
@@ -780,9 +833,10 @@
                         <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
                             <div id="vlad-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
                         </div>
-                        <div class="text-[10px] text-gray-400">План квартала (макс. 24 мес.)</div>
+                        <div class="text-[10px] text-gray-400" id="vlad-backtest-status">План квартала (макс. 24 мес.)</div>
                     </div>
 
+                    <!-- Колонки для Макса -->
                     <div class="p-3 rounded-xl bg-brand-card/60 border border-brand-border space-y-2">
                         <div class="font-bold text-white flex items-center justify-between">
                             <span>Max</span>
@@ -791,12 +845,14 @@
                         <div class="w-full bg-brand-dark h-2 rounded-full overflow-hidden border border-brand-border">
                             <div id="max-backtest-bar" class="bg-amber-400 h-full w-0 transition-all duration-500"></div>
                         </div>
-                        <div class="text-[10px] text-gray-400">План квартала (макс. 24 мес.)</div>
+                        <div class="text-[10px] text-gray-400" id="max-backtest-status">План квартала (макс. 24 мес.)</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Архив скриншотов бэктестов (Раздельные колонки для Vladimir и Max) -->
+           
+
+            <!-- 6. Архив скриншотов бэктестов (История по неделям/выходным) -->
             <div class="p-4 rounded-xl bg-brand-dark/60 border border-brand-border space-y-3">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold text-white flex items-center space-x-2">
@@ -805,39 +861,64 @@
                     </h4>
                     <span class="text-[10px] text-gray-400">Нажмите для просмотра</span>
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Колонка Vladimir -->
-                    <div class="p-3 rounded-xl bg-brand-card/50 border border-brand-border/40 space-y-2">
-                        <div class="text-xs font-bold text-amber-400 flex items-center space-x-1.5 border-b border-brand-border/40 pb-1.5">
-                            <i class="fa-solid fa-user"></i>
-                            <span>Vladimir (Архив)</span>
-                        </div>
-                        <div id="backtest-history-vladimir" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <!-- Колонка Max -->
-                    <div class="p-3 rounded-xl bg-brand-card/50 border border-brand-border/40 space-y-2">
-                        <div class="text-xs font-bold text-blue-400 flex items-center space-x-1.5 border-b border-brand-border/40 pb-1.5">
-                            <i class="fa-solid fa-user"></i>
-                            <span>Max (Архив)</span>
-                        </div>
-                        <div id="backtest-history-max" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-                    </div>
+                <div id="backtest-history-feed" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Заполняется динамически через JS -->
                 </div>
             </div>
             
         </div>
     </div>
 
-    <!-- Firebase SDK & App Script -->
+    <!-- Firebase Sync Config Modal -->
+    <div id="firebase-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-lg w-full rounded-2xl p-6 border border-brand-border space-y-4">
+            <div class="flex items-center justify-between border-b border-brand-border pb-3">
+                <h3 class="font-bold text-white text-base flex items-center space-x-2">
+                    <i class="fa-solid fa-cloud text-amber-400"></i>
+                    <span>Синхронизация через Firebase</span>
+                </h3>
+                <button onclick="toggleFirebaseModal()" class="text-gray-400 hover:text-white text-lg p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-gray-300 leading-relaxed">
+                Чтобы видеть отчёты друг друга в реальном времени, введите параметры вашего бесплатного проекта Firebase (Realtime Database). Если поля пусты, данные сохраняются локально.
+            </p>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-gray-400 mb-1">Database URL (https://your-db-default-rtdb.firebaseio.com)</label>
+                    <input type="text" id="fb-database-url" placeholder="https://..." class="w-full bg-brand-dark border border-brand-border rounded-lg p-2.5 text-white focus:border-amber-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">API Key</label>
+                    <input type="text" id="fb-api-key" placeholder="AIzaSy..." class="w-full bg-brand-dark border border-brand-border rounded-lg p-2.5 text-white focus:border-amber-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Project ID</label>
+                    <input type="text" id="fb-project-id" placeholder="trading-journal" class="w-full bg-brand-dark border border-brand-border rounded-lg p-2.5 text-white focus:border-amber-400 outline-none">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-2 pt-2">
+                <button onclick="clearFirebaseConfig()" class="text-xs text-rose-400 hover:text-rose-300 px-3 py-2">Сбросить</button>
+                <button onclick="saveFirebaseConfig()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2.5 rounded-xl text-xs">Сохранить и Синхронизировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Imports -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
         window.fbSDK = { initializeApp, getDatabase, ref, push, onValue, set, remove };
     </script>
 
+    <!-- App Main Script -->
     <script>
+        // State variables
         let currentUser = localStorage.getItem('trading_journal_user') || 'Vladimir';
         let currentStep = 1;
         let dbRef = null;
@@ -847,23 +928,41 @@
         let reportsHistory = [];
         let openAccordions = [];
 
+        // Пароль для досрочного разблокирования формы во время сессии (можно изменить здесь)
         const SESSION_UNLOCK_PASSWORD = '1888';
 
-        let reportData = { trades: '', compliance: '', error: 'Отсутствуют', image: null, timestamp: '' };
+        let reportData = {
+            trades: '',
+            compliance: '',
+            error: 'Отсутствуют',
+            image: null,
+            timestamp: ''
+        };
 
         const rulesList = [
-            "Внутренний настрой и абсолютное спокойствие", "Трендовые показатели и структура рынка",
-            "Ликвидность и зоны интереса (POI)", "Правило одного актива и жесткий лимит риска",
-            "Идентификация сетапа и иерархия таймфреймов", "Манипуляция и подтверждение входа",
-            "Отслеживание критериев торговой модели", "Цели и риск-менеджмент (R:R)",
-            "Уведомления и динамическое управление позицией", "Перезаход только при повторном сетапе"
+            "Внутренний настрой и абсолютное спокойствие",
+            "Трендовые показатели и структура рынка",
+            "Ликвидность и зоны интереса (POI)",
+            "Правило одного актива и жесткий лимит риска",
+            "Идентификация сетапа и иерархия таймфреймов",
+            "Манипуляция и подтверждение входа",
+            "Отслеживание критериев торговой модели",
+            "Цели и риск-менеджмент (R:R)",
+            "Уведомления и динамическое управление позицией",
+            "Перезаход только при повторном сетапе"
         ];
 
         const errorOptions = [
-            "1. Внутренний настрой", "2. Трендовые показатели и структура", "3. Ликвидность и зоны интереса",
-            "4. Правило одного актива и жесткий лимит", "5. Идентификация сетапа и иерархия таймфреймов",
-            "6. Манипуляция", "7. Отслеживание критериев модели", "8. Цели и риск-менеджмент",
-            "9. Уведомления и динамическое управление позицией", "10. Перезаход"
+            "1. Внутренний настрой",
+            "2. Трендовые показатели и структура",
+            "3. Ликвидность и зоны интереса",
+            "4. Правило одного актива и жесткий лимит",
+            "5. Идентификация сетапа и иерархия таймфреймов",
+            "6. Манипуляция",
+            "7. Отслеживание критериев модели",
+            "8. Цели и риск-менеджмент",
+            "9. Уведомления и динамическое управление позицией",
+            "10. Перезаход"
         ];
 
         window.addEventListener('load', () => {
@@ -871,20 +970,22 @@
             initRulesAndErrors();
             loadFirebaseConfig();
             initSessionTimer();
-            setInterval(initSessionTimer, 1000);
+            setInterval(initSessionTimer, 1000); // Обновление таймера каждую секунду
         });
 
+       // Торговая сессия, проверка завершённости дня и логика 1-дневного Блока
         function initSessionTimer() {
             const now = new Date();
-            const dayOfWeek = now.getDay();
+            const dayOfWeek = now.getDay(); // 0 - ВС, 1 - ПН, ..., 5 - ПТ, 6 - СБ
             const hours = now.getHours();
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
             const totalCurrentSeconds = hours * 3600 + minutes * 60 + seconds;
 
-            const startSeconds = 9 * 3600;
-            const endSeconds = 12 * 3600;
+            const startSeconds = 9 * 3600;  // 09:00
+            const endSeconds = 12 * 3600;   // 12:00
 
+            // Форматирование даты
             const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
             const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
             
@@ -901,21 +1002,28 @@
             const wizardContainer = document.getElementById('wizard-container');
             const completedCard = document.getElementById('completed-day-card');
 
+            // 1. ПРОВЕРКА НА АКТИВНЫЙ БЛОК С ПРОШЛОЙ СЕССИИ (Защита на следующий день)
+            // Ищем последнюю запись текущего пользователя
             const lastUserReport = reportsHistory.find(item => item.author === currentUser);
             
             if (lastUserReport && lastUserReport.compliance !== 'clean') {
                 const reportDate = new Date(lastUserReport.id);
+                
+                // Вычисляем дату и время точной разблокировки (строго в 09:00 на 2-й торговый день после ошибки)
                 let unlockDate = new Date(reportDate);
                 const repDay = reportDate.getDay();
 
+                // Если ошибка совершена в Пятницу (5) или Субботу (6) -> Блок весь Понедельник, разблокировка во Вторник в 09:00
                 if (repDay === 5 || repDay === 6) {
-                    const daysToAdd = (repDay === 5) ? 4 : 3;
+                    const daysToAdd = (repDay === 5) ? 4 : 3; // До Вторника
                     unlockDate.setDate(unlockDate.getDate() + daysToAdd);
                 } else {
+                    // Иначе разблокировка через 2 дня в 09:00 (пропускаем заблокированный день)
                     unlockDate.setDate(unlockDate.getDate() + 2);
                 }
                 unlockDate.setHours(9, 0, 0, 0);
 
+                // Если текущее время ещё НЕ достигло даты/времени разблокировки — удерживаем БЛОК
                 if (now < unlockDate) {
                     if (timerCard) timerCard.classList.add('hidden');
                     if (wizardContainer) wizardContainer.classList.add('hidden');
@@ -924,23 +1032,44 @@
                     const authorInfoEl = document.getElementById('completed-author-info');
                     if (authorInfoEl) authorInfoEl.innerText = `Дисциплинарный блок (${lastUserReport.author})`;
 
-                    const badgeContainerEl = document.getElementById('completed-badge-container');
-                    if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== 'blocked') {
-                        badgeContainerEl.innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-smooth"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>БЛОК ТОРГОВЛИ: 1 ДЕНЬ</span>`;
-                        badgeContainerEl.dataset.badgeType = 'blocked';
-                    }
+                   const badgeContainerEl = document.getElementById('completed-badge-container');
+
+if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== 'blocked') {
+    badgeContainerEl.innerHTML = `
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-smooth">
+            <i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>
+            БЛОК ТОРГОВЛИ: 1 ДЕНЬ
+        </span>
+    `;
+
+    badgeContainerEl.dataset.badgeType = 'blocked';
+}
 
                     const unlockDateStr = `${unlockDate.getDate()} ${months[unlockDate.getMonth()]} в 09:00`;
                     const thoughtEl = document.getElementById('completed-spiritual-thought');
                     if (thoughtEl) {
-                        thoughtEl.innerHTML = `<div class="space-y-2"><p class="font-semibold text-rose-300">Почему этот блок необходим и почему наказание настолько строгое?</p><p class="text-gray-300">Даже если завтра Брат заберёт свои +2% профита, а ты останешься позади и лишён этих денег — прими это смиренно как целебное лекарство от гордыни и зависти.</p><p class="text-gray-400">Блок на 1 день убивает азарт и иллюзию контроля. Мы учимся радоваться успехам Брата больше, чем собственным процентам, осознавая полную немощь своего «я».</p></div>`;
+                        thoughtEl.innerHTML = `
+                            <div class="space-y-2">
+                                <p class="font-semibold text-rose-300">Почему этот блок необходим и почему наказание настолько строгое?</p>
+                                <p class="text-gray-300">Даже если завтра Брат заберёт свои +2% профита, а ты останешься позади и лишён этих денег — прими это смиренно как целебное лекарство от гордыни и зависти.</p>
+                                <p class="text-gray-400">Блок на 1 день убивает азарт и иллюзию контроля. Мы учимся радоваться успехам Брата больше, чем собственным процентам, осознавая полную немощь своего «я». Торговля без дисциплины — это результат легкомысленности. Поэтому у тебя есть время поразмыслить над ошибкой, и зафиксировать ее в своем разуме как что-то, к чему точчно не стоит возвращаться.</p>
+                            </div>
+                        `;
                     }
-                    return;
+
+                    const countdownTextEl = document.getElementById('next-session-countdown-text');
+                    if (countdownTextEl) {
+                        countdownTextEl.innerHTML = `<span class="text-rose-400 font-bold">Торговля заблокирована. Доступ откроется строго: ${unlockDateStr}</span>`;
+                    }
+                    return; // Полная заморозка, выход из функции
                 }
             }
 
+            // 2. ПРОВЕРКА: Если отчёт за сегодня уже сдан
             const todayStr = now.toDateString();
-            const userTodayReport = reportsHistory.find(item => new Date(item.id).toDateString() === todayStr && item.author === currentUser);
+            const userTodayReport = reportsHistory.find(item => {
+                return new Date(item.id).toDateString() === todayStr && item.author === currentUser;
+            });
 
             if (userTodayReport) {
                 if (timerCard) timerCard.classList.add('hidden');
@@ -951,22 +1080,51 @@
                 const authorInfoEl = document.getElementById('completed-author-info');
                 if (authorInfoEl) authorInfoEl.innerText = `Запись зафиксирована (${userTodayReport.author})`;
                 
-                const badgeContainerEl = document.getElementById('completed-badge-container');
-                const badgeType = isClean ? 'clean' : 'blocked';
+              const badgeContainerEl = document.getElementById('completed-badge-container');
 
-                if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
-                    badgeContainerEl.innerHTML = isClean
-                        ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✅ 100% По системе</span>`
-                        : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-smooth"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>БЛОК ТОРГОВЛИ: 1 ДЕНЬ</span>`;
-                    badgeContainerEl.dataset.badgeType = badgeType;
+const badgeType = isClean ? 'clean' : 'blocked';
+
+if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
+    badgeContainerEl.innerHTML = isClean
+    ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✅ 100% По системе</span>`
+    : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 pulse-smooth"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i>БЛОК ТОРГОВЛИ: 1 ДЕНЬ</span>`;
+    badgeContainerEl.dataset.badgeType = badgeType;
+}
+              
+                const thoughtEl = document.getElementById('completed-spiritual-thought');
+                if (thoughtEl) {
+                    if (isClean) {
+                        thoughtEl.innerHTML = `«Слава Богу за победу Духа над плотью! Кодекс соблюдён не силой нашей самоуверенной воли, а Его живой праведностью. Пусть это чистое стекло продолжает смиренно отражать свет Мастера, не приписывая себе заслуг».`;
+                    } else {
+                        thoughtEl.innerHTML = `
+                            <div class="space-y-1">
+                                <p class="font-semibold text-rose-300">«Урок смирения за нарушение кодекса»</p>
+                                <p>Завтрашний день ты пропустишь, пока Брат будет торговать. Это сильное наказание нужно для того, чтобы укротить жадность и страх упущенной выгоды. Поразмышляй в тишине над ошибкой — Истина важнее комфорта.</p>
+                            </div>
+                        `;
+                    }
                 }
+
+                // Расчёт даты снятия
+                let targetDayName = "Завтра в 09:00";
+                if (!isClean) {
+                    if (dayOfWeek === 5 || dayOfWeek === 6) targetDayName = "Во вторник в 09:00";
+                    else targetDayName = "Послезавтра в 09:00";
+                } else {
+                    if (dayOfWeek === 6) targetDayName = "В понедельник в 09:00";
+                }
+                
+                const countdownTextEl = document.getElementById('next-session-countdown-text');
+                if (countdownTextEl) countdownTextEl.innerText = `Следующее торговое окно откроется: ${targetDayName}`;
                 return;
             }
 
+           // 3. Выходной день (Суббота / Воскресенье) без сданного отчёта за сегодня
             if (dayOfWeek === 6 || dayOfWeek === 0) {
                 if (completedCard) completedCard.classList.add('hidden');
                 if (wizardContainer) wizardContainer.classList.add('hidden');
                 
+                // Показываем карточку таймера в режиме выходного дня
                 if (timerCard) {
                     timerCard.classList.remove('hidden');
                     const badgeTextEl = document.getElementById('session-badge-text');
@@ -977,10 +1135,14 @@
                     
                     const remTextEl = document.getElementById('session-remaining-text');
                     if (remTextEl) remTextEl.innerText = "Отдых до понедельника, 09:00";
+                    
+                    const progressBarEl = document.getElementById('session-progress-bar');
+                    if (progressBarEl) progressBarEl.style.width = "100%";
                 }
                 return;
             }
 
+            // 4. Обычный рабочий день и окно 09:00 - 12:00
             if (totalCurrentSeconds >= startSeconds && totalCurrentSeconds < endSeconds && !isUnlockedToday) {
                 if (timerCard) timerCard.classList.remove('hidden');
                 if (wizardContainer) wizardContainer.classList.add('hidden');
@@ -990,6 +1152,13 @@
                 const progressPercent = Math.min(100, Math.max(0, (elapsed / (endSeconds - startSeconds)) * 100));
                 const progressBarEl = document.getElementById('session-progress-bar');
                 if (progressBarEl) progressBarEl.style.width = `${progressPercent}%`;
+
+                const remainingSecs = endSeconds - totalCurrentSeconds;
+                const remHours = Math.floor(remainingSecs / 3600);
+                const remMins = Math.floor((remainingSecs % 3600) / 60);
+                const remSecs = remainingSecs % 60;
+                const remTextEl = document.getElementById('session-remaining-text');
+                if (remTextEl) remTextEl.innerText = `осталось ${remHours} ч ${remMins} мин ${remSecs} сек`;
             } else {
                 if (timerCard) timerCard.classList.add('hidden');
                 if (completedCard) completedCard.classList.add('hidden');
@@ -997,13 +1166,16 @@
             }
         }
 
+       // Модальное окно пароля для досрочного ввода с проверкой сессии и выходных
         function openUnlockModal() {
             const now = new Date();
-            const dayOfWeek = now.getDay();
+            const dayOfWeek = now.getDay(); // 0 - ВС, 6 - СБ
             const hours = now.getHours();
 
+            // Проверка: если выходной день (Сб/Вс) или вне часов торговой сессии (09:00 - 12:00)
             if (dayOfWeek === 0 || dayOfWeek === 6 || hours < 9 || hours >= 12) {
-                document.getElementById('notice-modal').classList.remove('hidden');
+                const noticeModal = document.getElementById('notice-modal');
+                if (noticeModal) noticeModal.classList.remove('hidden');
                 return;
             }
 
@@ -1012,8 +1184,14 @@
             document.getElementById('unlock-password-input').focus();
         }
 
-        function closeNoticeModal() { document.getElementById('notice-modal').classList.add('hidden'); }
-        function closeUnlockModal() { document.getElementById('unlock-modal').classList.add('hidden'); }
+        function closeNoticeModal() {
+            const noticeModal = document.getElementById('notice-modal');
+            if (noticeModal) noticeModal.classList.add('hidden');
+        }
+
+        function closeUnlockModal() {
+            document.getElementById('unlock-modal').classList.add('hidden');
+        }
 
         function verifyUnlockPassword() {
             const val = document.getElementById('unlock-password-input').value;
@@ -1029,14 +1207,20 @@
             }
         }
 
+        // Date formatter for Russian concise format (e.g., "24 окт.")
         function formatDate(timestamp) {
             const d = new Date(timestamp);
             if (isNaN(d)) return timestamp;
             const months = ['янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.', 'июл.', 'авг.', 'сен.', 'окт.', 'нояб.', 'дек.'];
-            return `${d.getDate()} ${months[d.getMonth()]}`;
+            const day = d.getDate();
+            const month = months[d.getMonth()];
+            return `${day} ${month}`;
         }
 
-        function toggleUserSelector() { document.getElementById('user-dropdown').classList.toggle('hidden'); }
+        // User Selection
+        function toggleUserSelector() {
+            document.getElementById('user-dropdown').classList.toggle('hidden');
+        }
 
         function switchUser(name) {
             currentUser = name;
@@ -1051,6 +1235,7 @@
             document.getElementById('check-max').classList.toggle('hidden', currentUser !== 'Max');
         }
 
+        // Rules and Errors Population
         function initRulesAndErrors() {
             const rulesOl = document.getElementById('modal-rules-list');
             rulesOl.innerHTML = '';
@@ -1072,6 +1257,7 @@
             });
         }
 
+        // Step Navigation
         function goToStep(step) {
             currentStep = step;
             document.getElementById('step-1').classList.add('hidden');
@@ -1085,44 +1271,86 @@
 
             if (step === 1) {
                 document.getElementById('step-1').classList.remove('hidden');
-                bar.style.width = '25%'; stepText.innerText = 'ШАГ 1 ИЗ 4: КОЛИЧЕСТВО СДЕЛОК'; stepPercent.innerText = '25%';
+                bar.style.width = '25%';
+                stepText.innerText = 'ШАГ 1 ИЗ 4: КОЛИЧЕСТВО СДЕЛОК';
+                stepPercent.innerText = '25%';
             } else if (step === 2) {
                 document.getElementById('step-2').classList.remove('hidden');
-                bar.style.width = '50%'; stepText.innerText = 'ШАГ 2 ИЗ 4: СОБЛЮДЕНИЕ КОДЕКСА'; stepPercent.innerText = '50%';
+                bar.style.width = '50%';
+                stepText.innerText = 'ШАГ 2 ИЗ 4: СОБЛЮДЕНИЕ КОДЕКСА';
+                stepPercent.innerText = '50%';
             } else if (step === 3) {
                 document.getElementById('step-3-error').classList.remove('hidden');
-                bar.style.width = '75%'; stepText.innerText = 'ШАГ 3 ИЗ 4: ВЫЯВЛЕННЫЕ ОШИБКИ'; stepPercent.innerText = '75%';
+                bar.style.width = '75%';
+                stepText.innerText = 'ШАГ 3 ИЗ 4: ВЫЯВЛЕННЫЕ ОШИБКИ';
+                stepPercent.innerText = '75%';
             } else if (step === 4) {
                 document.getElementById('step-4-upload').classList.remove('hidden');
-                bar.style.width = '100%'; stepText.innerText = 'ШАГ 4 ИЗ 4: СКРИНШОТ И ОПУБЛИКОВАНИЕ'; stepPercent.innerText = '100%';
+                bar.style.width = '100%';
+                stepText.innerText = 'ШАГ 4 ИЗ 4: СКРИНШОТ И ОПУБЛИКОВАНИЕ';
+                stepPercent.innerText = '100%';
             }
         }
 
-        function selectTrades(val) { reportData.trades = val; goToStep(2); }
+        function selectTrades(val) {
+            reportData.trades = val;
+            goToStep(2);
+        }
+
         function selectCompliance(type) {
             reportData.compliance = type;
-            if (type === 'clean') { reportData.error = 'Отсутствуют'; goToStep(4); } else { goToStep(3); }
+            if (type === 'clean') {
+                reportData.error = 'Отсутствуют';
+                goToStep(4);
+            } else {
+                goToStep(3);
+            }
         }
-        function selectError(err) { reportData.error = err; goToStep(4); }
-        function goBackFromUpload() { reportData.compliance === 'clean' ? goToStep(2) : goToStep(3); }
 
+        function selectError(err) {
+            reportData.error = err;
+            goToStep(4);
+        }
+
+        function goBackFromUpload() {
+            if (reportData.compliance === 'clean') {
+                goToStep(2);
+            } else {
+                goToStep(3);
+            }
+        }
+
+        // Image Handling (High Quality Base64)
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const maxDim = 2500; 
-                    let width = img.width; let height = img.height;
-                    if (width > height && width > maxDim) { height *= maxDim / width; width = maxDim; }
-                    else if (height > maxDim) { width *= maxDim / height; height = maxDim; }
-                    canvas.width = width; canvas.height = height;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height && width > maxDim) {
+                        height *= maxDim / width;
+                        width = maxDim;
+                    } else if (height > maxDim) {
+                        width *= maxDim / height;
+                        height = maxDim;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    reportData.image = canvas.toDataURL('image/jpeg', 0.92);
-                    document.getElementById('preview-img').src = reportData.image;
+
+                    const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+                    reportData.image = resizedDataUrl;
+
+                    document.getElementById('preview-img').src = resizedDataUrl;
                     document.getElementById('upload-placeholder').classList.add('hidden');
                     document.getElementById('upload-preview').classList.remove('hidden');
                 };
@@ -1140,66 +1368,109 @@
             document.getElementById('upload-preview').classList.add('hidden');
         }
 
+        // Lightbox Functions
         function openLightbox(src) {
             document.getElementById('lightbox-img').src = src;
             document.getElementById('lightbox-modal').classList.remove('hidden');
         }
-        function closeLightbox() { document.getElementById('lightbox-modal').classList.add('hidden'); }
+        function closeLightbox() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+        }
 
+        // Submitting Report
         function submitReport() {
-            if (!reportData.image) { alert('Прикрепите скриншот ордеров перед публикацией.'); return; }
+            if (!reportData.image) {
+                alert('Пожалуйста, прикрепите скриншот ордеров перед публикацией.');
+                return;
+            }
+
             const timestamp = Date.now();
-            const newEntry = { id: timestamp, author: currentUser, date: formatDate(timestamp), trades: reportData.trades, compliance: reportData.compliance, error: reportData.error, image: reportData.image };
+            const newEntry = {
+                id: timestamp,
+                author: currentUser,
+                date: formatDate(timestamp),
+                trades: reportData.trades,
+                compliance: reportData.compliance,
+                error: reportData.error,
+                image: reportData.image
+            };
 
             if (isFirebaseConnected && dbRef) {
                 window.fbSDK.push(dbRef, newEntry).then(() => {
+                    // Оптимистично добавляем в локальную историю и сразу переключаем UI
                     reportsHistory.unshift(newEntry);
-                    renderReportsFeed(); resetWizard(); initSessionTimer();
-                }).catch(() => saveLocally(newEntry));
-            } else { saveLocally(newEntry); }
+                    renderReportsFeed();
+                    resetWizard();
+                    initSessionTimer(); // <--- Мгновенно переключает блок на карточку завершённого дня
+                }).catch(err => {
+                    console.error("Firebase push error:", err);
+                    saveLocally(newEntry);
+                });
+            } else {
+                saveLocally(newEntry);
+            }
         }
 
         function saveLocally(entry) {
             reportsHistory.unshift(entry);
             localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
-            renderReportsFeed(); resetWizard(); initSessionTimer();
+            renderReportsFeed();
+            resetWizard();
+            initSessionTimer(); // <--- Мгновенно переключает блок
         }
 
+        // Custom Modal Delete Logic
         function requestDeleteReport(id, fbKey) {
             itemToDelete = { id, fbKey };
             document.getElementById('delete-modal').classList.remove('hidden');
         }
-        function closeDeleteModal() { itemToDelete = null; document.getElementById('delete-modal').classList.add('hidden'); }
+
+        function closeDeleteModal() {
+            itemToDelete = null;
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
 
         document.getElementById('confirm-delete-btn').addEventListener('click', () => {
             if (!itemToDelete) return;
+
             const { id, fbKey } = itemToDelete;
+
             if (isFirebaseConnected && fbKey && dbInstance) {
-                window.fbSDK.remove(window.fbSDK.ref(dbInstance, `reports/${fbKey}`)).catch(() => {});
+                const itemRef = window.fbSDK.ref(dbInstance, `reports/${fbKey}`);
+                window.fbSDK.remove(itemRef).catch(err => console.error("Delete error:", err));
             } else {
                 reportsHistory = reportsHistory.filter(item => item.id !== id);
                 localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
                 renderReportsFeed();
             }
+
             closeDeleteModal();
         });
 
         function resetWizard() {
             reportData = { trades: '', compliance: '', error: 'Отсутствуют', image: null, timestamp: '' };
-            removeImage(); goToStep(1);
+            removeImage();
+            goToStep(1);
             document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
         }
 
+        // Функция расчета и рендеринга статистики склонности к системной торговле за текущий месяц
         function updateMonthlyStats() {
             const now = new Date();
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
+
             const monthsNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
             const titleEl = document.getElementById('monthly-stats-title');
             if (titleEl) titleEl.innerText = `Склонность к системной торговле (${monthsNames[currentMonth]} ${currentYear})`;
 
+            // Сортируем историю от старых к новым для правильного хронологического расчёта шкалы
             const sortedReports = [...reportsHistory].sort((a, b) => a.id - b.id);
-            let stats = { 'Vladimir': { clean: 0, violation: 0, score: 0 }, 'Max': { clean: 0, violation: 0, score: 0 } };
+
+            let stats = {
+                'Vladimir': { clean: 0, violation: 0, score: 0 },
+                'Max': { clean: 0, violation: 0, score: 0 }
+            };
 
             sortedReports.forEach(item => {
                 const itemDate = new Date(item.id);
@@ -1208,57 +1479,96 @@
                     if (stats[author]) {
                         if (item.compliance === 'clean') {
                             stats[author].clean++;
+                            // +10% за каждый системный день, максимум 100%
                             stats[author].score = Math.min(100, stats[author].score + 10);
                         } else {
                             stats[author].violation++;
+                            // Снижение на 30% от текущего значения при нарушении
                             stats[author].score = Math.max(0, Math.round(stats[author].score * 0.7));
                         }
                     }
                 }
             });
 
-            ['Vladimir', 'Max'].forEach(user => {
-                const data = stats[user];
-                const key = user.toLowerCase();
-                document.getElementById(`${key}-clean-count`).innerText = data.clean;
-                document.getElementById(`${key}-violation-count`).innerText = data.violation;
-                document.getElementById(`${key}-progress-bar`).style.width = `${data.score}%`;
-                
-                const verdictEl = document.getElementById(`${key}-verdict`);
-                if (verdictEl) {
-                    if (data.violation === 0 && data.score < 50) {
-                        verdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
-                        verdictEl.innerText = `Чистый старт (${data.score}%)`;
-                    } else if (data.score >= 70) {
-                        verdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                        verdictEl.innerText = `Системный (${data.score}%)`;
-                    } else if (data.score >= 40) {
-                        verdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
-                        verdictEl.innerText = `Умеренный (${data.score}%)`;
-                    } else {
-                        verdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20";
-                        verdictEl.innerText = `Вне системы (${data.score}%)`;
-                    }
+            // Рендер для Vladimir
+            const vladData = stats['Vladimir'];
+            document.getElementById('vladimir-clean-count').innerText = vladData.clean;
+            document.getElementById('vladimir-violation-count').innerText = vladData.violation;
+            document.getElementById('vladimir-progress-bar').style.width = `${vladData.score}%`;
+            
+            const vladVerdictEl = document.getElementById('vladimir-score') || document.getElementById('vladimir-verdict');
+            if (vladVerdictEl) {
+                if (vladData.violation === 0 && vladData.score < 50) {
+                    // Начало месяца, срывов не было — идёт чистое накопление
+                    vladVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    vladVerdictEl.innerText = `Чистый старт (${vladData.score}%)`;
+                } else if (vladData.score >= 70) {
+                    vladVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                    vladVerdictEl.innerText = `Системный (${vladData.score}%)`;
+                } else if (vladData.score >= 40) {
+                    vladVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    vladVerdictEl.innerText = `Умеренный (${vladData.score}%)`;
+                } else {
+                    vladVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                    vladVerdictEl.innerText = `Вне системы (${vladData.score}%)`;
                 }
-            });
+            }
+
+            // Рендер для Max
+            const maxData = stats['Max'];
+            document.getElementById('max-clean-count').innerText = maxData.clean;
+            document.getElementById('max-violation-count').innerText = maxData.violation;
+            document.getElementById('max-progress-bar').style.width = `${maxData.score}%`;
+
+            const maxVerdictEl = document.getElementById('max-score') || document.getElementById('max-verdict');
+            if (maxVerdictEl) {
+                if (maxData.violation === 0 && maxData.score < 50) {
+                    // Начало месяца, срывов не было — идёт чистое накопление
+                    maxVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    maxVerdictEl.innerText = `Чистый старт (${maxData.score}%)`;
+                } else if (maxData.score >= 70) {
+                    maxVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                    maxVerdictEl.innerText = `Системный (${maxData.score}%)`;
+                } else if (maxData.score >= 40) {
+                    maxVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    maxVerdictEl.innerText = `Умеренный (${maxData.score}%)`;
+                } else {
+                    maxVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                    maxVerdictEl.innerText = `Вне системы (${maxData.score}%)`;
+                }
+            }
         }
 
+        // Render Feed
         function renderReportsFeed() {
             updateMonthlyStats();
             const container = document.getElementById('reports-feed');
             container.innerHTML = '';
+
             document.getElementById('reports-count').innerText = `${reportsHistory.length} записей`;
 
             if (reportsHistory.length === 0) {
-                container.innerHTML = `<div class="glass-panel p-8 text-center text-gray-400 rounded-xl"><i class="fa-solid fa-folder-open text-3xl mb-2 text-gray-600"></i><p class="text-xs">Журнал пока пуст. Будьте первым, кто сдаст отчёт за сегодня!</p></div>`;
+                container.innerHTML = `
+                    <div class="glass-panel p-8 text-center text-gray-400 rounded-xl">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 text-gray-600"></i>
+                        <p class="text-xs">Журнал пока пуст. Будьте первым, кто сдаст отчёт за сегодня!</p>
+                    </div>
+                `;
                 return;
             }
 
             reportsHistory.forEach(item => {
                 const isClean = item.compliance === 'clean';
+                
                 const badgeHtml = isClean 
-                    ? `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/35"><i class="fa-solid fa-circle-check text-emerald-400"></i><span>Системно</span></div>`
-                    : `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/35" style="text-wrap: nowrap;"><i class="fa-solid fa-circle-xmark text-rose-400"></i><span>Блок 1 день</span></div>`;
+                    ? `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/35">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                        <span>Системно</span>
+                       </div>`
+                    : `<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/35" style="text-wrap: nowrap;">
+                        <i class="fa-solid fa-circle-xmark text-rose-400"></i>
+                        <span>Блок 1 день</span>
+                       </div>`;
 
                 const isMyPost = item.author === currentUser;
                 const authorBadge = isMyPost
@@ -1267,42 +1577,75 @@
 
                 const row = document.createElement('div');
                 row.className = "glass-panel rounded-xl border border-brand-border/80 overflow-hidden transition";
+
                 row.innerHTML = `
                     <div onclick="toggleAccordion(${item.id})" class="p-4 flex items-center justify-between cursor-pointer record-header transition">
                         <div>
-                            <div class="flex items-center space-x-2 text-xs">${authorBadge}<span class="text-gray-400 font-medium">${item.date}</span></div>
+                            <div class="flex items-center space-x-2 text-xs">
+                                ${authorBadge}
+                                <span class="text-gray-400 font-medium">${item.date}</span>
+                            </div>
                             <div class="text-sm font-semibold text-white mt-1">${item.trades}</div>
                         </div>
-                        <div class="flex items-center space-x-3">${badgeHtml}<i id="chevron-${item.id}" class="fa-solid fa-chevron-down text-gray-500 text-xs transition-transform duration-300"></i></div>
+
+                        <div class="flex items-center space-x-3">
+                            ${badgeHtml}
+                            <i id="chevron-${item.id}" class="fa-solid fa-chevron-down text-gray-500 text-xs transition-transform duration-300"></i>
+                        </div>
                     </div>
+
                     <div id="body-${item.id}" class="accordion-body">
                         <div class="border-t border-brand-border/50 p-4 sm:p-5 bg-brand-card/40 space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                                 <div class="space-y-2">
-                                    <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border"><span class="text-gray-400 block mb-1">📊 Количество сделок:</span><span class="font-semibold text-white text-sm">${item.trades}</span></div>
-                                    <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border"><span class="text-gray-400 block mb-1">⚖️ Соблюдение кодекса:</span><span class="font-semibold ${isClean ? 'text-emerald-400' : 'text-rose-400'} text-sm">${isClean ? '✅ 100% По системе' : '❌ Нарушение кодекса'}</span></div>
-                                    <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border"><span class="text-gray-400 block mb-1">🔍 Выявленные ошибки:</span><span class="font-semibold text-white text-sm">${item.error}</span></div>
+                                    <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
+                                        <span class="text-gray-400 block mb-1">📊 Количество сделок:</span>
+                                        <span class="font-semibold text-white text-sm">${item.trades}</span>
+                                    </div>
+
+                                    <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
+                                        <span class="text-gray-400 block mb-1">⚖️ Соблюдение кодекса:</span>
+                                        <span class="font-semibold ${isClean ? 'text-emerald-400' : 'text-rose-400'} text-sm">
+                                            ${isClean ? '✅ 100% По системе' : '❌ Нарушение кодекса'}
+                                        </span>
+                                    </div>
+
+                                    <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
+                                        <span class="text-gray-400 block mb-1">🔍 Выявленные ошибки:</span>
+                                        <span class="font-semibold text-white text-sm">${item.error}</span>
+                                    </div>
                                 </div>
+
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-xs text-gray-400">
                                         <span>📸 Подтверждение ордеров:</span>
-                                        <button onclick="openLightbox('${item.image}')" class="text-amber-400 hover:text-amber-300 flex items-center space-x-1 text-[11px] font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 transition"><i class="fa-solid fa-expand"></i><span>Увеличить</span></button>
+                                        <button onclick="openLightbox('${item.image}')" class="text-amber-400 hover:text-amber-300 flex items-center space-x-1 text-[11px] font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 transition">
+                                            <i class="fa-solid fa-expand"></i>
+                                            <span>Увеличить</span>
+                                        </button>
                                     </div>
                                     <div class="rounded-xl overflow-hidden border border-brand-border bg-black/40 p-1 cursor-pointer" onclick="openLightbox('${item.image}')">
                                         <img src="${item.image}" class="w-full max-h-56 object-contain rounded-lg hover:opacity-90 transition">
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Delete Button Footer inside Accordion with proper spacing -->
                             <div class="pt-3 border-t border-brand-border/40 flex justify-end">
-                                <button onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="w-full sm:w-auto text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-4 py-2.5 sm:py-1.5 rounded-lg border border-rose-500/20 flex items-center justify-center space-x-1.5 transition"><i class="fa-solid fa-trash-can"></i><span>Удалить запись</span></button>
+                                <button onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="w-full sm:w-auto text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-4 py-2.5 sm:py-1.5 rounded-lg border border-rose-500/20 flex items-center justify-center space-x-1.5 transition">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span>Удалить запись</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 `;
+
                 container.appendChild(row);
             });
         }
 
+        // Плавный аккордеон с лимитом в 2 одновременно открытых отчёта
         function toggleAccordion(id) {
             const body = document.getElementById(`body-${id}`);
             const chevron = document.getElementById(`chevron-${id}`);
@@ -1316,17 +1659,26 @@
                 body.classList.add('open');
                 chevron.classList.add('rotate-180');
                 openAccordions.push(id);
+
                 if (openAccordions.length > 2) {
                     const oldestId = openAccordions.shift();
-                    document.getElementById(`body-${oldestId}`)?.classList.remove('open');
-                    document.getElementById(`chevron-${oldestId}`)?.classList.remove('rotate-180');
+                    const oldBody = document.getElementById(`body-${oldestId}`);
+                    const oldChevron = document.getElementById(`chevron-${oldestId}`);
+                    if (oldBody) oldBody.classList.remove('open');
+                    if (oldChevron) oldChevron.classList.remove('rotate-180');
                 }
             }
         }
 
-        function toggleRuleModal() { document.getElementById('rule-modal').classList.toggle('hidden'); }
-        function toggleFirebaseModal() { document.getElementById('firebase-modal').classList.toggle('hidden'); }
+        function toggleRuleModal() {
+            document.getElementById('rule-modal').classList.toggle('hidden');
+        }
 
+        function toggleFirebaseModal() {
+            document.getElementById('firebase-modal').classList.toggle('hidden');
+        }
+
+        // Вшитые настройки для автоматической синхронизации с братом
         const DEFAULT_CONFIG = {
             databaseURL: "https://trading-journal-bb826-default-rtdb.firebaseio.com/",
             apiKey: "AIzaSyBCJAnn1JlzPgfm1Fxd-RRGksk5YdgTjkc",
@@ -1335,18 +1687,33 @@
         
         function loadFirebaseConfig() {
             let savedConfig = localStorage.getItem('firebase_sync_config');
-            if (!savedConfig) { savedConfig = JSON.stringify(DEFAULT_CONFIG); localStorage.setItem('firebase_sync_config', savedConfig); }
-            try {
-                const cfg = JSON.parse(savedConfig);
-                document.getElementById('fb-database-url').value = cfg.databaseURL || '';
-                document.getElementById('fb-api-key').value = cfg.apiKey || '';
-                document.getElementById('fb-project-id').value = cfg.projectId || '';
-                initFirebase(cfg);
-            } catch (e) { fallbackToLocal(); }
+            if (!savedConfig) {
+                savedConfig = JSON.stringify(DEFAULT_CONFIG);
+                localStorage.setItem('firebase_sync_config', savedConfig);
+            }
+            
+            if (savedConfig) {
+                try {
+                    const cfg = JSON.parse(savedConfig);
+                    document.getElementById('fb-database-url').value = cfg.databaseURL || '';
+                    document.getElementById('fb-api-key').value = cfg.apiKey || '';
+                    document.getElementById('fb-project-id').value = cfg.projectId || '';
+                    
+                    initFirebase(cfg);
+                } catch (e) {
+                    fallbackToLocal();
+                }
+            } else {
+                fallbackToLocal();
+            }
         }
 
         function initFirebase(cfg) {
-            if (!window.fbSDK || !cfg.databaseURL) { fallbackToLocal(); return; }
+            if (!window.fbSDK || !cfg.databaseURL) {
+                fallbackToLocal();
+                return;
+            }
+
             try {
                 const app = window.fbSDK.initializeApp(cfg, 'tradingApp');
                 dbInstance = window.fbSDK.getDatabase(app);
@@ -1354,7 +1721,14 @@
 
                 window.fbSDK.onValue(dbRef, (snapshot) => {
                     const data = snapshot.val();
-                    reportsHistory = data ? Object.entries(data).map(([key, val]) => ({ ...val, fbKey: key })).sort((a, b) => b.id - a.id) : [];
+                    if (data) {
+                        reportsHistory = Object.entries(data).map(([key, val]) => ({
+                            ...val,
+                            fbKey: key
+                        })).sort((a, b) => b.id - a.id);
+                    } else {
+                        reportsHistory = [];
+                    }
                     renderReportsFeed();
                 });
 
@@ -1362,16 +1736,25 @@
                 const badge = document.getElementById('sync-status-badge');
                 badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/35";
                 badge.innerHTML = '<i class="fa-solid fa-wifi mr-1"></i> Live Sync';
-            } catch (err) { fallbackToLocal(); }
+            } catch (err) {
+                console.error("Firebase init failed:", err);
+                fallbackToLocal();
+            }
         }
 
         function fallbackToLocal() {
-            isFirebaseConnected = false; dbInstance = null;
+            isFirebaseConnected = false;
+            dbInstance = null;
             const badge = document.getElementById('sync-status-badge');
             badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700";
             badge.innerHTML = '<i class="fa-solid fa-hard-drive mr-1"></i> Local';
+
             const localData = localStorage.getItem('local_trading_reports');
-            reportsHistory = localData ? JSON.parse(localData).map(item => ({ ...item, fbKey: null })) : [];
+            if (localData) {
+                reportsHistory = JSON.parse(localData).map(item => ({ ...item, fbKey: null }));
+            } else {
+                reportsHistory = [];
+            }
             renderReportsFeed();
         }
 
@@ -1379,18 +1762,35 @@
             const dbUrl = document.getElementById('fb-database-url').value.trim();
             const apiKey = document.getElementById('fb-api-key').value.trim();
             const projId = document.getElementById('fb-project-id').value.trim();
-            if (!dbUrl) { alert('Укажите Database URL'); return; }
-            localStorage.setItem('firebase_sync_config', JSON.stringify({ databaseURL: dbUrl, apiKey, projectId: projId }));
-            toggleFirebaseModal(); location.reload();
+
+            if (!dbUrl) {
+                alert('Укажите хотя бы Database URL');
+                return;
+            }
+
+            const cfg = { databaseURL: dbUrl, apiKey: apiKey, projectId: projId };
+            localStorage.setItem('firebase_sync_config', JSON.stringify(cfg));
+            toggleFirebaseModal();
+            location.reload();
         }
 
-        function clearFirebaseConfig() { localStorage.removeItem('firebase_sync_config'); toggleFirebaseModal(); fallbackToLocal(); }
+        function clearFirebaseConfig() {
+            localStorage.removeItem('firebase_sync_config');
+            toggleFirebaseModal();
+            fallbackToLocal();
+        }
+        let backtestImageData = null;
 
-        let backtestImage1 = null;
+       let backtestImage1 = null;
         let backtestImage2 = null;
 
+        // Открытие модального окна полезных выходных (с блокировкой скролла страницы)
         function openWeekendModal() {
+            renderBacktestHistory();
+            // 1. Блокируем прокрутку основного сайта
             document.body.style.overflow = 'hidden';
+
+            // 2. Поиск последней ошибки текущего пользователя за неделю
             const userReports = reportsHistory.filter(item => item.author === currentUser);
             const lastViolation = userReports.find(item => item.compliance !== 'clean');
 
@@ -1404,47 +1804,31 @@
                 focusBox.classList.add('hidden');
             }
 
-            updateWeekendTitle();
-            renderBacktestStats();
+            renderBacktestStats(); // Обновляем квартальную статистику в модалке
             updateWeekendProgress();
-            renderBacktestHistory();
             document.getElementById('weekend-modal').classList.remove('hidden');
         }
 
         function closeWeekendModal() {
+            // Возвращаем прокрутку сайту
             document.body.style.overflow = '';
             document.getElementById('weekend-modal').classList.add('hidden');
         }
 
-        // Динамический заголовок с датами выходных (например, 25 и 26 октября)
-        function updateWeekendTitle() {
-            const now = new Date();
-            const day = now.getDay();
-            let sat = new Date(now);
-            let sun = new Date(now);
-
-            if (day === 6) { sun.setDate(sat.getDate() + 1); }
-            else if (day === 0) { sat.setDate(sun.getDate() - 1); }
-            else { sat.setDate(now.getDate() - (day === 0 ? 6 : day - 6)); sun.setDate(sat.getDate() + 1); }
-
-            const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-            const titleSpan = document.getElementById('current-weekend-title');
-            if (titleSpan) {
-                titleSpan.innerText = `Статистика бэктестов за выходные (${sat.getDate()} и ${sun.getDate()} ${months[sun.getMonth()]})`;
-            }
-        }
-
+        // Обновление индекса полезности (70% чек-лист + 15% за 1-й месяц + 15% за 2-й месяц = 100%)
         function updateWeekendProgress() {
             const checkboxes = document.querySelectorAll('.weekend-check');
             let checkedCount = 0;
             checkboxes.forEach(cb => { if (cb.checked) checkedCount++; });
 
-            let score = Math.round((checkedCount / checkboxes.length) * 70);
-            if (backtestImage1) score += 15;
-            if (backtestImage2) score += 15;
+            let score = Math.round((checkedCount / checkboxes.length) * 70); // до 70% за чек-лист
+            
+            if (backtestImage1) score += 15; // +15% за первый месяц (итог 85% с чек-листом)
+            if (backtestImage2) score += 15; // +15% за второй месяц (итог 100%)
 
             document.getElementById('weekend-usefulness-score').innerText = `${score}%`;
             
+            // Обновляем шкалу прогресса за эти выходные в модалке
             const sessionBar = document.getElementById('weekend-session-bar');
             const sessionStatus = document.getElementById('weekend-session-status');
             if (sessionBar) sessionBar.style.width = `${score}%`;
@@ -1458,25 +1842,9 @@
                     sessionStatus.innerText = 'Загрузите бэктесты';
                 }
             }
-
-            // Логика разблокировки второго слота бэктеста
-            const slot2 = document.getElementById('slot-container-2');
-            const slotIcon2 = document.getElementById('slot-icon-2');
-            const slotText2 = document.getElementById('slot-text-2');
-            
-            if (backtestImage1) {
-                slot2.classList.remove('slot-locked');
-                slot2.classList.add('slot-unlocked');
-                if (slotIcon2) slotIcon2.className = "fa-solid fa-file-circle-plus text-amber-400 text-lg animate-bounce";
-                if (slotText2) slotText2.innerText = "Месяц 2 — для 100% пользы! (+15%)";
-            } else {
-                slot2.classList.remove('slot-unlocked');
-                slot2.classList.add('slot-locked');
-                if (slotIcon2) slotIcon2.className = "fa-solid fa-lock text-gray-400 text-lg";
-                if (slotText2) slotText2.innerText = "Сначала загрузите Месяц 1";
-            }
         }
 
+        // Обработка загрузки скриншотов бэктеста (1 или 2)
         function handleBacktestImage(slot, event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1488,7 +1856,7 @@
                     document.getElementById('backtest-img-1').src = backtestImage1;
                     document.getElementById('backtest-ph-1').classList.add('hidden');
                     document.getElementById('backtest-prev-wrap-1').classList.remove('hidden');
-                } else if (slot === 2 && backtestImage1) {
+                } else {
                     backtestImage2 = e.target.result;
                     document.getElementById('backtest-img-2').src = backtestImage2;
                     document.getElementById('backtest-ph-2').classList.add('hidden');
@@ -1499,11 +1867,14 @@
             reader.readAsDataURL(file);
         }
 
+        // Сохранение активности выходного дня
         function saveWeekendActivity() {
             if (!backtestImage1 && !backtestImage2) {
                 alert('Пожалуйста, загрузите хотя бы один скриншот бэктеста FX Replay.');
                 return;
             }
+
+            renderBacktestHistory();
 
             const timestamp = Date.now();
             let backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
@@ -1517,6 +1888,7 @@
 
             localStorage.setItem('local_backtest_reports', JSON.stringify(backtests));
 
+            // Сброс полей текущих выходных
             backtestImage1 = null;
             backtestImage2 = null;
             document.getElementById('backtest-prev-wrap-1').classList.add('hidden');
@@ -1529,17 +1901,19 @@
 
             updateWeekendProgress();
             renderBacktestStats();
-            renderBacktestHistory();
 
+            // Мягкое сообщение внутри модалки вместо alert
             const scoreEl = document.getElementById('weekend-usefulness-score');
             if (scoreEl) {
                 scoreEl.innerHTML = '<span class="text-emerald-400">Слава Богу! Результаты выходных зафиксированы.</span>';
             }
         }
 
+        // Обновление таймера обратного отсчета до открытия Франкфурта (Пн, 09:00)
         function updateWeekendCountdown() {
             const now = new Date();
             const day = now.getDay();
+            
             let target = new Date(now);
             let daysUntilMonday = (1 - day + 7) % 7;
             if (daysUntilMonday === 0 && now.getHours() >= 9) daysUntilMonday = 7;
@@ -1560,26 +1934,18 @@
             }
         }
 
+        // Запуск таймера каждую секунду
         setInterval(updateWeekendCountdown, 1000);
 
+        // Рендер статистики бэктестов за квартал (3 месяца, база до 24 месяцев) в модалке
         function renderBacktestStats() {
             const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            
             const now = new Date();
             const currentQuarter = Math.floor(now.getMonth() / 3);
             const currentYear = now.getFullYear();
 
-            // Расчет за текущие выходные
-            const todayStr = formatDate(now.getTime());
-            const weekendBacktests = backtests.filter(item => item.date === todayStr);
-            let vladWeekCount = weekendBacktests.filter(i => i.author === 'Vladimir').length;
-            let maxWeekCount = weekendBacktests.filter(i => i.author === 'Max').length;
-
-            document.getElementById('vlad-weekend-count').innerText = `${vladWeekCount} / 2 мес.`;
-            document.getElementById('vlad-weekend-bar').style.width = `${Math.min(100, (vladWeekCount / 2) * 100)}%`;
-            document.getElementById('max-weekend-count').innerText = `${maxWeekCount} / 2 мес.`;
-            document.getElementById('max-weekend-bar').style.width = `${Math.min(100, (maxWeekCount / 2) * 100)}%`;
-
-            // Расчет за квартал
+            // Фильтруем за текущий квартал
             const quarterBacktests = backtests.filter(item => {
                 const d = new Date(item.id);
                 return Math.floor(d.getMonth() / 3) === currentQuarter && d.getFullYear() === currentYear;
@@ -1587,66 +1953,67 @@
 
             let vladCount = quarterBacktests.filter(i => i.author === 'Vladimir').length;
             let maxCount = quarterBacktests.filter(i => i.author === 'Max').length;
-            const maxQuarterTarget = 24;
+            const maxQuarterTarget = 24; // План квартала (макс. 24 месяца)
 
+            // Vladimir stats UI
             document.getElementById('vlad-backtest-count').innerText = `${vladCount} / ${maxQuarterTarget} мес.`;
-            document.getElementById('vlad-backtest-bar').style.width = `${Math.min(100, (vladCount / maxQuarterTarget) * 100)}%`;
+            const vladPercent = Math.min(100, (vladCount / maxQuarterTarget) * 100);
+            document.getElementById('vlad-backtest-bar').style.width = `${vladPercent}%`;
 
+            // Max stats UI
             document.getElementById('max-backtest-count').innerText = `${maxCount} / ${maxQuarterTarget} мес.`;
-            document.getElementById('max-backtest-bar').style.width = `${Math.min(100, (maxCount / maxQuarterTarget) * 100)}%`;
+            const maxPercent = Math.min(100, (maxCount / maxQuarterTarget) * 100);
+            document.getElementById('max-backtest-bar').style.width = `${maxPercent}%`;
         }
 
-        // Рендер архива в две отдельные колонки для Владимира и Макса, сгруппированные по выходным
+        // Рендер истории скриншотов бэктестов для текущего пользователя, сгруппированных по выходным
         function renderBacktestHistory() {
-            const vladFeed = document.getElementById('backtest-history-vladimir');
-            const maxFeed = document.getElementById('backtest-history-max');
-            if (!vladFeed || !maxFeed) return;
-
-            vladFeed.innerHTML = '';
-            maxFeed.innerHTML = '';
+            const feed = document.getElementById('backtest-history-feed');
+            if (!feed) return;
+            feed.innerHTML = '';
 
             const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
+            
+            // Фильтруем строго для текущего пользователя
+            const userBacktests = backtests.filter(item => item.author === currentUser);
 
-            function populateColumn(feedEl, authorName) {
-                const userTests = backtests.filter(item => item.author === authorName);
-                if (userTests.length === 0) {
-                    feedEl.innerHTML = '<div class="text-[11px] text-gray-500 text-center py-2">Нет архива бэктестов.</div>';
-                    return;
-                }
-
-                let grouped = {};
-                userTests.forEach(item => {
-                    if (!grouped[item.date]) grouped[item.date] = [];
-                    grouped[item.date].push(item);
-                });
-
-                Object.entries(grouped).forEach(([dateStr, items]) => {
-                    const groupDiv = document.createElement('div');
-                    groupDiv.className = "p-2 rounded-lg bg-brand-dark/40 border border-brand-border/40 space-y-1.5 text-xs";
-                    
-                    let imagesHtml = '';
-                    items.forEach((item, idx) => {
-                        imagesHtml += `
-                            <div class="relative group cursor-pointer inline-block mr-1.5 mb-1.5" onclick="openLightbox('${item.image}')" title="Кликните для увеличения">
-                                <img src="${item.image}" class="w-14 h-14 object-cover rounded-lg border border-brand-border group-hover:border-amber-400 transition shadow-md">
-                                <span class="absolute bottom-0.5 right-0.5 bg-black/80 text-[8px] text-amber-300 px-1 rounded font-mono">#${idx + 1}</span>
-                            </div>
-                        `;
-                    });
-
-                    groupDiv.innerHTML = `
-                        <div class="flex items-center justify-between text-gray-400 font-medium text-[10px]">
-                            <span>📅 Выходные: ${dateStr}</span>
-                            <span class="text-amber-400 font-semibold">${items.length} скр.</span>
-                        </div>
-                        <div class="flex flex-wrap items-center pt-1">${imagesHtml}</div>
-                    `;
-                    feedEl.appendChild(groupDiv);
-                });
+            if (userBacktests.length === 0) {
+                feed.innerHTML = '<div class="text-xs text-gray-500 text-center py-2">Нет сохраненных скриншотов бэктестов. Загрузите их за текущие выходные.</div>';
+                return;
             }
 
-            populateColumn(vladFeed, 'Vladimir');
-            populateColumn(maxFeed, 'Max');
+            // Группируем по дате (выходным)
+            let grouped = {};
+            userBacktests.forEach(item => {
+                if (!grouped[item.date]) grouped[item.date] = [];
+                grouped[item.date].push(item);
+            });
+
+            Object.entries(grouped).forEach(([dateStr, items]) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = "p-2.5 rounded-lg bg-brand-card/50 border border-brand-border/40 space-y-2 text-xs";
+                
+                let imagesHtml = '';
+                items.forEach((item, idx) => {
+                    imagesHtml += `
+                        <div class="relative group cursor-pointer inline-block mr-2 mb-2" onclick="openLightbox('${item.image}')" title="Кликните для увеличения">
+                            <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg border border-brand-border group-hover:border-amber-400 transition shadow-md">
+                            <span class="absolute bottom-0.5 right-0.5 bg-black/80 text-[9px] text-amber-300 px-1 rounded font-mono">#${idx + 1}</span>
+                        </div>
+                    `;
+                });
+
+                groupDiv.innerHTML = `
+                    <div class="flex items-center justify-between text-gray-400 font-medium text-[11px]">
+                        <span>📅 Выходные: ${dateStr}</span>
+                        <span class="text-amber-400 font-semibold">${items.length} скриншот(а)</span>
+                    </div>
+                    <div class="flex flex-wrap items-center pt-1">
+                        ${imagesHtml}
+                    </div>
+                `;
+                feed.appendChild(groupDiv);
+            });
         }
     </script>
 </body>
