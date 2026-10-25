@@ -1046,12 +1046,16 @@
             "10. Перезаход"
         ];
 
-        window.addEventListener('load', () => {
+       window.addEventListener('load', () => {
             updateUserUI();
             initRulesAndErrors();
             loadFirebaseConfig();
             initSessionTimer();
-            setInterval(initSessionTimer, 1000); // Обновление таймера каждую секунду
+            updateWeekendCountdown(); // <--- Добавь сюда
+            setInterval(() => {
+                initSessionTimer();
+                updateWeekendCountdown(); // <--- И сюда каждую секунду
+            }, 1000); 
         });
 
        // Торговая сессия, проверка завершённости дня и логика 1-дневного Блока
@@ -2413,6 +2417,52 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
                 alert('Дополнительный бэктест успешно сохранен в архив и статистику!');
             };
             reader.readAsDataURL(file);
+        }
+
+        // Таймер обратного отсчета до старта сессии Франкфурта (понедельник, 09:00)
+        function updateWeekendCountdown() {
+            const now = new Date();
+            const day = now.getDay(); // 0 - ВС, 1 - ПН, ..., 6 - СБ
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            // Вычисляем, сколько времени осталось до ближайшего понедельника 09:00
+            let target = new Date(now);
+            
+            if (day === 6) { // Суббота -> до понедельника 2 дня
+                target.setDate(now.getDate() + 2);
+            } else if (day === 0) { // Воскресенье -> до понедельника 1 день
+                target.setDate(now.getDate() + 1);
+            } else if (day >= 1 && day <= 5) { // Будни (если вдруг открыто в будни)
+                if (hours >= 9) target.setDate(now.getDate() + (1 - day + 7) % 7);
+            }
+            
+            target.setHours(9, 0, 0, 0);
+
+            // Если сегодня понедельник и уже больше 09:00, целимся на следующий понедельник (если это крайний случай)
+            if (target <= now && day === 1) {
+                target.setDate(target.getDate() + 7);
+            }
+
+            const diff = target - now;
+            if (diff <= 0) {
+                const el = document.getElementById('weekend-countdown-timer');
+                if (el) el.innerText = "Сессия открыта!";
+                return;
+            }
+
+            const dDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const dHours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const dMins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const dSecs = Math.floor((diff % (1000 * 60)) / 1000);
+
+            let timeString = "";
+            if (dDays > 0) timeString += `${dDays}д `;
+            timeString += `${String(dHours).padStart(2, '0')}ч ${String(dMins).padStart(2, '0')}мин ${String(dSecs).padStart(2, '0')}сек`;
+
+            const timerEl = document.getElementById('weekend-countdown-timer');
+            if (timerEl) timerEl.innerText = timeString;
         }
     </script>
 </body>
