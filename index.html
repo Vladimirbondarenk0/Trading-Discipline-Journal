@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ru" class="dark">
 <head>
@@ -108,67 +109,6 @@
         .step-transition {
             transition: all 0.4s ease-in-out;
         }
-
-        /* ==========================================
-       СТИЛЬНЫЕ АНИМИРОВАННЫЕ ЧЕКБОКСЫ И ТАЙМЕР
-       ========================================== */
-    .custom-checkbox-wrap input[type="checkbox"]:checked + .custom-checkbox {
-        background-color: #F3BA2F;
-        border-color: #F3BA2F;
-        box-shadow: 0 0 12px rgba(243, 186, 47, 0.45);
-        transform: scale(1.08);
-    }
-    .custom-checkbox-wrap input[type="checkbox"]:checked + .custom-checkbox i {
-        opacity: 1;
-        transform: scale(1);
-    }
-    .custom-checkbox {
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    /* Плавное появление последовательных блоков */
-    .checklist-step-locked {
-        opacity: 0.4;
-        pointer-events: none;
-        filter: grayscale(60%);
-        transition: all 0.4s ease;
-    }
-    .checklist-step-unlocked {
-        opacity: 1;
-        pointer-events: auto;
-        filter: none;
-        transition: all 0.4s ease;
-    }
-
-        /* Стили для выделения чекбокса при checked */
-    .custom-checkbox-wrap input[type="checkbox"]:checked + .custom-checkbox {
-        background-color: #F3BA2F;
-        border-color: #F3BA2F;
-        box-shadow: 0 0 12px rgba(243, 186, 47, 0.45);
-        transform: scale(1.08);
-    }
-    .custom-checkbox-wrap input[type="checkbox"]:checked + .custom-checkbox i {
-        opacity: 1;
-        transform: scale(1);
-    }
-    .custom-checkbox {
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    /* Состояния заблокированных и разблокированных блоков */
-    .checklist-step-locked {
-        opacity: 0.4;
-        pointer-events: none;
-        filter: grayscale(60%);
-        transition: all 0.4s ease;
-    }
-    .checklist-step-unlocked {
-        opacity: 1;
-        pointer-events: auto;
-        filter: none;
-        transition: all 0.4s ease;
-        cursor: pointer;
-    }
 
         /* Мобильная адаптация */
         @media (max-width: 640px) {
@@ -759,59 +699,30 @@
                     <span>Чек-лист духовного и технического настроя</span>
                 </h4>
 
-               <!-- 2. Чек-лист микронапоминаний с последовательным таймером чтения -->
-                <div class="space-y-3" id="weekend-checklist-container">
-                    <!-- Блок 1 (Всегда активен, клик по всему блоку) -->
-                    <div id="check-block-1" onclick="handleBlockClick(1)" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all cursor-pointer hover:border-amber-400/40">
-                        <div class="flex items-start space-x-3">
-                            <div class="custom-checkbox-wrap mt-0.5">
-                                <input type="checkbox" id="chk-1" class="hidden">
-                                <label for="chk-1" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-pointer transition-all pointer-events-none">
-                                    <i class="fa-solid fa-check text-[10px] text-black opacity-0 scale-50 transition-all"></i>
-                                </label>
-                            </div>
-                            <div class="flex-1">
-                                <strong class="text-white text-xs block mb-0.5">1. Молитва Капитуляции и покой духа</strong>
-                                <p class="text-xs text-gray-300 leading-relaxed">Передача результата и контроля в руки Мастера. Моё «я» не ищет самоутверждения в профите.</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="space-y-2 text-xs" id="weekend-checklist-container">
+                    <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
+                        <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
+                        <span class="text-gray-300 leading-relaxed">
+                            <strong class="text-white block mb-0.5">1. Молитва Капитуляции и покой духа</strong>
+                            Передача результата и контроля в руки Мастера. Моё «я» не ищет самоутверждения в профите.
+                        </span>
+                    </label>
 
-                    <!-- Блок 2 (Изначально заблокирован) -->
-                    <div id="check-block-2" onclick="handleBlockClick(2)" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all checklist-step-locked cursor-not-allowed">
-                        <div class="flex items-start space-x-3">
-                            <div class="custom-checkbox-wrap mt-0.5">
-                                <input type="checkbox" id="chk-2" class="hidden" disabled>
-                                <label for="chk-2" id="label-chk-2" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-not-allowed transition-all pointer-events-none">
-                                    <i class="fa-solid fa-check text-[10px] text-black opacity-0 scale-50 transition-all"></i>
-                                </label>
-                            </div>
-                            <div class="flex-1">
-                                <strong id="title-2" class="text-gray-400 text-xs block mb-0.5">2. Жесткий лимит риска (1% = $50)</strong>
-                                <p id="desc-2" class="text-xs text-gray-500 italic">Отметься в предыдущем напоминании, чтобы открыть этот блок.</p>
-                            </div>
-                        </div>
-                        <!-- Линия таймера чтения снизу -->
-                        <div class="absolute bottom-0 left-0 h-[2px] bg-amber-500 w-0" id="timer-line-2"></div>
-                    </div>
+                    <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
+                        <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
+                        <span class="text-gray-300 leading-relaxed">
+                            <strong class="text-white block mb-0.5">2. Жесткий лимит риска (1% = $50)</strong>
+                            Риск зафиксирован для полного устранения азарта и сохранения эмоциональной устойчивости.
+                        </span>
+                    </label>
 
-                    <!-- Блок 3 (Изначально заблокирован) -->
-                    <div id="check-block-3" onclick="handleBlockClick(3)" class="p-3.5 rounded-xl bg-brand-dark/50 border border-brand-border/60 relative overflow-hidden transition-all checklist-step-locked cursor-not-allowed">
-                        <div class="flex items-start space-x-3">
-                            <div class="custom-checkbox-wrap mt-0.5">
-                                <input type="checkbox" id="chk-3" class="hidden" disabled>
-                                <label for="chk-3" id="label-chk-3" class="custom-checkbox w-5 h-5 rounded-md border border-brand-border bg-brand-card flex items-center justify-center cursor-not-allowed transition-all pointer-events-none">
-                                    <i class="fa-solid fa-check text-[10px] text-black opacity-0 scale-50 transition-all"></i>
-                                </label>
-                            </div>
-                            <div class="flex-1">
-                                <strong id="title-3" class="text-gray-400 text-xs block mb-0.5">3. Вход строго по правилу AMD</strong>
-                                <p id="desc-3" class="text-xs text-gray-500 italic">Отметься в предыдущем напоминании, чтобы открыть этот блок.</p>
-                            </div>
-                        </div>
-                        <!-- Линия таймера чтения снизу -->
-                        <div class="absolute bottom-0 left-0 h-[2px] bg-amber-500 w-0" id="timer-line-3"></div>
-                    </div>
+                    <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
+                        <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
+                        <span class="text-gray-300 leading-relaxed">
+                            <strong class="text-white block mb-0.5">3. Вход строго по правилу AMD</strong>
+                            Только после полного снятия ликвидности Азии и подтверждения инвертированным имбалансом.
+                        </span>
+                    </label>
                 </div>
             </div>
 
@@ -832,12 +743,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <!-- Бэктест 1 (Всегда активен) -->
                     <div id="slot-container-1" class="border-2 border-dashed border-brand-border hover:border-amber-400/50 rounded-xl p-3 text-center bg-brand-card/30 transition cursor-pointer relative">
-                        <input type="file" id="backtest-input-1" accept="image/*,.heic,.heif" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" onchange="handleBacktestImage(1, event)">
-                        <div id="backtest-ph-1" class="space-y-1 relative z-10 pointer-events-none">
+                        <input type="file" id="backtest-input-1" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBacktestImage(1, event)">
+                        <div id="backtest-ph-1" class="space-y-1">
                             <i class="fa-solid fa-file-image text-amber-400 text-lg"></i>
                             <div class="text-[11px] text-gray-200 font-medium">Скриншот: Месяц 1 (+15%)</div>
                         </div>
-                        <div id="backtest-prev-wrap-1" class="hidden relative inline-block z-10">
+                        <div id="backtest-prev-wrap-1" class="hidden relative inline-block">
                             <img id="backtest-img-1" src="" class="max-h-24 rounded-lg border border-brand-border object-contain">
                             <span class="absolute bottom-1 right-1 bg-emerald-500 text-black text-[9px] font-bold px-1.5 rounded">Готово</span>
                         </div>
@@ -845,12 +756,12 @@
 
                     <!-- Бэктест 2 (Заблокирован, пока не загружен 1-й) -->
                     <div id="slot-container-2" class="border-2 border-dashed border-brand-border rounded-xl p-3 text-center bg-brand-card/30 transition cursor-pointer relative slot-locked">
-                        <input type="file" id="backtest-input-2" accept="image/*,.heic,.heif" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" onchange="handleBacktestImage(2, event)">
-                        <div id="backtest-ph-2" class="space-y-1 relative z-10 pointer-events-none">
+                        <input type="file" id="backtest-input-2" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBacktestImage(2, event)">
+                        <div id="backtest-ph-2" class="space-y-1">
                             <i id="slot-icon-2" class="fa-solid fa-lock text-gray-400 text-lg"></i>
                             <div id="slot-text-2" class="text-[11px] text-gray-400 font-medium">Сначала загрузите Месяц 1</div>
                         </div>
-                        <div id="backtest-prev-wrap-2" class="hidden relative inline-block z-10">
+                        <div id="backtest-prev-wrap-2" class="hidden relative inline-block">
                             <img id="backtest-img-2" src="" class="max-h-24 rounded-lg border border-brand-border object-contain">
                             <span class="absolute bottom-1 right-1 bg-emerald-500 text-black text-[9px] font-bold px-1.5 rounded">Готово</span>
                         </div>
@@ -1077,17 +988,12 @@
             "10. Перезаход"
         ];
 
-        // Запуск при загрузке страницы (инициализация таймеров и интерфейса)
         window.addEventListener('load', () => {
             updateUserUI();
             initRulesAndErrors();
             loadFirebaseConfig();
             initSessionTimer();
-            updateWeekendCountdown(); // Запускаем таймер выходных сразу
-            setInterval(() => {
-                initSessionTimer();
-                updateWeekendCountdown(); // Обновляем таймер каждую секунду
-            }, 1000); 
+            setInterval(initSessionTimer, 1000); // Обновление таймера каждую секунду
         });
 
        // Торговая сессия, проверка завершённости дня и логика 1-дневного Блока
@@ -1946,29 +1852,14 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             }
         }
 
-     function updateWeekendProgress() {
-            const checkboxes = document.querySelectorAll('.weekend-check, #chk-1, #chk-2, #chk-3');
+        function updateWeekendProgress() {
+            const checkboxes = document.querySelectorAll('.weekend-check');
             let checkedCount = 0;
-            checkboxes.forEach(cb => { if (cb.checked) cbCount++; });
-            
-            // Проверяем через чекбоксы
-            const c1 = document.getElementById('chk-1')?.checked ? 1 : 0;
-            const c2 = document.getElementById('chk-2')?.checked ? 1 : 0;
-            const c3 = document.getElementById('chk-3')?.checked ? 1 : 0;
-            const totalChecks = c1 + c2 + c3;
+            checkboxes.forEach(cb => { if (cb.checked) checkedCount++; });
 
-            let score = Math.round((totalChecks / 3) * 70);
+            let score = Math.round((checkedCount / checkboxes.length) * 70);
             if (backtestImage1) score += 15;
             if (backtestImage2) score += 15;
-
-            // Проверяем, сохранены ли уже бэктесты в localStorage за сегодня
-            const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
-            const now = new Date();
-            const todayStr = formatDate(now.getTime());
-            const weekendSaved = backtests.filter(item => item.date === todayStr);
-            if (weekendSaved.length >= 2 && totalChecks === 3) {
-                score = 100;
-            }
 
             document.getElementById('weekend-usefulness-score').innerText = `${score}%`;
             
@@ -1981,38 +1872,52 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
                     sessionStatus.innerHTML = '<span class="text-emerald-400">🔥 Максимальная польза (100%)!</span>';
                 } else if (score >= 85) {
                     sessionStatus.innerHTML = '<span class="text-amber-300">Загрузите 2-й месяц для 100%</span>';
-                } else if (weekendSaved.length > 0) {
-                    sessionStatus.innerHTML = '<span class="text-amber-400 font-bold">Результат зафиксирован</span>';
                 } else {
                     sessionStatus.innerText = 'Загрузите бэктесты';
                 }
             }
 
-            // Управление разблокировкой 2-го слота бэктестов
+            // Управление анимацией и разблокировкой 2-го слота
             const slot2 = document.getElementById('slot-container-2');
             const slotIcon2 = document.getElementById('slot-icon-2');
             const slotText2 = document.getElementById('slot-text-2');
             
-            if (slot2 && slotIcon2 && slotText2) {
-                if (backtestImage1) {
-                    slot2.classList.remove('slot-locked');
-                    slot2.classList.add('slot-unlocked');
-                    slotIcon2.className = "fa-solid fa-file-circle-plus text-amber-400 text-lg animate-bounce";
-                    slotText2.innerText = "Месяц 2 — для 100% пользы! (+15%)";
-                } else {
-                    slot2.classList.remove('slot-unlocked');
-                    slot2.classList.add('slot-locked');
-                    slotIcon2.className = "fa-solid fa-lock text-gray-400 text-lg";
-                    slotText2.innerText = "Сначала загрузите Месяц 1";
-                }
+            if (backtestImage1) {
+                slot2.classList.remove('slot-locked');
+                slot2.classList.add('slot-unlocked');
+                if (slotIcon2) slotIcon2.className = "fa-solid fa-file-circle-plus text-amber-400 text-lg animate-bounce";
+                if (slotText2) slotText2.innerText = "Месяц 2 — для 100% пользы! (+15%)";
+            } else {
+                slot2.classList.remove('slot-unlocked');
+                slot2.classList.add('slot-locked');
+                if (slotIcon2) slotIcon2.className = "fa-solid fa-lock text-gray-400 text-lg";
+                if (slotText2) slotText2.innerText = "Сначала загрузите Месяц 1";
             }
         }
 
-        function saveWeekendActivity() {
-            const c1 = document.getElementById('chk-1')?.checked;
-            const c2 = document.getElementById('chk-2')?.checked;
-            const c3 = document.getElementById('chk-3')?.checked;
+        function handleBacktestImage(slot, event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (slot === 1) {
+                    backtestImage1 = e.target.result;
+                    document.getElementById('backtest-img-1').src = backtestImage1;
+                    document.getElementById('backtest-ph-1').classList.add('hidden');
+                    document.getElementById('backtest-prev-wrap-1').classList.remove('hidden');
+                } else if (slot === 2 && backtestImage1) {
+                    backtestImage2 = e.target.result;
+                    document.getElementById('backtest-img-2').src = backtestImage2;
+                    document.getElementById('backtest-ph-2').classList.add('hidden');
+                    document.getElementById('backtest-prev-wrap-2').classList.remove('hidden');
+                }
+                updateWeekendProgress();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveWeekendActivity() {
             if (!backtestImage1 && !backtestImage2) {
                 alert('Пожалуйста, загрузите хотя бы один скриншот бэктеста FX Replay.');
                 return;
@@ -2032,62 +1937,22 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             backtestImage1 = null;
             backtestImage2 = null;
+            document.getElementById('backtest-prev-wrap-1').classList.add('hidden');
+            document.getElementById('backtest-ph-1').classList.remove('hidden');
+            document.getElementById('backtest-input-1').value = '';
+
+            document.getElementById('backtest-prev-wrap-2').classList.add('hidden');
+            document.getElementById('backtest-ph-2').classList.remove('hidden');
+            document.getElementById('backtest-input-2').value = '';
 
             updateWeekendProgress();
             renderBacktestStats();
             renderBacktestHistory();
-            checkAndTransformBacktestSlots();
 
             const scoreEl = document.getElementById('weekend-usefulness-score');
             if (scoreEl) {
                 scoreEl.innerHTML = '<span class="text-emerald-400">Слава Богу! Результаты выходных зафиксированы.</span>';
             }
-        }
-
-        // Проверка и замена двух стандартных слотов на один блок дополнительных при сохранении 2+ скринов
-        function checkAndTransformBacktestSlots() {
-            const backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
-            const now = new Date();
-            const todayStr = formatDate(now.getTime());
-            const weekendSaved = backtests.filter(item => item.date === todayStr);
-
-            const slotsContainer = document.getElementById('backtest-slots-container');
-            if (!slotsContainer) return;
-
-            if (weekendSaved.length >= 2) {
-                slotsContainer.innerHTML = `
-                    <div class="col-span-2 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2 text-xs">
-                        <div class="font-bold text-amber-300 flex items-center space-x-2">
-                            <i class="fa-solid fa-star text-amber-400"></i>
-                            <span>Дополнительные бэктесты для улучшения насмотренности</span>
-                        </div>
-                        <p class="text-gray-300 leading-relaxed">Цель за выходные (2 месяца) успешно выполнена! Если есть время и возможности, дополнительные месяцы можно загружать здесь — они будут автоматически вестись в архиве и общей квартальной статистике.</p>
-                        <div class="pt-1">
-                            <input type="file" id="extra-backtest-input" accept="image/*" class="hidden" onchange="handleExtraBacktest(event)">
-                            <button onclick="document.getElementById('extra-backtest-input').click()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2 rounded-lg text-xs transition shadow-md">
-                                <i class="fa-solid fa-plus mr-1"></i> Загрузить дополнительный месяц
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function handleExtraBacktest(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const timestamp = Date.now();
-                let backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
-                backtests.unshift({ id: timestamp, author: currentUser, date: formatDate(timestamp), image: e.target.result });
-                localStorage.setItem('local_backtest_reports', JSON.stringify(backtests));
-                renderBacktestStats();
-                renderBacktestHistory();
-                alert('Дополнительный бэктест успешно добавлен в архив и квартальную статистику!');
-            };
-            reader.readAsDataURL(file);
         }
 
         function renderBacktestStats() {
@@ -2228,188 +2093,6 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             populateColumn(vladFeed, 'Vladimir');
             populateColumn(maxFeed, 'Max');
-        }
-
-        // Тексты для последовательных блоков
-        const weekendBlockData = {
-            2: {
-                title: "2. Жесткий лимит риска (1% = $50)",
-                desc: "Риск зафиксирован для полного устранения азарта и сохранения эмоциональной устойчивости."
-            },
-            3: {
-                title: "3. Вход строго по правилу AMD",
-                desc: "Только после полного снятия ликвидности Азии и подтверждения инвертированным имбалансом."
-            }
-        };
-
-        function handleCheckChange(num) {
-            const chk = document.getElementById(`chk-${num}`);
-            if (!chk.checked) return;
-
-            updateWeekendProgress();
-
-            if (num === 1) {
-                unlockSequentialBlock(2);
-            } else if (num === 2) {
-                unlockSequentialBlock(3);
-            }
-        }
-
-        function unlockSequentialBlock(nextNum) {
-            const block = document.getElementById(`check-block-${nextNum}`);
-            const title = document.getElementById(`title-${nextNum}`);
-            const desc = document.getElementById(`desc-${nextNum}`);
-            const timerLine = document.getElementById(`timer-line-${nextNum}`);
-
-            // Показываем текст урока
-            title.innerText = weekendBlockData[nextNum].title;
-            title.className = "text-white text-xs block mb-0.5";
-            desc.innerText = weekendBlockData[nextNum].desc;
-            desc.className = "text-xs text-gray-300 leading-relaxed";
-
-            block.classList.remove('checklist-step-locked');
-            block.classList.add('checklist-step-unlocked', 'border-amber-400/40');
-
-            // Запускаем плавную линию таймера чтения (продолжительность 3.5 секунды)
-            timerLine.style.transition = 'width 3.5s linear';
-            timerLine.style.width = '100%';
-
-            setTimeout(() => {
-                const chk = document.getElementById(`chk-${nextNum}`);
-                chk.disabled = false;
-                timerLine.style.backgroundColor = '#10B981'; // Зеленеет по завершении чтения
-            }, 3500);
-        }
-
-        const weekendBlockData = {
-            2: {
-                title: "2. Жесткий лимит риска (1% = $50)",
-                desc: "Риск зафиксирован для полного устранения азарта и сохранения эмоциональной устойчивости."
-            },
-            3: {
-                title: "3. Вход строго по правилу AMD",
-                desc: "Только после полного снятия ликвидности Азии и подтверждения инвертированным имбалансом."
-            }
-        };
-
-        // Обработка клика по блоку или чекбоксу
-        function handleBlockClick(num) {
-            const chk = document.getElementById(`chk-${num}`);
-            if (chk.disabled) return;
-
-            // Переключаем состояние чекбокса
-            chk.checked = !chk.checked;
-
-            // Визуальное оформление блока
-            const block = document.getElementById(`check-block-${num}`);
-            if (chk.checked) {
-                block.classList.add('border-amber-400/60', 'bg-amber-500/10');
-            } else {
-                block.classList.remove('border-amber-400/60', 'bg-amber-500/10');
-            }
-
-            updateWeekendProgress();
-
-            // Если отметили первый блок — плавно открываем второй
-            if (num === 1 && chk.checked) {
-                unlockBlock(2);
-            } 
-            // Если отметили второй блок — плавно открываем третий
-            else if (num === 2 && chk.checked) {
-                unlockBlock(3);
-            }
-        }
-
-        function unlockBlock(nextNum) {
-            const block = document.getElementById(`check-block-${nextNum}`);
-            const title = document.getElementById(`title-${nextNum}`);
-            const desc = document.getElementById(`desc-${nextNum}`);
-            const timerLine = document.getElementById(`timer-line-${nextNum}`);
-            const chk = document.getElementById(`chk-${nextNum}`);
-
-            if (!block.classList.contains('checklist-step-locked')) return;
-
-            // Разблокируем визуальное отображение блока и текст
-            block.classList.remove('checklist-step-locked', 'cursor-not-allowed');
-            block.classList.add('checklist-step-unlocked', 'hover:border-amber-400/40');
-
-            title.innerText = weekendBlockData[nextNum].title;
-            title.className = "text-white text-xs block mb-0.5";
-            desc.innerText = weekendBlockData[nextNum].desc;
-            desc.className = "text-xs text-gray-300 leading-relaxed";
-
-            // Запускаем линию таймера чтения (например, 3 секунды)
-            timerLine.style.width = '0%';
-            void timerLine.offsetWidth; // сброс анимации
-            timerLine.style.transition = 'width 3s linear';
-            timerLine.style.width = '100%';
-
-            // По окончании таймера активируем чекбокс для нажатия
-            setTimeout(() => {
-                chk.disabled = false;
-                timerLine.style.backgroundColor = '#10B981'; // Линия становится зеленой
-            }, 3000);
-        }
-
-        function handleBacktestImage(slot, event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            // Проверка на размер (максимум 20MB)
-            if (file.size > 20 * 1024 * 1024) {
-                alert('Файл слишком большой. Пожалуйста, выберите скриншот меньше 20MB.');
-                event.target.value = '';
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const maxDim = 1800; // Оптимальное ограничение для быстрой и надежной загрузки
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height && width > maxDim) {
-                        height *= maxDim / width;
-                        width = maxDim;
-                    } else if (height > maxDim) {
-                        width *= maxDim / height;
-                        height = maxDim;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
-
-                    if (slot === 1) {
-                        backtestImage1 = resizedDataUrl;
-                        document.getElementById('backtest-img-1').src = backtestImage1;
-                        document.getElementById('backtest-ph-1').classList.add('hidden');
-                        document.getElementById('backtest-prev-wrap-1').classList.remove('hidden');
-                    } else if (slot === 2 && backtestImage1) {
-                        backtestImage2 = resizedDataUrl;
-                        document.getElementById('backtest-img-2').src = backtestImage2;
-                        document.getElementById('backtest-ph-2').classList.add('hidden');
-                        document.getElementById('backtest-prev-wrap-2').classList.remove('hidden');
-                    }
-                    updateWeekendProgress();
-                };
-                img.onerror = function() {
-                    alert('Не удалось обработать изображение. Попробуйте сделать скриншот или выбрать другой файл (JPG/PNG).');
-                    event.target.value = '';
-                };
-                img.src = e.target.result;
-            };
-            reader.onerror = function() {
-                alert('Ошибка чтения файла.');
-                event.target.value = '';
-            };
-            reader.readAsDataURL(file);
         }
     </script>
 </body>
