@@ -323,10 +323,24 @@
                     </div>
                 </div>
 
-                <!-- Progress Bar Line -->
-                <div class="space-y-2 pt-2">
-                    <div class="w-full bg-brand-card h-2 rounded-full overflow-hidden border border-brand-border/50">
-                        <div id="session-progress-bar" class="bg-gradient-to-r from-emerald-500 to-amber-400 h-full w-0 transition-all duration-1000"></div>
+                <!-- Рабочая область режима Выходного Дня -->
+                <div id="weekend-active-panel" class="pt-2 space-y-4">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl bg-brand-dark/60 border border-brand-border">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg border border-amber-500/20">
+                                <i class="fa-solid fa-hourglass-start"></i>
+                            </div>
+                            <div>
+                                <div class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">До старта сессии Франкфурта</div>
+                                <div id="weekend-countdown-timer" class="text-lg font-bold text-amber-400 font-mono">00ч 00мин 00сек</div>
+                            </div>
+                        </div>
+
+                        <!-- Кнопка вызова Модуля Полезных Выходных -->
+                        <button onclick="openWeekendModal()" class="w-full sm:w-auto text-xs bg-gradient-to-r from-amber-500/20 to-amber-600/20 hover:from-amber-500/30 hover:to-amber-600/30 text-amber-300 font-semibold px-4 py-2.5 rounded-xl border border-amber-500/40 flex items-center justify-center space-x-2 transition shadow-lg shadow-amber-500/5">
+                            <i class="fa-solid fa-brain text-amber-400"></i>
+                            <span>Проводим выходные с пользой</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -631,6 +645,110 @@
             <button onclick="toggleRuleModal()" class="w-full bg-brand-card hover:bg-gray-800 text-white font-medium py-3 sm:py-2.5 rounded-xl border border-brand-border text-xs transition">
                 Понятно, закрыть
             </button>
+        </div>
+    </div>
+
+    <!-- MODAL: Проводим выходные с пользой -->
+    <div id="weekend-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="glass-panel max-w-2xl w-full rounded-2xl p-5 sm:p-6 border border-brand-border space-y-5 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-brand-border/60 pb-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-base">Проводим выходные с пользой</h3>
+                        <p class="text-[11px] text-gray-400">Подготовка разума, проработка ошибок и бэктесты (FX Replay)</p>
+                    </div>
+                </div>
+                <button onclick="closeWeekendModal()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- 1. Персональная работа над ошибкой недели -->
+            <div id="personal-error-focus-box" class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 space-y-1.5 hidden">
+                <div class="text-xs font-bold text-rose-300 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <span>Главный фокус недели (Твоя последняя ошибка):</span>
+                </div>
+                <p id="personal-error-text" class="text-xs text-gray-200 leading-relaxed font-medium"></p>
+            </div>
+
+            <!-- 2. Чек-лист микронапоминаний перед новой неделей -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Чек-лист духовного и технического настроя</span>
+                </h4>
+
+                <div class="space-y-2 text-xs" id="weekend-checklist-container">
+                    <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
+                        <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
+                        <span class="text-gray-300 leading-relaxed">
+                            <strong class="text-white block mb-0.5">1. Молитва Капитуляции и покой духа</strong>
+                            Передача результата и контроля в руки Мастера. Моё «я» не ищет самоутверждения в профите.
+                        </span>
+                    </label>
+
+                    <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
+                        <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
+                        <span class="text-gray-300 leading-relaxed">
+                            <strong class="text-white block mb-0.5">2. Жесткий лимит риска (1% = $50)</strong>
+                            Риск зафиксирован для полного устранения азарта и сохранения эмоциональной устойчивости.
+                        </span>
+                    </label>
+
+                    <label class="flex items-start space-x-3 p-3 rounded-xl bg-brand-dark/50 border border-brand-border/60 cursor-pointer hover:border-amber-400/40 transition">
+                        <input type="checkbox" onchange="updateWeekendProgress()" class="weekend-check mt-0.5 rounded border-gray-700 bg-gray-900 text-amber-500 focus:ring-amber-400">
+                        <span class="text-gray-300 leading-relaxed">
+                            <strong class="text-white block mb-0.5">3. Вход строго по правилу AMD</strong>
+                            Только после полного снятия ликвидности Азии и подтверждения инвертированным имбалансом.
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 3. Секция Бэктестинга (2 месяца на FX Replay) -->
+            <div class="p-4 rounded-xl bg-brand-dark/60 border border-brand-border space-y-3">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-desktop text-amber-400"></i>
+                        <span>Практика Бэктестов (FX Replay — мин. 2 месяца)</span>
+                    </h4>
+                    <span class="text-[10px] text-gray-400">Наработка навыка</span>
+                </div>
+
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    Пройдите минимум 2 исторических месяца на FX Replay для закрепления механики снятия ликвидности и зафиксируйте отчёт.
+                </p>
+
+                <!-- Загрузка скриншота бэктеста -->
+                <div class="border-2 border-dashed border-brand-border hover:border-amber-400/50 rounded-xl p-4 text-center bg-brand-card/30 transition cursor-pointer relative" id="backtest-drop-zone">
+                    <input type="file" id="backtest-screenshot-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBacktestImage(event)">
+                    
+                    <div id="backtest-upload-placeholder" class="space-y-1">
+                        <i class="fa-solid fa-file-image text-amber-400 text-xl"></i>
+                        <div class="text-xs text-gray-200 font-medium">Загрузить скриншот пройденного месяца FX Replay</div>
+                    </div>
+
+                    <div id="backtest-upload-preview" class="hidden relative inline-block">
+                        <img id="backtest-preview-img" src="" class="max-h-36 rounded-lg border border-brand-border object-contain">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer & Шкала полезности -->
+            <div class="pt-2 border-t border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs text-gray-400">
+                    Уровень полезности: <span id="weekend-usefulness-score" class="font-bold text-amber-400">0%</span>
+                </div>
+                <button onclick="saveWeekendActivity()" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-check"></i>
+                    <span>Зафиксировать и Сохранить</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1544,6 +1662,110 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             toggleFirebaseModal();
             fallbackToLocal();
         }
+        let backtestImageData = null;
+
+        // Открытие модального окна полезных выходных
+        function openWeekendModal() {
+            // 1. Поиск последней ошибки текущего пользователя за неделю
+            const userReports = reportsHistory.filter(item => item.author === currentUser);
+            const lastViolation = userReports.find(item => item.compliance !== 'clean');
+
+            const focusBox = document.getElementById('personal-error-focus-box');
+            const focusText = document.getElementById('personal-error-text');
+
+            if (lastViolation && lastViolation.error && lastViolation.error !== 'Отсутствуют') {
+                focusText.innerText = `Внимание к детали: "${lastViolation.error}". Проанализируй этот момент перед открытием сессии в понедельник.`;
+                focusBox.classList.remove('hidden');
+            } else {
+                focusBox.classList.add('hidden');
+            }
+
+            document.getElementById('weekend-modal').classList.remove('hidden');
+        }
+
+        function closeWeekendModal() {
+            document.getElementById('weekend-modal').classList.add('hidden');
+        }
+
+        // Обновление индекса полезности (проценты)
+        function updateWeekendProgress() {
+            const checkboxes = document.querySelectorAll('.weekend-check');
+            let checkedCount = 0;
+            checkboxes.forEach(cb => { if (cb.checked) checkedCount++; });
+
+            let score = Math.round((checkedCount / checkboxes.length) * 70); // 70% за чек-лист
+            if (backtestImageData) score += 30; // 30% за загруженный бэктест
+
+            document.getElementById('weekend-usefulness-score').innerText = `${score}%`;
+        }
+
+        // Загрузка скриншота бэктеста
+        function handleBacktestImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                backtestImageData = e.target.result;
+                document.getElementById('backtest-preview-img').src = backtestImageData;
+                document.getElementById('backtest-upload-placeholder').classList.add('hidden');
+                document.getElementById('backtest-upload-preview').classList.remove('hidden');
+                updateWeekendProgress();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Сохранение активности выходного дня в журнал
+        function saveWeekendActivity() {
+            if (!backtestImageData) {
+                alert('Пожалуйста, загрузите хотя бы один скриншот пройденного месяца FX Replay.');
+                return;
+            }
+
+            const timestamp = Date.now();
+            const newEntry = {
+                id: timestamp,
+                author: currentUser,
+                date: formatDate(timestamp) + ' (Выходные)',
+                trades: 'Практика FX Replay (Бэктест)',
+                compliance: 'clean',
+                error: 'Выходной проведен с пользой',
+                image: backtestImageData
+            };
+
+            saveLocally(newEntry);
+            closeWeekendModal();
+            alert('Слава Богу! Практика бэктеста зафиксирована в журнале.');
+        }
+
+        // Обновление таймера обратного отсчета до открытия Франкфурта (Пн, 09:00)
+        function updateWeekendCountdown() {
+            const now = new Date();
+            const day = now.getDay();
+            
+            // Вычисляем следующий Понедельник 09:00
+            let target = new Date(now);
+            let daysUntilMonday = (1 - day + 7) % 7;
+            if (daysUntilMonday === 0 && now.getHours() >= 9) daysUntilMonday = 7;
+            
+            target.setDate(now.getDate() + daysUntilMonday);
+            target.setHours(9, 0, 0, 0);
+
+            const diff = target - now;
+            if (diff <= 0) return;
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const timerEl = document.getElementById('weekend-countdown-timer');
+            if (timerEl) {
+                timerEl.innerText = `${String(hours).padStart(2, '0')}ч ${String(minutes).padStart(2, '0')}мин ${String(seconds).padStart(2, '0')}сек`;
+            }
+        }
+
+        // Запуск таймера каждую секунду
+        setInterval(updateWeekendCountdown, 1000);
     </script>
 </body>
 </html>
