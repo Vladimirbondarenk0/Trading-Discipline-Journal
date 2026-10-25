@@ -2064,7 +2064,6 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
         function deleteArchivedBacktest(event, id) {
             if (event && event.stopPropagation) event.stopPropagation();
-            if (!confirm('Вы действительно хотите удалить этот скриншот из архива?')) return;
 
             let backtests = JSON.parse(localStorage.getItem('local_backtest_reports') || '[]');
             backtests = backtests.filter(item => String(item.id) !== String(id));
