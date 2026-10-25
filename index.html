@@ -777,14 +777,15 @@
                 </div>
             </div>
 
-            <!-- Статистика за текущие выходные (с динамическими датами) -->
+            <!-- Статистика за текущие выходные -->
             <div class="p-4 rounded-xl bg-brand-dark/80 border border-brand-border space-y-3">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
                         <i class="fa-solid fa-chart-column"></i>
-                        <span id="current-weekend-title">Статистика бэктестов за эти выходные</span>
+                        <span>Статистика бэктестов за выходные</span>
                     </h4>
-                    <span class="text-[10px] text-gray-400">Независимый учет</span>
+                    <!-- Сдаю ID для вывода дат справа -->
+                    <span id="weekend-dates-label" class="text-[10px] text-gray-400 font-medium">Загрузка дат...</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -863,9 +864,8 @@
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold text-white flex items-center space-x-2">
                         <i class="fa-solid fa-images text-amber-400"></i>
-                        <span>Архив скриншотов бэктестов (История)</span>
+                        <span>Архив скриншотов бэктестов</span>
                     </h4>
-                    <span class="text-[10px] text-gray-400">История</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="backtest-archive-grid">
@@ -1838,7 +1838,7 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             document.getElementById('weekend-modal').classList.add('hidden');
         }
 
-        // Динамический заголовок с датами выходных (например, 25 и 26 октября)
+        // Динамический вывод дат выходных в правую плашку (например, "24 и 25 октября")
         function updateWeekendTitle() {
             const now = new Date();
             const day = now.getDay();
@@ -1850,9 +1850,10 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             else { sat.setDate(now.getDate() - (day === 0 ? 6 : day - 6)); sun.setDate(sat.getDate() + 1); }
 
             const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-            const titleSpan = document.getElementById('current-weekend-title');
-            if (titleSpan) {
-                titleSpan.innerText = `Статистика бэктестов за выходные (${sat.getDate()} и ${sun.getDate()} ${months[sun.getMonth()]})`;
+            
+            const datesLabel = document.getElementById('weekend-dates-label');
+            if (datesLabel) {
+                datesLabel.innerText = `${sat.getDate()} и ${sun.getDate()} ${months[sun.getMonth()]}`;
             }
         }
 
