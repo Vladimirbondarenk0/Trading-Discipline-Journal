@@ -1227,7 +1227,11 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             
             const vladVerdictEl = document.getElementById('vladimir-score') || document.getElementById('vladimir-verdict');
             if (vladVerdictEl) {
-                if (vladData.score >= 70) {
+                if (vladData.violation === 0 && vladData.score < 50) {
+                    // Начало месяца, срывов не было — идёт чистое накопление
+                    vladVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    vladVerdictEl.innerText = `Чистый старт (${vladData.score}%)`;
+                } else if (vladData.score >= 70) {
                     vladVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
                     vladVerdictEl.innerText = `Системный (${vladData.score}%)`;
                 } else if (vladData.score >= 40) {
@@ -1247,7 +1251,11 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
 
             const maxVerdictEl = document.getElementById('max-score') || document.getElementById('max-verdict');
             if (maxVerdictEl) {
-                if (maxData.score >= 70) {
+                if (maxData.violation === 0 && maxData.score < 50) {
+                    // Начало месяца, срывов не было — идёт чистое накопление
+                    maxVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    maxVerdictEl.innerText = `Чистый старт (${maxData.score}%)`;
+                } else if (maxData.score >= 70) {
                     maxVerdictEl.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
                     maxVerdictEl.innerText = `Системный (${maxData.score}%)`;
                 } else if (maxData.score >= 40) {
@@ -1258,7 +1266,6 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
                     maxVerdictEl.innerText = `Вне системы (${maxData.score}%)`;
                 }
             }
-        }
 
         // Render Feed
         function renderReportsFeed() {
