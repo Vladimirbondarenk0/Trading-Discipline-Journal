@@ -2260,17 +2260,17 @@ if (badgeContainerEl && badgeContainerEl.dataset.badgeType !== badgeType) {
             descEl.innerText = stepLessons[nextNum].desc;
             descEl.className = "text-xs text-gray-300 leading-relaxed";
 
-            // Линия таймера чтения (время заполнения линии — 4 секунды)
+            // Линия таймера чтения плавно дойдет до конца за 10 секунд
             timerLine.style.width = '0%';
             void timerLine.offsetWidth;
-            timerLine.style.transition = 'width 4s linear';
+            timerLine.style.transition = 'width 10s linear';
             timerLine.style.width = '100%';
 
-            // Чекбокс активируется только после полного прохождения линии
+            // Чекбокс станет активным ровно через 10 секунд
             setTimeout(() => {
                 chk.disabled = false;
-                timerLine.style.backgroundColor = '#10B981';
-            }, 4000);
+                timerLine.style.backgroundColor = '#10B981'; // Линия станет зеленой по завершении
+            }, 10000);
         }
 
         function checkAndTransformBacktestSection() {
