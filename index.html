@@ -1747,7 +1747,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             }
         }
 
-        function initFirebase(cfg) {
+       function initFirebase(cfg) {
             if (!window.fbSDK || !cfg.databaseURL) {
                 fallbackToLocal();
                 return;
@@ -1786,9 +1786,6 @@ const DB_NODE_NAME = 'reports_vladimir';
                         initSessionTimer();
                     }
                 });
-                const badge = document.getElementById('sync-status-badge');
-                badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/35";
-                badge.innerHTML = '<i class="fa-solid fa-wifi mr-1"></i> Live Sync';
             } catch (err) {
                 console.error("Firebase init failed:", err);
                 fallbackToLocal();
