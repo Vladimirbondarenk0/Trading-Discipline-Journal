@@ -1206,7 +1206,18 @@ const DB_NODE_NAME = 'reports_vladimir';
             if (val === SESSION_UNLOCK_PASSWORD) {
                 const now = new Date();
                 const todayKey = `session_unlocked_${now.getFullYear()}_${now.getMonth()}_${now.getDate()}`;
+                
+                // Локальная разблокировка
                 sessionStorage.setItem(todayKey, 'true');
+
+                // Синхронизация разблокировки через Firebase для обоих
+                if (isFirebaseConnected && dbInstance) {
+                    const unlockRef = window.fbSDK.ref(dbInstance, `unlocks/${todayKey}`);
+                    window.fbSDK.set(unlockRef, true).catch(err => {
+                        console.error("Firebase unlock sync error:", err);
+                    });
+                }
+
                 closeUnlockModal();
                 initSessionTimer();
             } else {
@@ -1761,6 +1772,20 @@ const DB_NODE_NAME = 'reports_vladimir';
                 });
 
                 isFirebaseConnected = true;
+                const badge = document.getElementById('sync-status-badge');
+                badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/35";
+                badge.innerHTML = '<i class="fa-solid fa-wifi mr-1"></i> Live Sync';
+
+                // СЛУШАТЕЛЬ РАЗБЛОКИРОВКИ СЕССИИ ДЛЯ ОБОИХ УСТРОЙСТВ
+                const now = new Date();
+                const todayKey = `session_unlocked_${now.getFullYear()}_${now.getMonth()}_${now.getDate()}`;
+                const unlockRef = window.fbSDK.ref(dbInstance, `unlocks/${todayKey}`);
+                window.fbSDK.onValue(unlockRef, (snapshot) => {
+                    if (snapshot.val() === true) {
+                        sessionStorage.setItem(todayKey, 'true');
+                        initSessionTimer();
+                    }
+                });
                 const badge = document.getElementById('sync-status-badge');
                 badge.className = "text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/35";
                 badge.innerHTML = '<i class="fa-solid fa-wifi mr-1"></i> Live Sync';
