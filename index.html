@@ -1494,6 +1494,25 @@ const DB_NODE_NAME = 'reports_vladimir';
 
         // Переключение видимости формы добавления комментария в журнале
         function toggleReplyInput(id) {
+            // 1. Автоматически открываем аккордеон, если он был закрыт, чтобы блок был виден
+            const body = document.getElementById(`body-${id}`);
+            const chevron = document.getElementById(`chevron-${id}`);
+            if (body && !body.classList.contains('open')) {
+                body.classList.add('open');
+                if (chevron) chevron.classList.add('rotate-180');
+                if (!openAccordions.includes(id)) {
+                    openAccordions.push(id);
+                    if (openAccordions.length > 2) {
+                        const oldestId = openAccordions.shift();
+                        const oldBody = document.getElementById(`body-${oldestId}`);
+                        const oldChevron = document.getElementById(`chevron-${oldestId}`);
+                        if (oldBody) oldBody.classList.remove('open');
+                        if (oldChevron) oldChevron.classList.remove('rotate-180');
+                    }
+                }
+            }
+
+            // 2. Показываем/скрываем само поле ввода
             const box = document.getElementById(`reply-box-${id}`);
             if (box) {
                 box.classList.toggle('hidden');
