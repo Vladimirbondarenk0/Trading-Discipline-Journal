@@ -1974,14 +1974,19 @@ const DB_NODE_NAME = 'reports_vladimir';
                                         if (currentUser === 'Vladimir' && r.author === 'Max') displayName = 'Брат';
                                         if (currentUser === 'Max' && r.author === 'Vladimir') displayName = 'Брат';
 
+                                        const likes = (r.reactions && r.reactions.likes) ? r.reactions.likes : [];
+                                        const dislikes = (r.reactions && r.reactions.dislikes) ? r.reactions.dislikes : [];
+                                        const hasLiked = likes.includes(currentUser);
+                                        const hasDisliked = dislikes.includes(currentUser);
+
                                         return `
-                                            <div id="reply-item-${item.id}-${replyIdx}" class="p-2.5 rounded-lg bg-brand-dark/60 border border-brand-border/60 text-xs space-y-1 transition-all duration-300">
+                                            <div id="reply-item-${item.id}-${replyIdx}" class="p-2.5 rounded-lg bg-brand-dark/60 border border-brand-border/60 text-xs space-y-1.5 transition-all duration-300">
                                                 <div class="flex items-center justify-between text-[10px] text-gray-400 font-semibold relative">
                                                     <span class="${isMe ? 'text-amber-400' : 'text-blue-400'}">${displayName}</span>
                                                     <div class="flex items-center space-x-2.5">
                                                         <span>${r.time}</span>
                                                         ${isMe ? `
-                                                            <div class="flex items-center space-x-2">
+                                                            <div class="flex items-center space-x-2 border-l border-brand-border/50 pl-2">
                                                                 <button type="button" onclick="editReplyText('${item.id}', ${replyIdx}, '${item.fbKey || ''}')" title="Редактировать комментарий" class="text-gray-500 hover:text-amber-400 transition">
                                                                     <i class="fa-solid fa-pen text-[10px]"></i>
                                                                 </button>
@@ -1995,20 +2000,25 @@ const DB_NODE_NAME = 'reports_vladimir';
                                                 <div id="reply-content-${item.id}-${replyIdx}">
                                                     <p class="text-gray-200 leading-relaxed">${r.text}</p>
                                                 </div>
+                                                
+                                                <!-- Лайки и дизлайки строго под текстом комментария -->
+                                                <div class="flex items-center space-x-3 pt-1.5 border-t border-brand-border/30 text-[11px]">
+                                                    <button type="button" onclick="toggleReaction('${item.id}', ${replyIdx}, 'like', '${item.fbKey || ''}', this)" 
+                                                        class="reaction-btn flex items-center space-x-1 ${hasLiked ? 'text-emerald-400 font-bold' : 'text-gray-500 hover:text-emerald-400'}">
+                                                        <i class="fa-${hasLiked ? 'solid' : 'regular'} fa-thumbs-up text-xs"></i>
+                                                        ${likes.length > 0 ? `<span class="text-[10px]">${likes.length}</span>` : ''}
+                                                    </button>
+
+                                                    <button type="button" onclick="toggleReaction('${item.id}', ${replyIdx}, 'dislike', '${item.fbKey || ''}', this)" 
+                                                        class="reaction-btn flex items-center space-x-1 ${hasDisliked ? 'text-rose-400 font-bold' : 'text-gray-500 hover:text-rose-400'}">
+                                                        <i class="fa-${hasDisliked ? 'solid' : 'regular'} fa-thumbs-down text-xs"></i>
+                                                        ${dislikes.length > 0 ? `<span class="text-[10px]">${dislikes.length}</span>` : ''}
+                                                    </button>
+                                                </div>
                                             </div>
                                         `;
                                     }).join('') : '<div class="text-[11px] text-gray-500 italic">Пока нет комментариев к этой записи.</div>'}
                                 </div>
-
-                               <!-- Блок ввода комментария -->
-                                <div id="reply-box-${item.id}" class="hidden space-y-2 pt-2">
-                                    <input type="text" id="reply-input-${item.id}" placeholder="Напишите комментарий или вопрос..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-2.5 text-white text-xs focus:border-amber-400 outline-none">
-                                    <div class="flex justify-end space-x-2">
-                                        <button type="button" onclick="toggleReplyInput('${item.id}')" class="px-3 py-1.5 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-xs border border-brand-border transition">Отмена</button>
-                                        <button type="button" onclick="addReplyToReport('${item.id}', '${item.fbKey || ''}')" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition">Отправить</button>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div class="pt-3 border-t border-brand-border/40 flex justify-end">
                                 <button type="button" onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="w-full sm:w-auto text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-4 py-2.5 sm:py-1.5 rounded-lg border border-rose-500/20 flex items-center justify-center space-x-1.5 transition">
@@ -2895,6 +2905,61 @@ const DB_NODE_NAME = 'reports_vladimir';
             } else {
                 localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
                 renderReportsFeed();
+            }
+        }
+
+        // Обработка переключения лайка/дизлайка с анимацией
+        function toggleReaction(reportId, replyIndex, type, fbKey, btnEl) {
+            const targetReport = reportsHistory.find(item => String(item.id) === String(reportId));
+            if (!targetReport || !targetReport.replies || !targetReport.replies[replyIndex]) return;
+
+            const reply = targetReport.replies[replyIndex];
+            if (!reply.reactions) {
+                reply.reactions = { likes: [], dislikes: [] };
+            }
+
+            const likes = reply.reactions.likes || [];
+            const dislikes = reply.reactions.dislikes || [];
+
+            if (type === 'like') {
+                // Если лайк уже стоит — убираем его, иначе добавляем и убираем дизлайк
+                if (likes.includes(currentUser)) {
+                    reply.reactions.likes = likes.filter(u => u !== currentUser);
+                } else {
+                    reply.reactions.likes = [...likes, currentUser];
+                    reply.reactions.dislikes = dislikes.filter(u => u !== currentUser);
+                }
+            } else if (type === 'dislike') {
+                // Если дизлайк уже стоит — убираем его, иначе добавляем и убираем лайк
+                if (dislikes.includes(currentUser)) {
+                    reply.reactions.dislikes = dislikes.filter(u => u !== currentUser);
+                } else {
+                    reply.reactions.dislikes = [...dislikes, currentUser];
+                    reply.reactions.likes = likes.filter(u => u !== currentUser);
+                }
+            }
+
+            // Добавляем эффект подпрыгивания кнопке
+            if (btnEl) {
+                btnEl.classList.add('reaction-pop');
+            }
+
+            // Фиксируем открытое состояние аккордеона
+            if (!openAccordions.includes(Number(reportId)) && !openAccordions.includes(String(reportId))) {
+                openAccordions.push(reportId);
+            }
+
+            // Сохраняем изменения
+            if (isFirebaseConnected && fbKey && fbKey !== 'undefined' && fbKey !== '' && dbInstance) {
+                const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
+                window.fbSDK.set(itemRef, targetReport).then(() => {
+                    setTimeout(() => renderReportsFeed(), 150);
+                }).catch(err => {
+                    console.error("Error updating reactions in Firebase:", err);
+                });
+            } else {
+                localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
+                setTimeout(() => renderReportsFeed(), 150);
             }
         }
     </script>
