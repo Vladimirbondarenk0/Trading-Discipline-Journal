@@ -1817,7 +1817,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             });
         }
 
-        // Плавный аккордеон с лимитом в 2 одновременно открытых отчёта
+        // Плавный аккордеон с лимитом в 2 одновременно открытых отчёта и прокруткой вверх экрана
         function toggleAccordion(id) {
             const body = document.getElementById(`body-${id}`);
             const chevron = document.getElementById(`chevron-${id}`);
@@ -1839,9 +1839,16 @@ const DB_NODE_NAME = 'reports_vladimir';
                     if (oldBody) oldBody.classList.remove('open');
                     if (oldChevron) oldChevron.classList.remove('rotate-180');
                 }
+
+                // Плавная прокрутка карточки в самый верх экрана после открытия
+                setTimeout(() => {
+                    const cardRow = body.closest('.glass-panel');
+                    if (cardRow) {
+                        cardRow.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 50);
             }
         }
-
         function toggleRuleModal() {
             document.getElementById('rule-modal').classList.toggle('hidden');
         }
