@@ -1873,7 +1873,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                 const authorBadge = isMyPost
                     ? `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user mr-1"></i>${item.author}</span>`
                     : `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user mr-1"></i>Брат</span>`;
-
+                
                 const isOpen = openAccordions.includes(item.id) || openAccordions.includes(String(item.id)) || openAccordions.includes(Number(item.id));
                 const row = document.createElement('div');
                 row.className = "glass-panel rounded-xl border border-brand-border/80 overflow-hidden transition";
@@ -1971,7 +1971,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                                     ${item.replies && item.replies.length > 0 ? item.replies.map((r, replyIdx) => `
                                         <div id="reply-item-${item.id}-${replyIdx}" class="p-2.5 rounded-lg bg-brand-dark/60 border border-brand-border/60 text-xs space-y-1 transition-all duration-300">
                                             <div class="flex items-start justify-between text-[10px] text-gray-400 font-semibold">
-                                                <span class="${r.author === currentUser ? 'text-amber-400' : 'text-blue-400'}">${r.author}</span>
+                                                <span class="${r.author === currentUser ? 'text-amber-400' : 'text-blue-400'}">${r.author === 'Max' ? 'Брат' : r.author}</span>
                                                 <div class="flex flex-col items-end space-y-1">
                                                     <span>${r.time}</span>
                                                     ${r.author === currentUser ? `
