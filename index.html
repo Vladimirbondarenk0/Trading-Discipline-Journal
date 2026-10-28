@@ -1492,9 +1492,9 @@ const DB_NODE_NAME = 'reports_vladimir';
             document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
         }
 
-       // Переключение видимости формы добавления комментария и точная прокрутка в центр
+       // Плавное открытие и мягкое центрирование поля ввода
         function toggleReplyInput(id) {
-            // 1. Автоматически открываем аккордеон, если он был закрыт
+            // 1. Автоматически открываем аккордеон
             const body = document.getElementById(`body-${id}`);
             const chevron = document.getElementById(`chevron-${id}`);
             if (body && !body.classList.contains('open')) {
@@ -1512,24 +1512,55 @@ const DB_NODE_NAME = 'reports_vladimir';
                 }
             }
 
-            // 2. Показываем/скрываем поле ввода
+            // 2. Показываем поле ввода и запускаем мягкую прокрутку
             const box = document.getElementById(`reply-box-${id}`);
             if (box) {
                 const isHidden = box.classList.contains('hidden');
                 if (isHidden) {
                     box.classList.remove('hidden');
-                    // Ждем окончания анимации раскрытия аккордеона (350мс), затем центрируем и фокусируем
+                    
+                    // Ждем раскрытия аккордеона, затем плавно ведем экран к центру
                     setTimeout(() => {
-                        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        const boxRect = box.getBoundingClientRect();
+                        const absoluteBoxTop = boxRect.top + window.pageYOffset;
+                        const targetScroll = absoluteBoxTop - (window.innerHeight / 2) + (boxRect.height / 2);
+
+                        // Кастомная плавная анимация прокрутки без резких рывков
+                        smoothScrollTo(targetScroll, 500);
+
                         const input = document.getElementById(`reply-input-${id}`);
                         if (input) input.focus();
                     }, 350);
                 } else {
                     box.classList.add('hidden');
                 }
-            } else {
-                console.error("Не найден блок ответа для id:", id);
             }
+        }
+
+        // Вспомогательная функция для мягкого скролла (если её еще нет в коде)
+        function smoothScrollTo(targetPosition, duration) {
+            const startPosition = window.pageYOffset;
+            const distance = targetPosition - startPosition;
+            let startTime = null;
+
+            function animation(currentTime) {
+                if (startTime === null) startTime = currentTime;
+                const timeElapsed = currentTime - startTime;
+                const run = easeInOutQuad(timeElapsed, startPosition, distance, duration);
+                window.scrollTo(0, run);
+                if (timeElapsed < duration) {
+                    requestAnimationFrame(animation);
+                }
+            }
+
+            function easeInOutQuad(t, b, c, d) {
+                t /= d / 2;
+                if (t < 1) return c / 2 * t * t + b;
+                t--;
+                return -c / 2 * (t * (t - 2) - 1) + b;
+            }
+
+            requestAnimationFrame(animation);
         }
 
         // Сохранение нового комментария/уточнения к существующей записи
