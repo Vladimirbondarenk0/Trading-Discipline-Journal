@@ -1492,9 +1492,9 @@ const DB_NODE_NAME = 'reports_vladimir';
             document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Переключение видимости формы добавления комментария в журнале
+       // Переключение видимости формы добавления комментария в журнале с прокруткой к центру
         function toggleReplyInput(id) {
-            // 1. Автоматически открываем аккордеон, если он был закрыт, чтобы блок был виден
+            // 1. Автоматически открываем аккордеон, если он был закрыт
             const body = document.getElementById(`body-${id}`);
             const chevron = document.getElementById(`chevron-${id}`);
             if (body && !body.classList.contains('open')) {
@@ -1512,11 +1512,17 @@ const DB_NODE_NAME = 'reports_vladimir';
                 }
             }
 
-            // 2. Показываем/скрываем само поле ввода
+            // 2. Показываем/скрываем само поле ввода и плавно смещаем экран к нему в центр
             const box = document.getElementById(`reply-box-${id}`);
             if (box) {
                 box.classList.toggle('hidden');
                 if (!box.classList.contains('hidden')) {
+                    // Плавная прокрутка экрана так, чтобы карточка оказалась по центру
+                    const cardRow = box.closest('.glass-panel');
+                    if (cardRow) {
+                        cardRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    
                     const input = document.getElementById(`reply-input-${id}`);
                     if (input) input.focus();
                 }
