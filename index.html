@@ -1495,7 +1495,13 @@ const DB_NODE_NAME = 'reports_vladimir';
         // Переключение видимости формы добавления комментария в журнале
         function toggleReplyInput(id) {
             const box = document.getElementById(`reply-box-${id}`);
-            if (box) box.classList.toggle('hidden');
+            if (box) {
+                box.classList.toggle('hidden');
+                if (!box.classList.contains('hidden')) {
+                    const input = document.getElementById(`reply-input-${id}`);
+                    if (input) input.focus();
+                }
+            }
         }
 
         // Сохранение нового комментария/уточнения к существующей записи
