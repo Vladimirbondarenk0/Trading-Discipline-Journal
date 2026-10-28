@@ -176,25 +176,53 @@
     will-change: opacity;
 }
 
-        /* Анимация пульсации и подпрыгивания реакций */
-@keyframes reactionPop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.35) translateY(-2px); }
-    100% { transform: scale(1); }
-}
+       /* Сочная анимация реакций (Pop, Bounce & Glow) */
+        @keyframes reactionPopGlow {
+            0% {
+                transform: scale(1);
+            }
+            30% {
+                transform: scale(0.7) rotate(-10deg);
+            }
+            60% {
+                transform: scale(1.45) translateY(-3px) rotate(6deg);
+            }
+            80% {
+                transform: scale(0.95) translateY(1px);
+            }
+            100% {
+                transform: scale(1) translateY(0) rotate(0deg);
+            }
+        }
 
-.reaction-btn {
-    transition: all 0.2s ease;
-}
+        .reaction-btn {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform;
+        }
 
-.reaction-btn:active {
-    transform: scale(0.85);
-}
+        .reaction-btn:hover {
+            transform: translateY(-1px) scale(1.1);
+        }
 
-.reaction-pop {
-    animation: reactionPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-        
+        .reaction-btn:active {
+            transform: scale(0.8);
+        }
+
+        /* Анимация при клике */
+        .reaction-pop {
+            animation: reactionPopGlow 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Неоновое свечение активных реакций */
+        .reaction-active-like {
+            color: #34d399 !important; /* emerald-400 */
+            filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.6));
+        }
+
+        .reaction-active-dislike {
+            color: #fb7185 !important; /* rose-400 */
+            filter: drop-shadow(0 0 6px rgba(251, 113, 133, 0.6));
+        }
     </style>
 </head>
 <body class="min-h-screen pb-16">
@@ -2032,17 +2060,17 @@ const DB_NODE_NAME = 'reports_vladimir';
                                                     <!-- Правая панель: Реакции, Время, Редактирование, Удаление -->
                                                     <div class="flex items-center space-x-3">
                                                         <!-- Лайк / Дизлайк -->
-                                                        <div class="flex items-center space-x-2 bg-brand-dark/40 px-2 py-0.5 rounded-md border border-brand-border/40">
+                                                        <div class="flex items-center space-x-2 bg-brand-dark/50 px-2 py-0.5 rounded-md border border-brand-border/40 backdrop-blur-sm">
                                                             <button type="button" onclick="toggleReaction('${item.id}', ${replyIdx}, 'like', '${item.fbKey || ''}', this)" 
-                                                                class="reaction-btn flex items-center space-x-1 ${hasLiked ? 'text-emerald-400 font-bold' : 'text-gray-500 hover:text-emerald-400'}">
+                                                                class="reaction-btn flex items-center space-x-1 ${hasLiked ? 'reaction-active-like font-bold' : 'text-gray-500 hover:text-emerald-400'}">
                                                                 <i class="fa-${hasLiked ? 'solid' : 'regular'} fa-thumbs-up text-[11px]"></i>
-                                                                ${likes.length > 0 ? `<span class="text-[9px]">${likes.length}</span>` : ''}
+                                                                ${likes.length > 0 ? `<span class="text-[9px] font-bold">${likes.length}</span>` : ''}
                                                             </button>
-                                                            <span class="text-brand-border">|</span>
+                                                            <span class="text-brand-border/60 text-[10px]">|</span>
                                                             <button type="button" onclick="toggleReaction('${item.id}', ${replyIdx}, 'dislike', '${item.fbKey || ''}', this)" 
-                                                                class="reaction-btn flex items-center space-x-1 ${hasDisliked ? 'text-rose-400 font-bold' : 'text-gray-500 hover:text-rose-400'}">
+                                                                class="reaction-btn flex items-center space-x-1 ${hasDisliked ? 'reaction-active-dislike font-bold' : 'text-gray-500 hover:text-rose-400'}">
                                                                 <i class="fa-${hasDisliked ? 'solid' : 'regular'} fa-thumbs-down text-[11px]"></i>
-                                                                ${dislikes.length > 0 ? `<span class="text-[9px]">${dislikes.length}</span>` : ''}
+                                                                ${dislikes.length > 0 ? `<span class="text-[9px] font-bold">${dislikes.length}</span>` : ''}
                                                             </button>
                                                         </div>
 
@@ -3010,7 +3038,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             }, 200);
         }
 
-        // Обработка переключения лайка/дизлайка с анимацией
+       // Обработка переключения лайка/дизлайка с сочной анимацией
         function toggleReaction(reportId, replyIndex, type, fbKey, btnEl) {
             const targetReport = reportsHistory.find(item => String(item.id) === String(reportId));
             if (!targetReport || !targetReport.replies || !targetReport.replies[replyIndex]) return;
@@ -3024,7 +3052,6 @@ const DB_NODE_NAME = 'reports_vladimir';
             const dislikes = reply.reactions.dislikes || [];
 
             if (type === 'like') {
-                // Если лайк уже стоит — убираем его, иначе добавляем и убираем дизлайк
                 if (likes.includes(currentUser)) {
                     reply.reactions.likes = likes.filter(u => u !== currentUser);
                 } else {
@@ -3032,7 +3059,6 @@ const DB_NODE_NAME = 'reports_vladimir';
                     reply.reactions.dislikes = dislikes.filter(u => u !== currentUser);
                 }
             } else if (type === 'dislike') {
-                // Если дизлайк уже стоит — убираем его, иначе добавляем и убираем лайк
                 if (dislikes.includes(currentUser)) {
                     reply.reactions.dislikes = dislikes.filter(u => u !== currentUser);
                 } else {
@@ -3041,8 +3067,10 @@ const DB_NODE_NAME = 'reports_vladimir';
                 }
             }
 
-            // Добавляем эффект подпрыгивания кнопке
+            // Перезапуск эффекта пружинящего прыжка
             if (btnEl) {
+                btnEl.classList.remove('reaction-pop');
+                void btnEl.offsetWidth; // Force reflow для повторного старта CSS-анимации
                 btnEl.classList.add('reaction-pop');
             }
 
@@ -3051,17 +3079,19 @@ const DB_NODE_NAME = 'reports_vladimir';
                 openAccordions.push(reportId);
             }
 
-            // Сохраняем изменения
+            // Сохранение с задержкой для доигрывания анимации
+            const onDone = () => {
+                setTimeout(() => renderReportsFeed(), 220);
+            };
+
             if (isFirebaseConnected && fbKey && fbKey !== 'undefined' && fbKey !== '' && dbInstance) {
                 const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
-                window.fbSDK.set(itemRef, targetReport).then(() => {
-                    setTimeout(() => renderReportsFeed(), 150);
-                }).catch(err => {
+                window.fbSDK.set(itemRef, targetReport).then(onDone).catch(err => {
                     console.error("Error updating reactions in Firebase:", err);
                 });
             } else {
                 localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
-                setTimeout(() => renderReportsFeed(), 150);
+                onDone();
             }
         }
 
