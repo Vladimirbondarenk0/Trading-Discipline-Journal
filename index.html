@@ -1851,7 +1851,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             });
         }
 
-        // Плавный аккордеон с лимитом в 2 одновременно открытых отчёта и прокруткой вверх экрана
+        // Плавный аккордеон с лимитом в 2 одновременно открытых отчёта и мягким подтягиванием вверх
         function toggleAccordion(id) {
             const body = document.getElementById(`body-${id}`);
             const chevron = document.getElementById(`chevron-${id}`);
@@ -1874,13 +1874,18 @@ const DB_NODE_NAME = 'reports_vladimir';
                     if (oldChevron) oldChevron.classList.remove('rotate-180');
                 }
 
-                // Плавная прокрутка карточки в самый верх экрана после открытия
+                // Выжидаем старт раскрытия и мягко подтягиваем карточку прямо под фиксированный хедер
                 setTimeout(() => {
                     const cardRow = body.closest('.glass-panel');
                     if (cardRow) {
-                        cardRow.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        const cardRect = cardRow.getBoundingClientRect();
+                        const absoluteCardTop = cardRect.top + window.pageYOffset;
+                        // Отступаем 80px сверху, чтобы карточка не перекрывалась прилипающей шапкой
+                        const targetScroll = absoluteCardTop - 80;
+
+                        smoothScrollTo(targetScroll, 500);
                     }
-                }, 50);
+                }, 100);
             }
         }
         function toggleRuleModal() {
