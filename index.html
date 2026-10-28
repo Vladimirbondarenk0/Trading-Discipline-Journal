@@ -2868,6 +2868,35 @@ const DB_NODE_NAME = 'reports_vladimir';
             
             alert('База данных выходных сброшена! Всё готово для показа брату.');
         }
+
+        // Удаление комментария из обсуждения
+        function deleteReply(reportId, replyIndex, fbKey) {
+            if (!confirm("Ты действительно хочешь удалить этот комментарий?")) return;
+
+            const targetReport = reportsHistory.find(item => String(item.id) === String(reportId));
+            if (!targetReport || !targetReport.replies) return;
+
+            // Удаляем комментарий из массива по его индексу
+            targetReport.replies.splice(replyIndex, 1);
+
+            // Убеждаемся, что аккордеон останется открытым после перерисовки
+            if (!openAccordions.includes(Number(reportId)) && !openAccordions.includes(String(reportId))) {
+                openAccordions.push(reportId);
+            }
+
+            if (isFirebaseConnected && fbKey && fbKey !== 'undefined' && fbKey !== '' && dbInstance) {
+                const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
+                window.fbSDK.set(itemRef, targetReport).then(() => {
+                    renderReportsFeed();
+                }).catch(err => {
+                    console.error("Error deleting reply in Firebase:", err);
+                    alert("Ошибка при удалении комментария.");
+                });
+            } else {
+                localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
+                renderReportsFeed();
+            }
+        }
     </script>
 </body>
 </html>
