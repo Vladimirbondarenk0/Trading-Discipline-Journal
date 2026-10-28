@@ -1637,10 +1637,11 @@ const DB_NODE_NAME = 'reports_vladimir';
             });
         }
 
-        // Render Feed
+       // Render Feed
         function renderReportsFeed() {
             updateMonthlyStats();
             const container = document.getElementById('reports-feed');
+            if (!container) return;
             container.innerHTML = '';
 
             document.getElementById('reports-count').innerText = `${reportsHistory.length} записей`;
@@ -1669,7 +1670,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                        </div>`;
 
                 const isMyPost = item.author === currentUser;
-               const authorBadge = isMyPost
+                const authorBadge = isMyPost
                     ? `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user mr-1"></i>${item.author}</span>`
                     : `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user mr-1"></i>Брат</span>`;
 
@@ -1687,8 +1688,8 @@ const DB_NODE_NAME = 'reports_vladimir';
                         </div>
 
                         <div class="flex items-center space-x-3" onclick="event.stopPropagation()">
-                            <button onclick="toggleReplyInput(${item.id})" title="Добавить уточнение или комментарий" class="text-gray-400 hover:text-amber-400 w-8 h-8 rounded-lg bg-brand-dark/40 hover:bg-amber-500/10 border border-brand-border flex items-center justify-center transition">
-                                <i class="fa-solid fa-comment-dots text-xs"></i>
+                            <button type="button" onclick="toggleReplyInput(${item.id})" title="Добавить уточнение или комментарий" class="text-gray-400 hover:text-amber-400 w-8 h-8 rounded-lg bg-brand-dark/40 hover:bg-amber-500/10 border border-brand-border flex items-center justify-center transition cursor-pointer">
+                                <i class="fa-solid fa-comment-dots text-xs pointer-events-none"></i>
                             </button>
                             ${badgeHtml}
                             <div>
@@ -1733,7 +1734,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-xs text-gray-400">
                                         <span>📸 Подтверждение ордеров:</span>
-                                        <button onclick="openLightbox('${item.image}')" class="text-amber-400 hover:text-amber-300 flex items-center space-x-1 text-[11px] font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 transition">
+                                        <button type="button" onclick="openLightbox('${item.image}')" class="text-amber-400 hover:text-amber-300 flex items-center space-x-1 text-[11px] font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 transition">
                                             <i class="fa-solid fa-expand"></i>
                                             <span>Увеличить</span>
                                         </button>
@@ -1765,14 +1766,14 @@ const DB_NODE_NAME = 'reports_vladimir';
                                 <div id="reply-box-${item.id}" class="hidden space-y-2 pt-2">
                                     <input type="text" id="reply-input-${item.id}" placeholder="Напишите комментарий или вопрос..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-2.5 text-white text-xs focus:border-amber-400 outline-none">
                                     <div class="flex justify-end space-x-2">
-                                        <button onclick="toggleReplyInput(${item.id})" class="px-3 py-1.5 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-xs border border-brand-border transition">Отмена</button>
-                                        <button onclick="addReplyToReport(${item.id}, '${item.fbKey || ''}')" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition">Отправить</button>
+                                        <button type="button" onclick="toggleReplyInput(${item.id})" class="px-3 py-1.5 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-xs border border-brand-border transition">Отмена</button>
+                                        <button type="button" onclick="addReplyToReport(${item.id}, '${item.fbKey || ''}')" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition">Отправить</button>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="pt-3 border-t border-brand-border/40 flex justify-end">
-                                <button onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="w-full sm:w-auto text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-4 py-2.5 sm:py-1.5 rounded-lg border border-rose-500/20 flex items-center justify-center space-x-1.5 transition">
+                                <button type="button" onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="w-full sm:w-auto text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-4 py-2.5 sm:py-1.5 rounded-lg border border-rose-500/20 flex items-center justify-center space-x-1.5 transition">
                                     <i class="fa-solid fa-trash-can"></i>
                                     <span>Удалить запись</span>
                                 </button>
