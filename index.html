@@ -1018,22 +1018,34 @@ const DB_NODE_NAME = 'reports_vladimir';
             const completedCard = document.getElementById('completed-day-card');
             const weekendPanel = document.getElementById('weekend-active-panel');
             const tradingPanel = document.getElementById('trading-active-panel');
-
-            // 1. ПРОВЕРКА НА АКТИВНЫЙ БЛОК С ПРОШЛОЙ СЕССИИ (Защита на следующий день)
+            
+            // 1. ПРОВЕРКА НА АКТИВНЫЙ БЛОК С ПРОШЛОЙ СЕССИИ (Строго 24 часа / до 09:00 следующего дня)
             const lastUserReport = reportsHistory.find(item => item.author === currentUser);
             
             if (lastUserReport && lastUserReport.compliance !== 'clean') {
-                const reportDate = new Date(lastUserReport.id);
-                let unlockDate = new Date(reportDate);
-                const repDay = reportDate.getDay();
+                const reportTime = lastUserReport.id; // Время создания отчёта ( timestamp )
+                let unlockTime = reportTime + (24 * 3600 * 1000); // Ровно через 24 часа
 
-                if (repDay === 5 || repDay === 6) {
-                    const daysToAdd = (repDay === 5) ? 4 : 3;
+                // Дополнительная проверка на выходные (если блок попадает на выходные дни, продлеваем до понедельника 09:00)
+                const reportDate = new Date(reportTime);
+                const repDay = reportDate.getDay();
+                let unlockDate = new Date(unlockTime);
+                
+                // Если отчёт подан в пятницу или выходные, блок переносится на утро понедельника (09:00)
+                if (repDay === 5 || repDay === 6 || repDay === 0) {
+                    unlockDate = new Date(reportDate);
+                    const daysToAdd = (repDay === 5) ? 3 : (repDay === 6 ? 2 : 1);
                     unlockDate.setDate(unlockDate.getDate() + daysToAdd);
+                    unlockDate.setHours(9, 0, 0, 0);
                 } else {
-                    unlockDate.setDate(unlockDate.getDate() + 2);
+                    // Для будней: если отдали отчёт утром (например, в 09:30 за вчера), блок действует до 09:00 следующего дня
+                    let nextMorning = new Date(reportDate);
+                    nextMorning.setDate(nextMorning.getDate() + 1);
+                    nextMorning.setHours(9, 0, 0, 0);
+                    if (unlockDate < nextMorning) {
+                        unlockDate = nextMorning;
+                    }
                 }
-                unlockDate.setHours(9, 0, 0, 0);
 
                 if (now < unlockDate) {
                     if (timerCard) timerCard.classList.add('hidden');
@@ -1054,7 +1066,9 @@ const DB_NODE_NAME = 'reports_vladimir';
                         badgeContainerEl.dataset.badgeType = 'blocked';
                     }
 
+                    const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
                     const unlockDateStr = `${unlockDate.getDate()} ${months[unlockDate.getMonth()]} в 09:00`;
+                    
                     const thoughtEl = document.getElementById('completed-spiritual-thought');
                     if (thoughtEl) {
                         thoughtEl.innerHTML = `
