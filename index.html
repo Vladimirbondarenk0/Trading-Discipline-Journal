@@ -1769,10 +1769,11 @@ const DB_NODE_NAME = 'reports_vladimir';
                                     `).join('') : '<div class="text-[11px] text-gray-500 italic">Пока нет комментариев к этой записи.</div>'}
                                 </div>
 
-                                <!-- Блок ввода комментария всегда виден или управляется кнопкой -->
-                                <div id="reply-box-${item.id}" class="space-y-2 pt-2">
+                               <!-- Блок ввода комментария -->
+                                <div id="reply-box-${item.id}" class="hidden space-y-2 pt-2">
                                     <input type="text" id="reply-input-${item.id}" placeholder="Напишите комментарий или вопрос..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-2.5 text-white text-xs focus:border-amber-400 outline-none">
                                     <div class="flex justify-end space-x-2">
+                                        <button type="button" onclick="toggleReplyInput(${item.id})" class="px-3 py-1.5 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-xs border border-brand-border transition">Отмена</button>
                                         <button type="button" onclick="addReplyToReport(${item.id}, '${item.fbKey || ''}')" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition">Отправить</button>
                                     </div>
                                 </div>
