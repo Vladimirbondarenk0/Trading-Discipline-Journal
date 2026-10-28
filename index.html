@@ -929,6 +929,32 @@
         </div>
     </div>
 
+    <!-- Кастомное модальное окно подтверждения удаления -->
+<div id="delete-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-200">
+    <div class="glass-panel p-6 rounded-2xl max-w-sm w-full mx-4 border border-brand-border/80 shadow-2xl space-y-4 transform scale-95 transition-transform duration-200" id="delete-modal-card">
+        <div class="flex items-center space-x-3 text-rose-400">
+            <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-trash-can text-lg"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-white">Удаление комментария</h3>
+                <p class="text-xs text-gray-400 mt-0.5">Это действие нельзя отменить</p>
+            </div>
+        </div>
+        <p class="text-xs text-gray-300 leading-relaxed">
+            Ты действительно хочешь удалить этот комментарий?
+        </p>
+        <div class="flex justify-end space-x-2 pt-2">
+            <button type="button" id="delete-modal-cancel" class="px-4 py-2 rounded-xl bg-brand-card hover:bg-gray-800 text-gray-300 text-xs font-semibold border border-brand-border transition">
+                Отмена
+            </button>
+            <button type="button" id="delete-modal-confirm" class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold transition shadow-lg shadow-rose-500/20">
+                Удалить
+            </button>
+        </div>
+    </div>
+</div>
+
     <!-- Firebase SDK Imports -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -2899,32 +2925,75 @@ const DB_NODE_NAME = 'reports_vladimir';
             alert('База данных выходных сброшена! Всё готово для показа брату.');
         }
 
-        // Удаление комментария из обсуждения
+        // Переменная для хранения контекста удаляемого комментария
+        let pendingDeleteContext = null;
+
+        // Открытие красивой модалки вместо системного confirm
         function deleteReply(reportId, replyIndex, fbKey) {
-            if (!confirm("Ты действительно хочешь удалить этот комментарий?")) return;
+            pendingDeleteContext = { reportId, replyIndex, fbKey };
+            
+            const modal = document.getElementById('delete-modal');
+            const card = document.getElementById('delete-modal-card');
+            if (!modal || !card) return;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('delete-modal');
+            const card = document.getElementById('delete-modal-card');
+            if (!modal || !card) return;
+
+            modal.classList.add('opacity-0');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                pendingDeleteContext = null;
+            }, 200);
+        }
+
+        // Подтвержденное удаление комментария
+        function confirmDeleteReply() {
+            if (!pendingDeleteContext) return;
+            const { reportId, replyIndex, fbKey } = pendingDeleteContext;
 
             const targetReport = reportsHistory.find(item => String(item.id) === String(reportId));
-            if (!targetReport || !targetReport.replies) return;
+            if (!targetReport || !targetReport.replies) {
+                closeDeleteModal();
+                return;
+            }
 
-            // Удаляем комментарий из массива по его индексу
+            // Удаляем комментарий
             targetReport.replies.splice(replyIndex, 1);
 
-            // Убеждаемся, что аккордеон останется открытым после перерисовки
+            // Сохраняем открытый аккордеон
             if (!openAccordions.includes(Number(reportId)) && !openAccordions.includes(String(reportId))) {
                 openAccordions.push(reportId);
             }
 
+            const onDone = () => {
+                closeDeleteModal();
+                renderReportsFeed();
+            };
+
             if (isFirebaseConnected && fbKey && fbKey !== 'undefined' && fbKey !== '' && dbInstance) {
                 const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
                 window.fbSDK.set(itemRef, targetReport).then(() => {
-                    renderReportsFeed();
+                    onDone();
                 }).catch(err => {
                     console.error("Error deleting reply in Firebase:", err);
-                    alert("Ошибка при удалении комментария.");
+                    closeDeleteModal();
                 });
             } else {
                 localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
-                renderReportsFeed();
+                onDone();
             }
         }
 
@@ -2982,6 +3051,23 @@ const DB_NODE_NAME = 'reports_vladimir';
                 setTimeout(() => renderReportsFeed(), 150);
             }
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnCancel = document.getElementById('delete-modal-cancel');
+            const btnConfirm = document.getElementById('delete-modal-confirm');
+            const modal = document.getElementById('delete-modal');
+
+            if (btnCancel) btnCancel.addEventListener('click', closeDeleteModal);
+            if (btnConfirm) btnConfirm.addEventListener('click', confirmDeleteReply);
+
+            // Закрытие по клику на фон
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeDeleteModal();
+                });
+            }
+        });
     </script>
+    
 </body>
 </html>
