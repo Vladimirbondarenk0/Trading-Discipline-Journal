@@ -1622,7 +1622,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             }
         }
 
-        // Сохранение нового комментария/уточнения к существующей записи
+        // Сохранение комментария без закрытия аккордеона + плавная анимация
         function addReplyToReport(id, fbKey) {
             const input = document.getElementById(`reply-input-${id}`);
             if (!input) return;
@@ -1635,30 +1635,103 @@ const DB_NODE_NAME = 'reports_vladimir';
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
 
-            // Надежный поиск записи (приводим оба id к строке для точного сравнения)
             const targetReport = reportsHistory.find(item => String(item.id) === String(id));
-            if (!targetReport) {
-                console.error("Не найдена запись для добавления комментария, id:", id);
-                return;
-            }
+            if (!targetReport) return;
 
             if (!targetReport.replies) targetReport.replies = [];
             targetReport.replies.push(newReply);
 
-            // Если подключен Firebase и есть реальный ключ узла `fbKey`
+            // Убеждаемся, что текущий аккордеон зафиксирован как открытый
+            if (!openAccordions.includes(Number(id)) && !openAccordions.includes(String(id))) {
+                openAccordions.push(id);
+            }
+
+            const onSaveSuccess = () => {
+                input.value = '';
+                // Скрываем форму ввода
+                const box = document.getElementById(`reply-box-${id}`);
+                if (box) box.classList.add('hidden');
+
+                // Перерисовываем ленту (аккордеон останется открытым)
+                renderReportsFeed();
+
+                // Добавляем эффект плавного появления для последнего комментария
+                const newReplyIndex = targetReport.replies.length - 1;
+                const newEl = document.getElementById(`reply-item-${id}-${newReplyIndex}`);
+                if (newEl) {
+                    newEl.classList.add('opacity-0', 'scale-95');
+                    setTimeout(() => {
+                        newEl.classList.remove('opacity-0', 'scale-95');
+                        newEl.classList.add('opacity-100', 'scale-100');
+                    }, 50);
+                }
+            };
+
             if (isFirebaseConnected && fbKey && fbKey !== 'undefined' && fbKey !== '' && dbInstance) {
                 const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
                 window.fbSDK.set(itemRef, targetReport).then(() => {
-                    input.value = '';
-                    renderReportsFeed();
+                    onSaveSuccess();
                 }).catch(err => {
                     console.error("Error saving reply to Firebase:", err);
                     alert("Ошибка при сохранении комментария в базу.");
                 });
             } else {
-                // Локальное сохранение / fallback
                 localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
-                input.value = '';
+                onSaveSuccess();
+            }
+        }
+
+        // Редактирование текста комментария в блоке обсуждения
+        function editReplyText(reportId, replyIndex, fbKey) {
+            const targetReport = reportsHistory.find(item => String(item.id) === String(reportId));
+            if (!targetReport || !targetReport.replies || !targetReport.replies[replyIndex]) return;
+
+            const contentDiv = document.getElementById(`reply-content-${reportId}-${replyIndex}`);
+            if (!contentDiv || contentDiv.querySelector('textarea')) return;
+
+            const currentText = targetReport.replies[replyIndex].text;
+
+            contentDiv.innerHTML = `
+                <div class="space-y-2 pt-1">
+                    <textarea id="edit-reply-input-${reportId}-${replyIndex}" rows="2" class="w-full bg-brand-dark border border-brand-border rounded-xl p-2 text-white text-xs focus:border-amber-400 outline-none resize-none">${currentText}</textarea>
+                    <div class="flex justify-end space-x-1.5">
+                        <button type="button" onclick="renderReportsFeed()" class="px-2.5 py-1 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-[11px] border border-brand-border transition">Отмена</button>
+                        <button type="button" onclick="saveReplyText('${reportId}', ${replyIndex}, '${fbKey}')" class="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-[11px] transition">Сохранить</button>
+                    </div>
+                </div>
+            `;
+
+            const input = document.getElementById(`edit-reply-input-${reportId}-${replyIndex}`);
+            if (input) input.focus();
+        }
+
+        function saveReplyText(reportId, replyIndex, fbKey) {
+            const input = document.getElementById(`edit-reply-input-${reportId}-${replyIndex}`);
+            if (!input) return;
+
+            const newText = input.value.trim();
+            if (!newText) return;
+
+            const targetReport = reportsHistory.find(item => String(item.id) === String(reportId));
+            if (!targetReport || !targetReport.replies || !targetReport.replies[replyIndex]) return;
+
+            targetReport.replies[replyIndex].text = newText;
+
+            // Убеждаемся, что карточка останется открытой при сохранении
+            if (!openAccordions.includes(Number(reportId)) && !openAccordions.includes(String(reportId))) {
+                openAccordions.push(reportId);
+            }
+
+            if (isFirebaseConnected && fbKey && fbKey !== 'undefined' && fbKey !== '' && dbInstance) {
+                const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
+                window.fbSDK.set(itemRef, targetReport).then(() => {
+                    renderReportsFeed();
+                }).catch(err => {
+                    console.error("Error updating reply in Firebase:", err);
+                    alert("Ошибка при сохранении.");
+                });
+            } else {
+                localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
                 renderReportsFeed();
             }
         }
@@ -1801,6 +1874,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                     ? `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user mr-1"></i>${item.author}</span>`
                     : `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-semibold"><i class="fa-solid fa-user mr-1"></i>Брат</span>`;
 
+                const isOpen = openAccordions.includes(item.id) || openAccordions.includes(String(item.id)) || openAccordions.includes(Number(item.id));
                 const row = document.createElement('div');
                 row.className = "glass-panel rounded-xl border border-brand-border/80 overflow-hidden transition";
 
@@ -1820,12 +1894,12 @@ const DB_NODE_NAME = 'reports_vladimir';
                             </button>
                             ${badgeHtml}
                             <div class="pointer-events-none">
-                                <i id="chevron-${item.id}" class="fa-solid fa-chevron-down text-gray-500 text-xs transition-transform duration-300"></i>
+                                <i id="chevron-${item.id}" class="fa-solid fa-chevron-down text-gray-500 text-xs transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}"></i>
                             </div>
                         </div>
                     </div>
 
-                    <div id="body-${item.id}" class="accordion-body">
+                    <div id="body-${item.id}" class="accordion-body ${isOpen ? 'open' : ''}">
                         <div class="border-t border-brand-border/50 p-4 sm:p-5 bg-brand-card/40 space-y-4" onclick="event.stopPropagation()">
                             
                             ${item.comment || isMyPost ? `
@@ -1893,14 +1967,23 @@ const DB_NODE_NAME = 'reports_vladimir';
                                     </button>
                                 </div>   
 
-                                <div class="space-y-2" id="replies-list-${item.id}">
-                                    ${item.replies && item.replies.length > 0 ? item.replies.map(r => `
-                                        <div class="p-2.5 rounded-lg bg-brand-dark/60 border border-brand-border/60 text-xs space-y-1">
-                                            <div class="flex items-center justify-between text-[10px] text-gray-400 font-semibold">
-                                                <span class="text-amber-400">${r.author}</span>
-                                                <span>${r.time}</span>
+                               <div class="space-y-2" id="replies-list-${item.id}">
+                                    ${item.replies && item.replies.length > 0 ? item.replies.map((r, replyIdx) => `
+                                        <div id="reply-item-${item.id}-${replyIdx}" class="p-2.5 rounded-lg bg-brand-dark/60 border border-brand-border/60 text-xs space-y-1 transition-all duration-300">
+                                            <div class="flex items-start justify-between text-[10px] text-gray-400 font-semibold">
+                                                <span class="${r.author === currentUser ? 'text-amber-400' : 'text-blue-400'}">${r.author}</span>
+                                                <div class="flex flex-col items-end space-y-1">
+                                                    <span>${r.time}</span>
+                                                    ${r.author === currentUser ? `
+                                                        <button type="button" onclick="editReplyText('${item.id}', ${replyIdx}, '${item.fbKey || ''}')" title="Редактировать комментарий" class="text-gray-400 hover:text-amber-400 transition p-0.5">
+                                                            <i class="fa-solid fa-pen text-[10px]"></i>
+                                                        </button>
+                                                    ` : ''}
+                                                </div>
                                             </div>
-                                            <p class="text-gray-200 leading-relaxed">${r.text}</p>
+                                            <div id="reply-content-${item.id}-${replyIdx}">
+                                                <p class="text-gray-200 leading-relaxed">${r.text}</p>
+                                            </div>
                                         </div>
                                     `).join('') : '<div class="text-[11px] text-gray-500 italic">Пока нет комментариев к этой записи.</div>'}
                                 </div>
