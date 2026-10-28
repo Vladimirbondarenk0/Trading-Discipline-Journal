@@ -13,7 +13,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <!-- Lenis Smooth Scroll CDN -->
+<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -3109,6 +3111,26 @@ const DB_NODE_NAME = 'reports_vladimir';
                 });
             }
         });
+
+        // Инициализация плавной прокрутки Lenis для мыши, тачпадов и тачскринов
+        const lenis = new Lenis({
+            duration: 1.2,          // Плавность (больше значение = мягче и дольше скольжение)
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Благородная кривая замедления
+            direction: 'vertical',  // Вертикальный скролл
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,     // Множитель скорости колесика мыши
+            smoothTouch: false,     // На тачскринах оставляем нативную инерцию браузера, чтобы не конфликтовало, но если нужна ультра-гладкость везде — можно поставить true
+            touchMultiplier: 2,
+        });
+
+        // Связываем Lenis с анимационным циклом браузера (requestAnimationFrame)
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
     </script>
     
 </body>
