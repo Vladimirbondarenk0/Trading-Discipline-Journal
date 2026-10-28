@@ -3052,17 +3052,16 @@ const DB_NODE_NAME = 'reports_vladimir';
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const btnCancel = document.getElementById('delete-modal-cancel');
-            const btnConfirm = document.getElementById('delete-modal-confirm');
-            const modal = document.getElementById('delete-modal');
+            const btnCancel = document.getElementById('delete-reply-modal-cancel');
+            const btnConfirm = document.getElementById('delete-reply-modal-confirm');
+            const modal = document.getElementById('delete-reply-modal');
 
-            if (btnCancel) btnCancel.addEventListener('click', closeDeleteModal);
+            if (btnCancel) btnCancel.addEventListener('click', closeDeleteReplyModal);
             if (btnConfirm) btnConfirm.addEventListener('click', confirmDeleteReply);
 
-            // Закрытие по клику на фон
             if (modal) {
                 modal.addEventListener('click', (e) => {
-                    if (e.target === modal) closeDeleteModal();
+                    if (e.target === modal) closeDeleteReplyModal();
                 });
             }
         });
