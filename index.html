@@ -2025,11 +2025,29 @@ const DB_NODE_NAME = 'reports_vladimir';
                                         const hasDisliked = dislikes.includes(currentUser);
 
                                         return `
-                                            <div id="reply-item-${item.id}-${replyIdx}" class="p-2.5 rounded-lg bg-brand-dark/60 border border-brand-border/60 text-xs space-y-1.5 transition-all duration-300">
+                                            <div id="reply-item-${item.id}-${replyIdx}" class="p-2.5 rounded-lg bg-brand-dark/60 border border-brand-border/60 text-xs space-y-1 transition-all duration-300">
                                                 <div class="flex items-center justify-between text-[10px] text-gray-400 font-semibold relative">
                                                     <span class="${isMe ? 'text-amber-400' : 'text-blue-400'}">${displayName}</span>
-                                                    <div class="flex items-center space-x-2.5">
+                                                    
+                                                    <!-- Правая панель: Реакции, Время, Редактирование, Удаление -->
+                                                    <div class="flex items-center space-x-3">
+                                                        <!-- Лайк / Дизлайк -->
+                                                        <div class="flex items-center space-x-2 bg-brand-dark/40 px-2 py-0.5 rounded-md border border-brand-border/40">
+                                                            <button type="button" onclick="toggleReaction('${item.id}', ${replyIdx}, 'like', '${item.fbKey || ''}', this)" 
+                                                                class="reaction-btn flex items-center space-x-1 ${hasLiked ? 'text-emerald-400 font-bold' : 'text-gray-500 hover:text-emerald-400'}">
+                                                                <i class="fa-${hasLiked ? 'solid' : 'regular'} fa-thumbs-up text-[11px]"></i>
+                                                                ${likes.length > 0 ? `<span class="text-[9px]">${likes.length}</span>` : ''}
+                                                            </button>
+                                                            <span class="text-brand-border">|</span>
+                                                            <button type="button" onclick="toggleReaction('${item.id}', ${replyIdx}, 'dislike', '${item.fbKey || ''}', this)" 
+                                                                class="reaction-btn flex items-center space-x-1 ${hasDisliked ? 'text-rose-400 font-bold' : 'text-gray-500 hover:text-rose-400'}">
+                                                                <i class="fa-${hasDisliked ? 'solid' : 'regular'} fa-thumbs-down text-[11px]"></i>
+                                                                ${dislikes.length > 0 ? `<span class="text-[9px]">${dislikes.length}</span>` : ''}
+                                                            </button>
+                                                        </div>
+
                                                         <span>${r.time}</span>
+
                                                         ${isMe ? `
                                                             <div class="flex items-center space-x-2 border-l border-brand-border/50 pl-2">
                                                                 <button type="button" onclick="editReplyText('${item.id}', ${replyIdx}, '${item.fbKey || ''}')" title="Редактировать комментарий" class="text-gray-500 hover:text-amber-400 transition">
@@ -2042,22 +2060,10 @@ const DB_NODE_NAME = 'reports_vladimir';
                                                         ` : ''}
                                                     </div>
                                                 </div>
-                                                <div id="reply-content-${item.id}-${replyIdx}">
-                                                    <p class="text-gray-200 leading-relaxed">${r.text}</p>
-                                                </div>
-                                                
-                                                <div class="flex items-center space-x-3 pt-1.5 border-t border-brand-border/30 text-[11px]">
-                                                    <button type="button" onclick="toggleReaction('${item.id}', ${replyIdx}, 'like', '${item.fbKey || ''}', this)" 
-                                                        class="reaction-btn flex items-center space-x-1 ${hasLiked ? 'text-emerald-400 font-bold' : 'text-gray-500 hover:text-emerald-400'}">
-                                                        <i class="fa-${hasLiked ? 'solid' : 'regular'} fa-thumbs-up text-xs"></i>
-                                                        ${likes.length > 0 ? `<span class="text-[10px]">${likes.length}</span>` : ''}
-                                                    </button>
 
-                                                    <button type="button" onclick="toggleReaction('${item.id}', ${replyIdx}, 'dislike', '${item.fbKey || ''}', this)" 
-                                                        class="reaction-btn flex items-center space-x-1 ${hasDisliked ? 'text-rose-400 font-bold' : 'text-gray-500 hover:text-rose-400'}">
-                                                        <i class="fa-${hasDisliked ? 'solid' : 'regular'} fa-thumbs-down text-xs"></i>
-                                                        ${dislikes.length > 0 ? `<span class="text-[10px]">${dislikes.length}</span>` : ''}
-                                                    </button>
+                                                <!-- Текст комментария -->
+                                                <div id="reply-content-${item.id}-${replyIdx}" class="pt-0.5">
+                                                    <p class="text-gray-200 leading-relaxed">${r.text}</p>
                                                 </div>
                                             </div>
                                         `;
