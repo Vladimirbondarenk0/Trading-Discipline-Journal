@@ -1687,7 +1687,6 @@ const DB_NODE_NAME = 'reports_vladimir';
                         </div>
 
                         <div class="flex items-center space-x-3" onclick="event.stopPropagation()">
-                            <!-- Иконка для быстрого вызова комментирования (остановленstopPropagation, чтобы не дергать аккордеон) -->
                             <button onclick="toggleReplyInput(${item.id})" title="Добавить уточнение или комментарий" class="text-gray-400 hover:text-amber-400 w-8 h-8 rounded-lg bg-brand-dark/40 hover:bg-amber-500/10 border border-brand-border flex items-center justify-center transition">
                                 <i class="fa-solid fa-comment-dots text-xs"></i>
                             </button>
@@ -1701,7 +1700,6 @@ const DB_NODE_NAME = 'reports_vladimir';
                     <div id="body-${item.id}" class="accordion-body">
                         <div class="border-t border-brand-border/50 p-4 sm:p-5 bg-brand-card/40 space-y-4">
                             
-                            <!-- Если было введено уточнение на этапе подачи отчета -->
                             ${item.comment ? `
                                 <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-1">
                                     <div class="text-[10px] uppercase font-bold text-amber-400 tracking-wider flex items-center space-x-1">
@@ -1746,14 +1744,12 @@ const DB_NODE_NAME = 'reports_vladimir';
                                 </div>
                             </div>
 
-                            <!-- Секция комментариев и обсуждения отчета -->
                             <div class="space-y-3 pt-3 border-t border-brand-border/40">
                                 <div class="text-xs font-bold text-gray-300 flex items-center space-x-1.5">
                                     <i class="fa-solid fa-comments text-amber-400"></i>
                                     <span>Обсуждение и уточнения (${item.replies ? item.replies.length : 0})</span>
                                 </div>
 
-                                <!-- Список уже оставленных комментариев -->
                                 <div class="space-y-2" id="replies-list-${item.id}">
                                     ${item.replies && item.replies.length > 0 ? item.replies.map(r => `
                                         <div class="p-2.5 rounded-lg bg-brand-dark/60 border border-brand-border/60 text-xs space-y-1">
@@ -1766,7 +1762,6 @@ const DB_NODE_NAME = 'reports_vladimir';
                                     `).join('') : '<div class="text-[11px] text-gray-500 italic">Пока нет комментариев к этой записи.</div>'}
                                 </div>
 
-                                <!-- Скрытая форма ввода нового комментария -->
                                 <div id="reply-box-${item.id}" class="hidden space-y-2 pt-2">
                                     <input type="text" id="reply-input-${item.id}" placeholder="Напишите комментарий или вопрос..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-2.5 text-white text-xs focus:border-amber-400 outline-none">
                                     <div class="flex justify-end space-x-2">
@@ -1776,7 +1771,6 @@ const DB_NODE_NAME = 'reports_vladimir';
                                 </div>
                             </div>
 
-                            <!-- Delete Button Footer inside Accordion -->
                             <div class="pt-3 border-t border-brand-border/40 flex justify-end">
                                 <button onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="w-full sm:w-auto text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-4 py-2.5 sm:py-1.5 rounded-lg border border-rose-500/20 flex items-center justify-center space-x-1.5 transition">
                                     <i class="fa-solid fa-trash-can"></i>
