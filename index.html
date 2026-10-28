@@ -1415,7 +1415,15 @@ const DB_NODE_NAME = 'reports_vladimir';
             const commentInput = document.getElementById('report-comment-input');
             const userComment = commentInput ? commentInput.value.trim() : '';
 
-            const timestamp = Date.now();
+            // Умная логика даты сессии: 
+            // Если отчёт отправляется рано утром (до 09:00), он относится к торговой сессии предыдущего дня.
+            const now = new Date();
+            let sessionDate = new Date(now);
+            if (now.getHours() < 9) {
+                sessionDate.setDate(sessionDate.getDate() - 1);
+            }
+            const timestamp = sessionDate.getTime();
+
             const newEntry = {
                 id: timestamp,
                 author: currentUser,
@@ -1424,8 +1432,8 @@ const DB_NODE_NAME = 'reports_vladimir';
                 compliance: reportData.compliance,
                 error: reportData.error,
                 image: reportData.image,
-                comment: userComment, // <--- сохраняем комментарий
-                replies: [] // <--- массив для обсуждений/уточнений в журнале
+                comment: userComment, // Сохраняем комментарий
+                replies: [] // Массив для обсуждений
             };
 
             if (isFirebaseConnected && dbRef) {
