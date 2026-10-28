@@ -1678,8 +1678,8 @@ const DB_NODE_NAME = 'reports_vladimir';
                 row.className = "glass-panel rounded-xl border border-brand-border/80 overflow-hidden transition";
 
                 row.innerHTML = `
-                    <div onclick="toggleAccordion(${item.id})" class="p-4 flex items-center justify-between cursor-pointer record-header transition">
-                        <div class="flex-1">
+                    <div class="p-4 flex items-center justify-between cursor-pointer record-header transition" onclick="toggleAccordion(${item.id})">
+                        <div class="flex-1 pointer-events-none">
                             <div class="flex items-center space-x-2 text-xs">
                                 ${authorBadge}
                                 <span class="text-gray-400 font-medium">${item.date}</span>
@@ -1687,12 +1687,12 @@ const DB_NODE_NAME = 'reports_vladimir';
                             <div class="text-sm font-semibold text-white mt-1">${item.trades}</div>
                         </div>
 
-                        <div class="flex items-center space-x-3" onclick="event.stopPropagation()">
-                            <button type="button" onclick="toggleReplyInput(${item.id})" title="Добавить уточнение или комментарий" class="text-gray-400 hover:text-amber-400 w-8 h-8 rounded-lg bg-brand-dark/40 hover:bg-amber-500/10 border border-brand-border flex items-center justify-center transition cursor-pointer">
+                        <div class="flex items-center space-x-3">
+                            <button type="button" onclick="event.stopPropagation(); toggleReplyInput(${item.id})" title="Добавить уточнение или комментарий" class="text-gray-400 hover:text-amber-400 w-8 h-8 rounded-lg bg-brand-dark/40 hover:bg-amber-500/10 border border-brand-border flex items-center justify-center transition cursor-pointer">
                                 <i class="fa-solid fa-comment-dots text-xs pointer-events-none"></i>
                             </button>
                             ${badgeHtml}
-                            <div>
+                            <div class="pointer-events-none">
                                 <i id="chevron-${item.id}" class="fa-solid fa-chevron-down text-gray-500 text-xs transition-transform duration-300"></i>
                             </div>
                         </div>
