@@ -1492,7 +1492,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
         }
 
-       // Переключение видимости формы добавления комментария и прокрутка поля ввода в центр экрана
+       // Переключение видимости формы добавления комментария и точная прокрутка в центр
         function toggleReplyInput(id) {
             // 1. Автоматически открываем аккордеон, если он был закрыт
             const body = document.getElementById(`body-${id}`);
@@ -1512,17 +1512,20 @@ const DB_NODE_NAME = 'reports_vladimir';
                 }
             }
 
-            // 2. Показываем/скрываем поле ввода и прокручиваем именно его по центру
+            // 2. Показываем/скрываем поле ввода
             const box = document.getElementById(`reply-box-${id}`);
             if (box) {
-                box.classList.toggle('hidden');
-                if (!box.classList.contains('hidden')) {
-                    // Даем небольшой таймаут на отрисовку открывшегося блока, затем центрируем поле ввода
+                const isHidden = box.classList.contains('hidden');
+                if (isHidden) {
+                    box.classList.remove('hidden');
+                    // Ждем окончания анимации раскрытия аккордеона (350мс), затем центрируем и фокусируем
                     setTimeout(() => {
                         box.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         const input = document.getElementById(`reply-input-${id}`);
                         if (input) input.focus();
-                    }, 50);
+                    }, 350);
+                } else {
+                    box.classList.add('hidden');
                 }
             } else {
                 console.error("Не найден блок ответа для id:", id);
