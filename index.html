@@ -1492,7 +1492,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
         }
 
-       // Переключение видимости формы добавления комментария в журнале с прокруткой к центру
+       // Переключение видимости формы добавления комментария и прокрутка поля ввода в центр экрана
         function toggleReplyInput(id) {
             // 1. Автоматически открываем аккордеон, если он был закрыт
             const body = document.getElementById(`body-${id}`);
@@ -1512,19 +1512,17 @@ const DB_NODE_NAME = 'reports_vladimir';
                 }
             }
 
-            // 2. Показываем/скрываем само поле ввода и плавно смещаем экран к нему в центр
+            // 2. Показываем/скрываем поле ввода и прокручиваем именно его по центру
             const box = document.getElementById(`reply-box-${id}`);
             if (box) {
                 box.classList.toggle('hidden');
                 if (!box.classList.contains('hidden')) {
-                    // Плавная прокрутка экрана так, чтобы карточка оказалась по центру
-                    const cardRow = box.closest('.glass-panel');
-                    if (cardRow) {
-                        cardRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                    
-                    const input = document.getElementById(`reply-input-${id}`);
-                    if (input) input.focus();
+                    // Даем небольшой таймаут на отрисовку открывшегося блока, затем центрируем поле ввода
+                    setTimeout(() => {
+                        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        const input = document.getElementById(`reply-input-${id}`);
+                        if (input) input.focus();
+                    }, 50);
                 }
             } else {
                 console.error("Не найден блок ответа для id:", id);
