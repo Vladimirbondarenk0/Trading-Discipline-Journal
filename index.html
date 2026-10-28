@@ -1571,6 +1571,57 @@ const DB_NODE_NAME = 'reports_vladimir';
             requestAnimationFrame(animation);
         }
 
+        // Редактирование и сохранение уточнения к отчёту
+        function editReportComment(id, fbKey) {
+            const targetReport = reportsHistory.find(item => String(item.id) === String(id));
+            if (!targetReport) return;
+
+            const textContainer = document.getElementById(`comment-text-${id}`);
+            if (!textContainer) return;
+
+            // Если уже в режиме редактирования — не дублируем
+            if (textContainer.querySelector('textarea')) return;
+
+            const currentComment = targetReport.comment || '';
+
+            textContainer.innerHTML = `
+                <div class="space-y-2 pt-1">
+                    <textarea id="edit-comment-input-${id}" rows="2" class="w-full bg-brand-dark border border-brand-border rounded-xl p-2.5 text-white text-xs focus:border-amber-400 outline-none resize-none">${currentComment}</textarea>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="renderReportsFeed()" class="px-3 py-1 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-xs border border-brand-border transition">Отмена</button>
+                        <button type="button" onclick="saveReportComment('${id}', '${fbKey}')" class="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition">Сохранить</button>
+                    </div>
+                </div>
+            `;
+
+            const input = document.getElementById(`edit-comment-input-${id}`);
+            if (input) input.focus();
+        }
+
+        function saveReportComment(id, fbKey) {
+            const input = document.getElementById(`edit-comment-input-${id}`);
+            if (!input) return;
+
+            const newComment = input.value.trim();
+            const targetReport = reportsHistory.find(item => String(item.id) === String(id));
+            if (!targetReport) return;
+
+            targetReport.comment = newComment;
+
+            if (isFirebaseConnected && fbKey && dbInstance) {
+                const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
+                window.fbSDK.set(itemRef, targetReport).then(() => {
+                    renderReportsFeed();
+                }).catch(err => {
+                    console.error("Error updating comment in Firebase:", err);
+                    alert("Ошибка при сохранении уточнения.");
+                });
+            } else {
+                localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
+                renderReportsFeed();
+            }
+        }
+
         // Сохранение нового комментария/уточнения к существующей записи
         function addReplyToReport(id, fbKey) {
             const input = document.getElementById(`reply-input-${id}`);
@@ -1774,13 +1825,22 @@ const DB_NODE_NAME = 'reports_vladimir';
                     <div id="body-${item.id}" class="accordion-body">
                         <div class="border-t border-brand-border/50 p-4 sm:p-5 bg-brand-card/40 space-y-4" onclick="event.stopPropagation()">
                             
-                            ${item.comment ? `
-                                <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-1">
-                                    <div class="text-[10px] uppercase font-bold text-amber-400 tracking-wider flex items-center space-x-1">
-                                        <i class="fa-solid fa-quote-left"></i>
-                                        <span>Уточнение к отчету (${item.author}):</span>
+                            ${item.comment || isMyPost ? `
+                                <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-2" id="comment-container-${item.id}">
+                                    <div class="flex items-center justify-between">
+                                        <div class="text-[10px] uppercase font-bold text-amber-400 tracking-wider flex items-center space-x-1">
+                                            <i class="fa-solid fa-quote-left"></i>
+                                            <span>Уточнение к отчету (${item.author}):</span>
+                                        </div>
+                                        ${isMyPost ? `
+                                            <button type="button" onclick="editReportComment('${item.id}', '${item.fbKey || ''}')" title="Редактировать уточнение" class="text-amber-400 hover:text-amber-300 p-1 transition">
+                                                <i class="fa-solid fa-pen text-xs"></i>
+                                            </button>
+                                        ` : ''}
                                     </div>
-                                    <p class="text-gray-200 italic leading-relaxed">"${item.comment}"</p>
+                                    <div id="comment-text-${item.id}">
+                                        <p class="text-gray-200 italic leading-relaxed">"${item.comment || 'Нет уточнения'}"</p>
+                                    </div>
                                 </div>
                             ` : ''}
 
