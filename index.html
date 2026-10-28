@@ -464,6 +464,12 @@
                     </div>
                 </div>
 
+                <!-- НОВОЕ: Необязательное уточнение / комментарий к отчету -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-medium text-gray-400">Уточнение или мысль к отчету (необязательно):</label>
+                    <input type="text" id="report-comment-input" placeholder="Например: Вход по структуре, но поторопился с фиксацией..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-3 text-white text-xs focus:border-amber-400 outline-none">
+                </div>
+
                 <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
                     <button onclick="goBackFromUpload()" class="w-full sm:w-auto text-xs text-gray-400 hover:text-white flex items-center justify-center space-x-1 py-2">
                         <i class="fa-solid fa-arrow-left"></i> <span>Назад</span>
@@ -475,7 +481,6 @@
                     </button>
                 </div>
             </div>
-        </section>
 
         <!-- CARD: Запись за сегодня уже сделана -->
         <section id="completed-day-card" class="glass-panel rounded-2xl p-6 sm:p-8 border border-brand-border shadow-2xl relative overflow-hidden hidden">
@@ -947,6 +952,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             compliance: '',
             error: 'Отсутствуют',
             image: null,
+            comment: '', // <--- добавили поле для комментария
             timestamp: ''
         };
 
@@ -1416,6 +1422,10 @@ const DB_NODE_NAME = 'reports_vladimir';
                 return;
             }
 
+            // Считываем необязательное уточнение
+            const commentInput = document.getElementById('report-comment-input');
+            const userComment = commentInput ? commentInput.value.trim() : '';
+
             const timestamp = Date.now();
             const newEntry = {
                 id: timestamp,
@@ -1424,13 +1434,13 @@ const DB_NODE_NAME = 'reports_vladimir';
                 trades: reportData.trades,
                 compliance: reportData.compliance,
                 error: reportData.error,
-                image: reportData.image
+                image: reportData.image,
+                comment: userComment, // <--- сохраняем комментарий
+                replies: [] // <--- массив для обсуждений/уточнений в журнале
             };
 
             if (isFirebaseConnected && dbRef) {
                 window.fbSDK.push(dbRef, newEntry).then(() => {
-                    // Firebase сам мгновенно пришлет актуальный список через onValue, 
-                    // поэтому ручной unshift больше не нужен — дубликата не будет.
                     resetWizard();
                     initSessionTimer(); 
                 }).catch(err => {
@@ -1485,10 +1495,56 @@ const DB_NODE_NAME = 'reports_vladimir';
         });
 
         function resetWizard() {
-            reportData = { trades: '', compliance: '', error: 'Отсутствуют', image: null, timestamp: '' };
+            reportData = { trades: '', compliance: '', error: 'Отсутствуют', image: null, comment: '', timestamp: '' };
+            const commentInput = document.getElementById('report-comment-input');
+            if (commentInput) commentInput.value = '';
             removeImage();
             goToStep(1);
             document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Переключение видимости формы добавления комментария в журнале
+        function toggleReplyInput(id) {
+            const box = document.getElementById(`reply-box-${id}`);
+            if (box) box.classList.toggle('hidden');
+        }
+
+        // Сохранение нового комментария/уточнения к существующей записи
+        function addReplyToReport(id, fbKey) {
+            const input = document.getElementById(`reply-input-${id}`);
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+
+            const newReply = {
+                author: currentUser,
+                text: text,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            // Находим запись в истории
+            const targetReport = reportsHistory.find(item => item.id === id);
+            if (!targetReport) return;
+
+            if (!targetReport.replies) targetReport.replies = [];
+            targetReport.replies.push(newReply);
+
+            // Если подключен Firebase, обновляем узел в базе данных
+            if (isFirebaseConnected && fbKey && dbInstance) {
+                const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
+                window.fbSDK.set(itemRef, targetReport).then(() => {
+                    input.value = '';
+                    renderReportsFeed();
+                }).catch(err => {
+                    console.error("Error saving reply to Firebase:", err);
+                    alert("Ошибка при сохранении комментария в базу.");
+                });
+            } else {
+                // Локальное сохранение
+                localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
+                input.value = '';
+                renderReportsFeed();
+            }
         }
 
         // Функция расчета и рендеринга статистики склонности к системной торговле за текущий месяц
@@ -1633,7 +1689,7 @@ const DB_NODE_NAME = 'reports_vladimir';
 
                 row.innerHTML = `
                     <div onclick="toggleAccordion(${item.id})" class="p-4 flex items-center justify-between cursor-pointer record-header transition">
-                        <div>
+                        <div class="flex-1">
                             <div class="flex items-center space-x-2 text-xs">
                                 ${authorBadge}
                                 <span class="text-gray-400 font-medium">${item.date}</span>
@@ -1641,14 +1697,32 @@ const DB_NODE_NAME = 'reports_vladimir';
                             <div class="text-sm font-semibold text-white mt-1">${item.trades}</div>
                         </div>
 
-                        <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-3" onclick="event.stopPropagation()">
+                            <!-- Иконка для быстрого вызова комментирования (остановленstopPropagation, чтобы не дергать аккордеон) -->
+                            <button onclick="toggleReplyInput(${item.id})" title="Добавить уточнение или комментарий" class="text-gray-400 hover:text-amber-400 w-8 h-8 rounded-lg bg-brand-dark/40 hover:bg-amber-500/10 border border-brand-border flex items-center justify-center transition">
+                                <i class="fa-solid fa-comment-dots text-xs"></i>
+                            </button>
                             ${badgeHtml}
-                            <i id="chevron-${item.id}" class="fa-solid fa-chevron-down text-gray-500 text-xs transition-transform duration-300"></i>
+                            <div>
+                                <i id="chevron-${item.id}" class="fa-solid fa-chevron-down text-gray-500 text-xs transition-transform duration-300"></i>
+                            </div>
                         </div>
                     </div>
 
                     <div id="body-${item.id}" class="accordion-body">
                         <div class="border-t border-brand-border/50 p-4 sm:p-5 bg-brand-card/40 space-y-4">
+                            
+                            <!-- Если было введено уточнение на этапе подачи отчета -->
+                            ${item.comment ? `
+                                <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-1">
+                                    <div class="text-[10px] uppercase font-bold text-amber-400 tracking-wider flex items-center space-x-1">
+                                        <i class="fa-solid fa-quote-left"></i>
+                                        <span>Уточнение к отчету (${item.author}):</span>
+                                    </div>
+                                    <p class="text-gray-200 italic leading-relaxed">"${item.comment}"</p>
+                                </div>
+                            ` : ''}
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                                 <div class="space-y-2">
                                     <div class="p-3 rounded-lg bg-brand-dark/50 border border-brand-border">
@@ -1683,7 +1757,37 @@ const DB_NODE_NAME = 'reports_vladimir';
                                 </div>
                             </div>
 
-                            <!-- Delete Button Footer inside Accordion with proper spacing -->
+                            <!-- Секция комментариев и обсуждения отчета -->
+                            <div class="space-y-3 pt-3 border-t border-brand-border/40">
+                                <div class="text-xs font-bold text-gray-300 flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-comments text-amber-400"></i>
+                                    <span>Обсуждение и уточнения (${item.replies ? item.replies.length : 0})</span>
+                                </div>
+
+                                <!-- Список уже оставленных комментариев -->
+                                <div class="space-y-2" id="replies-list-${item.id}">
+                                    ${item.replies && item.replies.length > 0 ? item.replies.map(r => `
+                                        <div class="p-2.5 rounded-lg bg-brand-dark/60 border border-brand-border/60 text-xs space-y-1">
+                                            <div class="flex items-center justify-between text-[10px] text-gray-400 font-semibold">
+                                                <span class="text-amber-400">${r.author}</span>
+                                                <span>${r.time}</span>
+                                            </div>
+                                            <p class="text-gray-200 leading-relaxed">${r.text}</p>
+                                        </div>
+                                    `).join('') : '<div class="text-[11px] text-gray-500 italic">Пока нет комментариев к этой записи.</div>'}
+                                </div>
+
+                                <!-- Скрытая форма ввода нового комментария -->
+                                <div id="reply-box-${item.id}" class="hidden space-y-2 pt-2">
+                                    <input type="text" id="reply-input-${item.id}" placeholder="Напишите комментарий или вопрос..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-2.5 text-white text-xs focus:border-amber-400 outline-none">
+                                    <div class="flex justify-end space-x-2">
+                                        <button onclick="toggleReplyInput(${item.id})" class="px-3 py-1.5 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-xs border border-brand-border transition">Отмена</button>
+                                        <button onclick="addReplyToReport(${item.id}, '${item.fbKey || ''}')" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition">Отправить</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Delete Button Footer inside Accordion -->
                             <div class="pt-3 border-t border-brand-border/40 flex justify-end">
                                 <button onclick="requestDeleteReport(${item.id}, '${item.fbKey || ''}')" class="w-full sm:w-auto text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-4 py-2.5 sm:py-1.5 rounded-lg border border-rose-500/20 flex items-center justify-center space-x-1.5 transition">
                                     <i class="fa-solid fa-trash-can"></i>
@@ -1693,7 +1797,6 @@ const DB_NODE_NAME = 'reports_vladimir';
                         </div>
                     </div>
                 `;
-
                 container.appendChild(row);
             });
         }
