@@ -1635,15 +1635,18 @@ const DB_NODE_NAME = 'reports_vladimir';
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
 
-            // Находим запись в истории
-            const targetReport = reportsHistory.find(item => item.id === id);
-            if (!targetReport) return;
+            // Надежный поиск записи (приводим оба id к строке для точного сравнения)
+            const targetReport = reportsHistory.find(item => String(item.id) === String(id));
+            if (!targetReport) {
+                console.error("Не найдена запись для добавления комментария, id:", id);
+                return;
+            }
 
             if (!targetReport.replies) targetReport.replies = [];
             targetReport.replies.push(newReply);
 
-            // Если подключен Firebase, обновляем узел в базе данных
-            if (isFirebaseConnected && fbKey && dbInstance) {
+            // Если подключен Firebase и есть реальный ключ узла `fbKey`
+            if (isFirebaseConnected && fbKey && fbKey !== 'undefined' && fbKey !== '' && dbInstance) {
                 const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
                 window.fbSDK.set(itemRef, targetReport).then(() => {
                     input.value = '';
@@ -1653,7 +1656,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                     alert("Ошибка при сохранении комментария в базу.");
                 });
             } else {
-                // Локальное сохранение
+                // Локальное сохранение / fallback
                 localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
                 input.value = '';
                 renderReportsFeed();
@@ -1879,10 +1882,16 @@ const DB_NODE_NAME = 'reports_vladimir';
                             </div>
 
                             <div class="space-y-3 pt-3 border-t border-brand-border/40">
-                                <div class="text-xs font-bold text-gray-300 flex items-center space-x-1.5">
-                                    <i class="fa-solid fa-comments text-amber-400"></i>
-                                    <span>Обсуждение и уточнения (${item.replies ? item.replies.length : 0})</span>
-                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="text-xs font-bold text-gray-300 flex items-center space-x-1.5">
+                                        <i class="fa-solid fa-comments text-amber-400"></i>
+                                        <span>Обсуждение и уточнения (${item.replies ? item.replies.length : 0})</span>
+                                    </div>
+                                    <button type="button" onclick="toggleReplyInput('${item.id}')" class="text-xs text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1.5 rounded-lg border border-amber-500/25 transition flex items-center space-x-1.5 cursor-pointer">
+                                        <i class="fa-solid fa-comment-medical"></i>
+                                        <span>Добавить комментарий</span>
+                                    </button>
+                                </div>   
 
                                 <div class="space-y-2" id="replies-list-${item.id}">
                                     ${item.replies && item.replies.length > 0 ? item.replies.map(r => `
