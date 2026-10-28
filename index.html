@@ -2019,7 +2019,6 @@ const DB_NODE_NAME = 'reports_vladimir';
                                         if (currentUser === 'Vladimir' && r.author === 'Max') displayName = 'Брат';
                                         if (currentUser === 'Max' && r.author === 'Vladimir') displayName = 'Брат';
 
-                                        // Инициализация реакций, если их еще не было
                                         const likes = (r.reactions && r.reactions.likes) ? r.reactions.likes : [];
                                         const dislikes = (r.reactions && r.reactions.dislikes) ? r.reactions.dislikes : [];
                                         const hasLiked = likes.includes(currentUser);
@@ -2047,8 +2046,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                                                     <p class="text-gray-200 leading-relaxed">${r.text}</p>
                                                 </div>
                                                 
-                                                <!-- Блок реакций: Лайк / Дизлайк -->
-                                                <div class="flex items-center space-x-3 pt-1 border-t border-brand-border/30 text-[11px]">
+                                                <div class="flex items-center space-x-3 pt-1.5 border-t border-brand-border/30 text-[11px]">
                                                     <button type="button" onclick="toggleReaction('${item.id}', ${replyIdx}, 'like', '${item.fbKey || ''}', this)" 
                                                         class="reaction-btn flex items-center space-x-1 ${hasLiked ? 'text-emerald-400 font-bold' : 'text-gray-500 hover:text-emerald-400'}">
                                                         <i class="fa-${hasLiked ? 'solid' : 'regular'} fa-thumbs-up text-xs"></i>
@@ -2064,6 +2062,15 @@ const DB_NODE_NAME = 'reports_vladimir';
                                             </div>
                                         `;
                                     }).join('') : '<div class="text-[11px] text-gray-500 italic">Пока нет комментариев к этой записи.</div>'}
+                                </div>
+
+                                <!-- СКРЫТЫЙ БЛОК ВВОДА КОММЕНТАРИЯ (появляется по кнопке) -->
+                                <div id="reply-box-${item.id}" class="hidden space-y-2 pt-2">
+                                    <textarea id="reply-input-${item.id}" rows="2" placeholder="Напишите комментарий или уточнение..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-2.5 text-white text-xs focus:border-amber-400 outline-none resize-none"></textarea>
+                                    <div class="flex justify-end space-x-2">
+                                        <button type="button" onclick="toggleReplyInput('${item.id}')" class="px-3 py-1.5 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-xs border border-brand-border transition">Отмена</button>
+                                        <button type="button" onclick="addReplyToReport('${item.id}', '${item.fbKey || ''}')" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition shadow-md">Отправить</button>
+                                    </div>
                                 </div>
 
                             <div class="pt-3 border-t border-brand-border/40 flex justify-end">
