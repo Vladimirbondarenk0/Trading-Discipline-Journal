@@ -2959,7 +2959,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             }, 200);
         }
 
-        // Подтверждение удаления именно комментария
+        // Подтвержденное удаление комментария с плавной анимацией модалки
         function confirmDeleteReply() {
             if (!pendingDeleteReplyContext) return;
             const { reportId, replyIndex, fbKey } = pendingDeleteReplyContext;
@@ -2970,30 +2970,31 @@ const DB_NODE_NAME = 'reports_vladimir';
                 return;
             }
 
-            // Удаляем строго выбранный комментарий по его индексу из массива replies
+            // Удаляем комментарий из массива
             targetReport.replies.splice(replyIndex, 1);
 
             if (!openAccordions.includes(Number(reportId)) && !openAccordions.includes(String(reportId))) {
                 openAccordions.push(reportId);
             }
 
-            const onDone = () => {
-                closeDeleteReplyModal();
-                renderReportsFeed();
-            };
+            // Сначала запускаем плавное закрытие модалки
+            closeDeleteReplyModal();
 
-            if (isFirebaseConnected && fbKey && fbKey !== 'undefined' && fbKey !== '' && dbInstance) {
-                const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
-                window.fbSDK.set(itemRef, targetReport).then(() => {
-                    onDone();
-                }).catch(err => {
-                    console.error("Error deleting reply in Firebase:", err);
-                    closeDeleteReplyModal();
-                });
-            } else {
-                localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
-                onDone();
-            }
+            // Даем модалке доиграть анимацию (200мс), и только после этого сохраняем данные и перерисовываем ленту
+            setTimeout(() => {
+                if (isFirebaseConnected && fbKey && fbKey !== 'undefined' && fbKey !== '' && dbInstance) {
+                    const itemRef = window.fbSDK.ref(dbInstance, `${DB_NODE_NAME}/${fbKey}`);
+                    window.fbSDK.set(itemRef, targetReport).then(() => {
+                        renderReportsFeed();
+                    }).catch(err => {
+                        console.error("Error deleting reply in Firebase:", err);
+                    });
+                } else {
+                    localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
+                    renderReportsFeed();
+                }
+                pendingDeleteReplyContext = null;
+            }, 200);
         }
 
         // Обработка переключения лайка/дизлайка с анимацией
