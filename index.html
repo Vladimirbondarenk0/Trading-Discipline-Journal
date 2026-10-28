@@ -315,7 +315,7 @@
                     </div>
                 </div>
 
-               <!-- Рабочая область Активной Сессии (по будням с 9:00 до 12:00) -->
+               <!-- Рабочая область Активной Сессии -->
                 <div id="trading-active-panel" class="pt-2 space-y-4 hidden">
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl bg-brand-dark/60 border border-brand-border">
                         <div class="flex items-center space-x-3">
@@ -379,7 +379,7 @@
                 </div>
             </div>
 
-            <!-- STEP 2: Codex Compliance (Split Logic) -->
+            <!-- STEP 2: Codex Compliance -->
             <div id="step-2" class="step-transition hidden space-y-6">
                 <div>
                     <h3 class="text-lg sm:text-xl font-bold text-white">Соблюдение торгового кодекса</h3>
@@ -387,7 +387,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <!-- 100% System Option -->
                     <button onclick="selectCompliance('clean')" class="glass-card p-6 rounded-xl text-left border border-emerald-500/30 hover:border-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 group focus:outline-none w-full">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">
@@ -399,7 +398,6 @@
                         <div class="text-xs text-gray-300 mt-1 leading-relaxed">Полное следование алгоритму. Пропускает этап выбора ошибок и ведет сразу к скриншоту.</div>
                     </button>
 
-                    <!-- Violation Option -->
                     <button onclick="selectCompliance('violation')" class="glass-card p-6 rounded-xl text-left border border-rose-500/30 hover:border-rose-400 bg-rose-500/5 hover:bg-rose-500/10 group focus:outline-none w-full">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-2xl">
@@ -419,16 +417,14 @@
                 </div>
             </div>
 
-            <!-- STEP 3: Error Stage (Appears only if Violation) -->
+            <!-- STEP 3: Error Stage -->
             <div id="step-3-error" class="step-transition hidden space-y-6">
                 <div>
                     <h3 class="text-lg sm:text-xl font-bold text-white text-rose-400">Выявленные ошибки</h3>
                     <p class="text-xs text-gray-400 mt-1">Укажите ключевую причину сбоя дисциплины во время сессии.</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2" id="error-list">
-                    <!-- Populated via JS -->
-                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2" id="error-list"></div>
 
                 <div class="pt-4 flex justify-between items-center">
                     <button onclick="goToStep(2)" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1 py-2">
@@ -437,7 +433,7 @@
                 </div>
             </div>
 
-            <!-- STEP 4: Screenshot Upload & Final Submission -->
+            <!-- STEP 4: Screenshot Upload -->
             <div id="step-4-upload" class="step-transition hidden space-y-6">
                 <div>
                     <h3 class="text-lg sm:text-xl font-bold text-white">Прикрепите скриншот истории ордеров</h3>
@@ -455,7 +451,6 @@
                         <div class="text-xs text-gray-500">PNG, JPG или WEBP (макс. 5MB)</div>
                     </div>
 
-                    <!-- Image Preview Area -->
                     <div id="upload-preview" class="hidden relative inline-block">
                         <img id="preview-img" src="" class="max-h-56 rounded-xl border border-brand-border object-contain shadow-lg">
                         <button onclick="removeImage(event)" class="absolute -top-3 -right-3 bg-rose-500 text-white w-7 h-7 rounded-full text-xs hover:bg-rose-600 shadow-md flex items-center justify-center">
@@ -464,7 +459,6 @@
                     </div>
                 </div>
 
-                <!-- НОВОЕ: Необязательное уточнение / комментарий к отчету -->
                 <div class="space-y-1.5">
                     <label class="block text-xs font-medium text-gray-400">Уточнение или мысль к отчету (необязательно):</label>
                     <input type="text" id="report-comment-input" placeholder="Например: Вход по структуре, но поторопился с фиксацией..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-3 text-white text-xs focus:border-amber-400 outline-none">
@@ -481,6 +475,7 @@
                     </button>
                 </div>
             </div>
+        </section>
 
         <!-- CARD: Запись за сегодня уже сделана -->
         <section id="completed-day-card" class="glass-panel rounded-2xl p-6 sm:p-8 border border-brand-border shadow-2xl relative overflow-hidden hidden">
@@ -495,17 +490,11 @@
                             <p id="completed-author-info" class="text-xs text-gray-400">Запись успешно внесена в совместный журнал</p>
                         </div>
                     </div>
-                    <div id="completed-badge-container">
-                        <!-- Динамический бейдж (Системно / Нарушение) -->
-                    </div>
+                    <div id="completed-badge-container"></div>
                 </div>
 
-                <!-- Мудрая и глубокая мысль (рефлексия) -->
-                <div class="p-5 rounded-xl bg-brand-dark/50 border border-brand-border/60 text-xs sm:text-sm text-gray-200 leading-relaxed" id="completed-spiritual-thought">
-                    <!-- Текст мысли подставляется динамически -->
-                </div>
+                <div class="p-5 rounded-xl bg-brand-dark/50 border border-brand-border/60 text-xs sm:text-sm text-gray-200 leading-relaxed" id="completed-spiritual-thought"></div>
 
-                <!-- Таймер до следующего открытия (утро / понедельник) -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs text-gray-400">
                     <div class="flex items-center space-x-2 justify-center sm:justify-start">
                         <i class="fa-solid fa-hourglass-half text-amber-400 animate-spin" style="animation-duration: 8s;"></i>
