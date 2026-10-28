@@ -2926,14 +2926,14 @@ const DB_NODE_NAME = 'reports_vladimir';
         }
 
         // Переменная для хранения контекста удаляемого комментария
-        let pendingDeleteContext = null;
+        let pendingDeleteReplyContext = null;
 
-        // Открытие красивой модалки вместо системного confirm
+        // Вызов модалки удаления КОНКРЕТНОГО КОММЕНТАРИЯ (а не всего отчета!)
         function deleteReply(reportId, replyIndex, fbKey) {
-            pendingDeleteContext = { reportId, replyIndex, fbKey };
+            pendingDeleteReplyContext = { reportId, replyIndex, fbKey };
             
-            const modal = document.getElementById('delete-modal');
-            const card = document.getElementById('delete-modal-card');
+            const modal = document.getElementById('delete-reply-modal');
+            const card = document.getElementById('delete-reply-modal-card');
             if (!modal || !card) return;
 
             modal.classList.remove('hidden');
@@ -2944,9 +2944,9 @@ const DB_NODE_NAME = 'reports_vladimir';
             }, 10);
         }
 
-        function closeDeleteModal() {
-            const modal = document.getElementById('delete-modal');
-            const card = document.getElementById('delete-modal-card');
+        function closeDeleteReplyModal() {
+            const modal = document.getElementById('delete-reply-modal');
+            const card = document.getElementById('delete-reply-modal-card');
             if (!modal || !card) return;
 
             modal.classList.add('opacity-0');
@@ -2955,31 +2955,30 @@ const DB_NODE_NAME = 'reports_vladimir';
 
             setTimeout(() => {
                 modal.classList.add('hidden');
-                pendingDeleteContext = null;
+                pendingDeleteReplyContext = null;
             }, 200);
         }
 
-        // Подтвержденное удаление комментария
+        // Подтверждение удаления именно комментария
         function confirmDeleteReply() {
-            if (!pendingDeleteContext) return;
-            const { reportId, replyIndex, fbKey } = pendingDeleteContext;
+            if (!pendingDeleteReplyContext) return;
+            const { reportId, replyIndex, fbKey } = pendingDeleteReplyContext;
 
             const targetReport = reportsHistory.find(item => String(item.id) === String(reportId));
             if (!targetReport || !targetReport.replies) {
-                closeDeleteModal();
+                closeDeleteReplyModal();
                 return;
             }
 
-            // Удаляем комментарий
+            // Удаляем строго выбранный комментарий по его индексу из массива replies
             targetReport.replies.splice(replyIndex, 1);
 
-            // Сохраняем открытый аккордеон
             if (!openAccordions.includes(Number(reportId)) && !openAccordions.includes(String(reportId))) {
                 openAccordions.push(reportId);
             }
 
             const onDone = () => {
-                closeDeleteModal();
+                closeDeleteReplyModal();
                 renderReportsFeed();
             };
 
@@ -2989,7 +2988,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                     onDone();
                 }).catch(err => {
                     console.error("Error deleting reply in Firebase:", err);
-                    closeDeleteModal();
+                    closeDeleteReplyModal();
                 });
             } else {
                 localStorage.setItem('local_trading_reports', JSON.stringify(reportsHistory));
