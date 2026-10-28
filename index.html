@@ -1501,6 +1501,8 @@ const DB_NODE_NAME = 'reports_vladimir';
                     const input = document.getElementById(`reply-input-${id}`);
                     if (input) input.focus();
                 }
+            } else {
+                console.error("Не найден блок ответа для id:", id);
             }
         }
 
@@ -1694,7 +1696,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                         </div>
 
                         <div class="flex items-center space-x-3">
-                            <button type="button" onclick="event.stopPropagation(); toggleReplyInput(${item.id})" title="Добавить уточнение или комментарий" class="text-gray-400 hover:text-amber-400 w-8 h-8 rounded-lg bg-brand-dark/40 hover:bg-amber-500/10 border border-brand-border flex items-center justify-center transition cursor-pointer">
+                            <button type="button" onclick="event.stopPropagation(); toggleReplyInput('${item.id}')" title="Добавить уточнение или комментарий" class="text-gray-400 hover:text-amber-400 w-8 h-8 rounded-lg bg-brand-dark/40 hover:bg-amber-500/10 border border-brand-border flex items-center justify-center transition cursor-pointer">
                                 <i class="fa-solid fa-comment-dots text-xs pointer-events-none"></i>
                             </button>
                             ${badgeHtml}
@@ -1773,8 +1775,8 @@ const DB_NODE_NAME = 'reports_vladimir';
                                 <div id="reply-box-${item.id}" class="hidden space-y-2 pt-2">
                                     <input type="text" id="reply-input-${item.id}" placeholder="Напишите комментарий или вопрос..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-2.5 text-white text-xs focus:border-amber-400 outline-none">
                                     <div class="flex justify-end space-x-2">
-                                        <button type="button" onclick="toggleReplyInput(${item.id})" class="px-3 py-1.5 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-xs border border-brand-border transition">Отмена</button>
-                                        <button type="button" onclick="addReplyToReport(${item.id}, '${item.fbKey || ''}')" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition">Отправить</button>
+                                        <button type="button" onclick="toggleReplyInput('${item.id}')" class="px-3 py-1.5 rounded-lg bg-brand-card hover:bg-gray-800 text-gray-300 text-xs border border-brand-border transition">Отмена</button>
+                                        <button type="button" onclick="addReplyToReport('${item.id}', '${item.fbKey || ''}')" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition">Отправить</button>
                                     </div>
                                 </div>
                             </div>
