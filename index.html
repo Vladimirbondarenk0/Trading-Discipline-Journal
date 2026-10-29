@@ -658,15 +658,12 @@
     <div id="rule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel max-w-2xl w-full rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] flex flex-col shadow-2xl">
             <div class="flex items-center justify-between border-b border-brand-border pb-3 flex-shrink-0">
-                <h3 class="font-bold text-white text-base sm:text-lg flex items-center space-x-2 w-full">
-                    <div id="rule-modal-main-title" class="flex items-center space-x-2 w-full">
-                        <i class="fa-solid fa-book-bookmark text-amber-400"></i>
-                        <span>Кодекс Дисциплины и Регламент AMD (11 Этапов)</span>
-                    </div>
+                <h3 class="font-bold text-white text-base sm:text-lg flex items-center space-x-2 truncate pr-2">
+                    <span id="rule-modal-main-title">Кодекс Дисциплины и Регламент AMD (11 Этапов)</span>
                 </h3>
-                <!-- Кнопка-стрелочка справа (в режиме списка скрыта, в режиме детализации превращается в возврат назад) -->
-                <button id="rule-modal-top-action-btn" onclick="toggleRuleModal()" class="text-gray-400 hover:text-white text-lg p-1 transition hidden flex-shrink-0" title="Назад к списку">
-                    <i class="fa-solid fa-arrow-right"></i>
+                <!-- Кнопка справа: в общем списке — крестик закрытия, внутри этапа — стрелочка возврата -->
+                <button id="rule-modal-top-btn" onclick="toggleRuleModal()" class="text-gray-400 hover:text-white text-lg p-1 transition flex-shrink-0" title="Закрыть">
+                    <i id="rule-modal-top-icon" class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
@@ -1122,19 +1119,24 @@ const DB_NODE_NAME = 'reports_vladimir';
             const container = document.getElementById('rule-modal-content-container');
             const titleEl = document.getElementById('rule-modal-main-title');
             const footerCloseBtn = document.getElementById('rule-modal-footer-close');
-            const topActionBtn = document.getElementById('rule-modal-top-action-btn');
+            const topBtn = document.getElementById('rule-modal-top-btn');
+            const topIcon = document.getElementById('rule-modal-top-icon');
+
             if (!container) return;
 
             container.innerHTML = '';
 
             if (activeRuleIndex === null) {
-                // Главный список: скрываем правую стрелочку в шапке
-                if (titleEl) titleEl.innerHTML = `
-                    <i class="fa-solid fa-book-bookmark text-amber-400 mr-2"></i>
-                    <span>Кодекс Дисциплины и Регламент AMD (${rulesList.length} Этапов)</span>
-                `;
+                // Главный список
+                if (titleEl) titleEl.innerText = `Кодекс Дисциплины и Регламент AMD (${rulesList.length} Этапов)`;
                 if (footerCloseBtn) footerCloseBtn.classList.remove('hidden');
-                if (topActionBtn) topActionBtn.classList.add('hidden');
+
+                // Настраиваем верхнюю кнопку справа на ЗАКРЫТИЕ МОДАЛКИ (крестик)
+                if (topBtn && topIcon) {
+                    topIcon.className = "fa-solid fa-xmark";
+                    topBtn.onclick = toggleRuleModal;
+                    topBtn.title = "Закрыть";
+                }
 
                 rulesList.forEach((rule, idx) => {
                     const btn = document.createElement('div');
@@ -1153,21 +1155,17 @@ const DB_NODE_NAME = 'reports_vladimir';
                     container.appendChild(btn);
                 });
             } else {
-                // Режим детализации: скрываем нижнюю кнопку, выводим название этапа и показываем стрелочку вправо справа
+                // Режим детализации
                 if (footerCloseBtn) footerCloseBtn.classList.add('hidden');
-                if (topActionBtn) {
-                    topActionBtn.classList.remove('hidden');
-                    // Меняем поведение крестика на возврат к списку
-                    topActionBtn.onclick = closeRuleDetail;
-                    topActionBtn.title = "Назад к списку";
-                }
 
                 const rule = rulesList[activeRuleIndex];
-                
-                if (titleEl) {
-                    titleEl.innerHTML = `
-                        <span class="truncate text-sm font-bold text-white">${rule.title}</span>
-                    `;
+                if (titleEl) titleEl.innerText = rule.title;
+
+                // Настраиваем верхнюю кнопку справа на ВОЗВРАТ К СПИСКУ (стрелочка)
+                if (topBtn && topIcon) {
+                    topIcon.className = "fa-solid fa-arrow-right text-amber-400";
+                    topBtn.onclick = closeRuleDetail;
+                    topBtn.title = "Назад к списку";
                 }
 
                 const detailDiv = document.createElement('div');
