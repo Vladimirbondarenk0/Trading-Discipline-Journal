@@ -226,15 +226,25 @@
             filter: drop-shadow(0 0 6px rgba(251, 113, 133, 0.6));
         }
 
-        @keyframes marqueeScroll {
-    0%, 15% { transform: translateX(0); }
-    85%, 100% { transform: translateX(calc(-100% + 200px)); } /* Подстраивается под длину текста */
+     @keyframes slideOnceSmooth {
+    0% {
+        transform: translateX(0);
+    }
+    15% {
+        transform: translateX(0); /* Пауза в начале */
+    }
+    85% {
+        transform: translateX(calc(-100% + 220px)); /* Плавный проезд до конца */
+    }
+    100% {
+        transform: translateX(0); /* Плавный возврат к началу и стоп */
+    }
 }
 
-.animate-marquee {
+.animate-marquee-once {
     display: inline-block;
     white-space: nowrap;
-    animation: marqueeScroll 8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+    animation: slideOnceSmooth 4.5s cubic-bezier(0.25, 1, 0.5, 1) 1 forwards; /* 1 раз и замирает на начале */
 }
     </style>
 </head>
@@ -1250,12 +1260,12 @@ const DB_NODE_NAME = 'reports_vladimir';
                 // Режим детализации
                 if (footerCloseBtn) footerCloseBtn.classList.add('hidden');
 
-                const rule = rulesList[activeRuleIndex];
+               const rule = rulesList[activeRuleIndex];
                 if (titleEl) {
                     titleEl.innerText = rule.title;
-                    // Если текст длинный, включаем анимацию бегущей строки для мобилок
-                    if (rule.title.length > 25) {
-                        titleEl.className = "block animate-marquee";
+                    // Если заголовок длинный, запускаем плавную прокрутку ровно 1 раз с остановкой в начале
+                    if (rule.title.length > 28) {
+                        titleEl.className = "block animate-marquee-once";
                     } else {
                         titleEl.className = "block truncate";
                     }
