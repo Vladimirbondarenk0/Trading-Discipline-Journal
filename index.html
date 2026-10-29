@@ -1126,7 +1126,7 @@ const DB_NODE_NAME = 'reports_vladimir';
             if (activeRuleIndex === null) {
                 // Главный список
                 if (titleEl) titleEl.innerText = `Кодекс Дисциплины и Регламент AMD (${rulesList.length} Этапов)`;
-                if (footerCloseBtn) footerCloseBtn.classList.remove('hidden'); // показываем кнопку внизу только в списке
+                if (footerCloseBtn) footerCloseBtn.classList.remove('hidden');
 
                 rulesList.forEach((rule, idx) => {
                     const btn = document.createElement('div');
@@ -1145,8 +1145,8 @@ const DB_NODE_NAME = 'reports_vladimir';
                     container.appendChild(btn);
                 });
             } else {
-                // Режим детализации конкретного этапа (без лишней надписи и без нижней кнопки)
-                if (footerCloseBtn) footerCloseBtn.classList.add('hidden'); // скрываем нижнюю кнопку в детализации
+                // Режим детализации: скрываем нижнюю кнопку, а заголовок становится названием этапа
+                if (footerCloseBtn) footerCloseBtn.classList.add('hidden');
 
                 const rule = rulesList[activeRuleIndex];
                 if (titleEl) titleEl.innerText = rule.title;
@@ -1154,15 +1154,16 @@ const DB_NODE_NAME = 'reports_vladimir';
                 const detailDiv = document.createElement('div');
                 detailDiv.className = "space-y-4 relative p-1";
 
-                // Разбиваем текст по строкам, применяем жирное оформление
                 const formattedContent = rule.content.split('\n').map(line => {
                     const parsedLine = formatMarkdownText(line);
                     return `<p class="leading-relaxed text-gray-300 text-xs">${parsedLine}</p>`;
                 }).join('');
 
+                // Оставляем единственную кнопку возврата в виде аккуратного крестика сверху
                 detailDiv.innerHTML = `
-                    <div class="flex items-center justify-end pb-2 border-b border-brand-border/60">
-                        <button onclick="closeRuleDetail()" class="w-7 h-7 rounded-full bg-brand-dark hover:bg-rose-500/20 text-gray-300 hover:text-rose-400 border border-brand-border hover:border-rose-500/40 flex items-center justify-center transition shadow-md cursor-pointer" title="Закрыть этап">
+                    <div class="flex items-center justify-between pb-2 border-b border-brand-border/60">
+                        <span class="text-[11px] font-medium text-gray-400">Содержимое регламента</span>
+                        <button onclick="closeRuleDetail()" class="w-7 h-7 rounded-full bg-brand-dark hover:bg-rose-500/20 text-gray-300 hover:text-rose-400 border border-brand-border hover:border-rose-500/40 flex items-center justify-center transition shadow-md cursor-pointer" title="Назад к списку">
                             <i class="fa-solid fa-xmark text-xs"></i>
                         </button>
                     </div>
