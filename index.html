@@ -246,6 +246,36 @@
     white-space: nowrap;
     animation: slideOnceSmooth 4.5s cubic-bezier(0.25, 1, 0.5, 1) 1 forwards; /* 1 раз и замирает на начале */
 }
+
+        @keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.97) translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.animate-modal-smooth {
+    animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes contentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-content-smooth {
+    animation: contentFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
     </style>
 </head>
 <body class="min-h-screen pb-16">
@@ -676,8 +706,8 @@
     </div>
 
  <!-- Modal Checklist for Rules & System AMD Guide -->
-    <div id="rule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="glass-panel w-full max-w-2xl md:max-w-3xl lg:max-w-4xl rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] flex flex-col shadow-2xl transition-all duration-300">
+    <div id="rule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden>
+        <div class="glass-panel w-full max-w-2xl md:max-w-3xl lg:max-w-4xl rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] flex flex-col shadow-2xl transition-all duration-300 animate-modal-smooth"">
             <div class="flex items-center justify-between border-b border-brand-border pb-3 flex-shrink-0 gap-4">
                 <!-- Обертка с маской overflow-hidden для эффекта бегущей строки -->
                 <div class="flex items-center space-x-2 flex-1 min-w-0 overflow-hidden relative">
@@ -1241,8 +1271,8 @@ const DB_NODE_NAME = 'reports_vladimir';
 
                 rulesList.forEach((rule, idx) => {
                     const btn = document.createElement('div');
-                    // Добавили relative hover:z-20, чтобы карточка при наведении и подъеме перекрывала соседей
-                    btn.className = "glass-card p-3.5 rounded-xl border border-brand-border hover:border-amber-400/50 cursor-pointer transition flex items-center justify-between font-medium group relative hover:z-20";
+                    // Добавили animate-content-smooth для плавного появления карточек списка
+                    btn.className = "glass-card p-3.5 rounded-xl border border-brand-border hover:border-amber-400/50 cursor-pointer transition flex items-center justify-between font-medium group relative hover:z-20 animate-content-smooth";
                     btn.innerHTML = `
                         <div class="flex items-center space-x-2 min-w-0 pr-2">
                             <span class="w-6 h-6 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-[11px] border border-amber-500/20 flex-shrink-0">${idx}</span>
@@ -1280,7 +1310,7 @@ const DB_NODE_NAME = 'reports_vladimir';
                 }
 
                 const detailDiv = document.createElement('div');
-                detailDiv.className = "space-y-4 relative p-1";
+                detailDiv.className = "space-y-4 relative p-1 animate-content-smooth";
 
                 const formattedContent = rule.content.split('\n').map(line => {
                     const parsedLine = formatMarkdownText(line);
