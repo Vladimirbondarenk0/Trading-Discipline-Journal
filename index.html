@@ -656,10 +656,10 @@
 
  <!-- Modal Checklist for Rules & System AMD Guide -->
     <div id="rule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="glass-panel max-w-2xl w-full rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] flex flex-col shadow-2xl">
-            <div class="flex items-center justify-between border-b border-brand-border pb-3 flex-shrink-0">
-                <h3 class="font-bold text-white text-base sm:text-lg flex items-center space-x-2 truncate pr-2">
-                    <span id="rule-modal-main-title">Кодекс Дисциплины и Регламент AMD</span>
+        <div class="glass-panel w-full max-w-2xl md:max-w-3xl lg:max-w-4xl rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] flex flex-col shadow-2xl transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-brand-border pb-3 flex-shrink-0 gap-4">
+                <h3 class="font-bold text-white text-base sm:text-lg flex items-center space-x-2 flex-1 min-w-0">
+                    <span id="rule-modal-main-title" class="truncate block w-full">Кодекс Дисциплины и Регламент AMD</span>
                 </h3>
                 <div class="flex items-center space-x-2 flex-shrink-0">
                     <!-- Кнопки изменения шрифта только для модалки -->
@@ -668,14 +668,14 @@
                         <span class="text-brand-border">|</span>
                         <button onclick="adjustRuleFontSize(1)" class="text-gray-400 hover:text-amber-400 px-1 font-bold transition" title="Увеличить шрифт">A+</button>
                     </div>
-                    <!-- Кнопка закрытия / возврата -->
-                    <button id="rule-modal-top-btn" onclick="toggleRuleModal()" class="text-gray-400 hover:text-white text-lg p-1 transition" title="Закрыть">
-                        <i id="rule-modal-top-icon" class="fa-solid fa-xmark"></i>
+                    <!-- Кнопка закрытия / возврата (теперь серая, а при наведении желтеет) -->
+                    <button id="rule-modal-top-btn" onclick="toggleRuleModal()" class="text-gray-400 hover:text-amber-400 text-lg p-1 transition group" title="Закрыть">
+                        <i id="rule-modal-top-icon" class="fa-solid fa-xmark text-gray-400 group-hover:text-amber-400 transition-colors"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Контейнер со списком этапов / детальным просмотром (с поддержкой динамического размера шрифта) -->
+            <!-- Контейнер со списком этапов / детальным просмотром -->
             <div id="rule-modal-content-container" class="space-y-3 overflow-y-auto pr-1 flex-1 text-sm transition-all duration-200" style="font-size: 0.875rem;">
                 <!-- Динамически наполняется через JavaScript -->
             </div>
@@ -1147,42 +1147,31 @@ const DB_NODE_NAME = 'reports_vladimir';
 
             if (!container) return;
 
-            // Применяем текущий сохраненный размер шрифта контейнеру
             container.style.fontSize = `${ruleFontSizeLevel}px`;
             container.innerHTML = '';
 
             if (activeRuleIndex === null) {
-                // Главный список (без "(12 Этапов)")
+                // Главный список
                 if (titleEl) titleEl.innerText = `Кодекс Дисциплины и Регламент AMD`;
                 if (footerCloseBtn) footerCloseBtn.classList.remove('hidden');
 
                 if (topBtn && topIcon) {
-                    topIcon.className = "fa-solid fa-xmark";
+                    topIcon.className = "fa-solid fa-xmark text-gray-400 group-hover:text-amber-400 transition-colors";
                     topBtn.onclick = toggleRuleModal;
                     topBtn.title = "Закрыть";
                 }
 
                 rulesList.forEach((rule, idx) => {
                     const btn = document.createElement('div');
-                    btn.className = "glass-card p-3.5 rounded-xl border border-brand-border hover:border-amber-400/50 cursor-pointer transition flex items-center justify-between font-medium";
+                    // Добавили класс group для корректного ховера на стрелочку вправо
+                    btn.className = "glass-card p-3.5 rounded-xl border border-brand-border hover:border-amber-400/50 cursor-pointer transition flex items-center justify-between font-medium group";
                     btn.innerHTML = `
-                        <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-2 min-w-0 pr-2">
                             <span class="w-6 h-6 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-[11px] border border-amber-500/20 flex-shrink-0">${idx}</span>
-                            <span>${rule.title}</span>
+                            <span class="truncate">${rule.title}</span>
                         </div>
-                        <i id="rule-arrow-${idx}" class="fa-solid fa-chevron-right text-gray-500 text-xs transition-all duration-300"></i>
+                        <i class="fa-solid fa-chevron-right text-gray-500 group-hover:text-amber-400 text-xs transition-all duration-300 transform group-hover:translate-x-0.5 flex-shrink-0"></i>
                     `;
-                    
-                    // Плавное изменение цвета стрелочки через события мыши
-                    btn.onmouseenter = () => {
-                        const arrow = document.getElementById(`rule-arrow-${idx}`);
-                        if (arrow) arrow.style.color = '#F3BA2F'; // Золотистый цвет AMD
-                    };
-                    btn.onmouseleave = () => {
-                        const arrow = document.getElementById(`rule-arrow-${idx}`);
-                        if (arrow) arrow.style.color = '#6B7280'; // Серый цвет (gray-500)
-                    };
-
                     btn.onclick = () => {
                         activeRuleIndex = idx;
                         renderRulesModalList();
@@ -1190,14 +1179,15 @@ const DB_NODE_NAME = 'reports_vladimir';
                     container.appendChild(btn);
                 });
             } else {
-                // Режим детализации конкретного этапа
+                // Режим детализации
                 if (footerCloseBtn) footerCloseBtn.classList.add('hidden');
 
                 const rule = rulesList[activeRuleIndex];
                 if (titleEl) titleEl.innerText = rule.title;
 
+                // Настраиваем верхнюю кнопку на стрелочку вправо (серая, при наведении — золотая)
                 if (topBtn && topIcon) {
-                    topIcon.className = "fa-solid fa-arrow-right text-amber-400";
+                    topIcon.className = "fa-solid fa-arrow-right text-gray-400 group-hover:text-amber-400 transition-colors";
                     topBtn.onclick = closeRuleDetail;
                     topBtn.title = "Назад к списку";
                 }
