@@ -1145,11 +1145,22 @@ const DB_NODE_NAME = 'reports_vladimir';
                     container.appendChild(btn);
                 });
             } else {
-                // Режим детализации: скрываем нижнюю кнопку, а заголовок становится названием этапа
+                // Режим детализации: скрываем нижнюю кнопку, а в заголовок выводим название этапа и крестик возврата
                 if (footerCloseBtn) footerCloseBtn.classList.add('hidden');
 
                 const rule = rulesList[activeRuleIndex];
-                if (titleEl) titleEl.innerText = rule.title;
+                
+                // Выводим название выбранного этапа прямо в шапку модалки и добавляем туда же аккуратный крестик
+                if (titleEl) {
+                    titleEl.innerHTML = `
+                        <div class="flex items-center justify-between w-full pr-2">
+                            <span class="truncate mr-2">${rule.title}</span>
+                            <button onclick="closeRuleDetail()" class="w-7 h-7 rounded-full bg-brand-dark hover:bg-rose-500/20 text-gray-300 hover:text-rose-400 border border-brand-border hover:border-rose-500/40 flex items-center justify-center transition shadow-md cursor-pointer flex-shrink-0" title="Назад к списку">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                }
 
                 const detailDiv = document.createElement('div');
                 detailDiv.className = "space-y-4 relative p-1";
@@ -1159,14 +1170,8 @@ const DB_NODE_NAME = 'reports_vladimir';
                     return `<p class="leading-relaxed text-gray-300 text-xs">${parsedLine}</p>`;
                 }).join('');
 
-                // Оставляем единственную кнопку возврата в виде аккуратного крестика сверху
+                // Текст содержимого без лишних дублирующих кнопок
                 detailDiv.innerHTML = `
-                    <div class="flex items-center justify-between pb-2 border-b border-brand-border/60">
-                        <span class="text-[11px] font-medium text-gray-400">Содержимое регламента</span>
-                        <button onclick="closeRuleDetail()" class="w-7 h-7 rounded-full bg-brand-dark hover:bg-rose-500/20 text-gray-300 hover:text-rose-400 border border-brand-border hover:border-rose-500/40 flex items-center justify-center transition shadow-md cursor-pointer" title="Назад к списку">
-                            <i class="fa-solid fa-xmark text-xs"></i>
-                        </button>
-                    </div>
                     <div class="space-y-2.5 bg-brand-dark/40 p-4 rounded-xl border border-brand-border/60">
                         ${formattedContent}
                     </div>
