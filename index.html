@@ -1125,7 +1125,10 @@ const DB_NODE_NAME = 'reports_vladimir';
 
             if (activeRuleIndex === null) {
                 // Главный список
-                if (titleEl) titleEl.innerText = `Кодекс Дисциплины и Регламент AMD (${rulesList.length} Этапов)`;
+                if (titleEl) titleEl.innerHTML = `
+                    <i class="fa-solid fa-book-bookmark text-amber-400 mr-2"></i>
+                    <span>Кодекс Дисциплины и Регламент AMD (${rulesList.length} Этапов)</span>
+                `;
                 if (footerCloseBtn) footerCloseBtn.classList.remove('hidden');
 
                 rulesList.forEach((rule, idx) => {
@@ -1145,19 +1148,18 @@ const DB_NODE_NAME = 'reports_vladimir';
                     container.appendChild(btn);
                 });
             } else {
-                // Режим детализации: скрываем нижнюю кнопку, а в заголовок выводим название этапа и крестик возврата
+                // Режим детализации: скрываем нижнюю кнопку, а в шапку добавляем стрелочку «Назад» и название этапа
                 if (footerCloseBtn) footerCloseBtn.classList.add('hidden');
 
                 const rule = rulesList[activeRuleIndex];
                 
-                // Выводим название выбранного этапа прямо в шапку модалки и добавляем туда же аккуратный крестик
                 if (titleEl) {
                     titleEl.innerHTML = `
-                        <div class="flex items-center justify-between w-full pr-2">
-                            <span class="truncate mr-2">${rule.title}</span>
-                            <button onclick="closeRuleDetail()" class="w-7 h-7 rounded-full bg-brand-dark hover:bg-rose-500/20 text-gray-300 hover:text-rose-400 border border-brand-border hover:border-rose-500/40 flex items-center justify-center transition shadow-md cursor-pointer flex-shrink-0" title="Назад к списку">
-                                <i class="fa-solid fa-xmark text-xs"></i>
+                        <div class="flex items-center space-x-3 w-full pr-2">
+                            <button onclick="closeRuleDetail()" class="w-7 h-7 rounded-lg bg-brand-dark hover:bg-brand-border text-amber-400 border border-brand-border flex items-center justify-center transition shadow-md cursor-pointer flex-shrink-0" title="Назад к списку">
+                                <i class="fa-solid fa-arrow-left text-xs"></i>
                             </button>
+                            <span class="truncate text-sm font-bold text-white">${rule.title}</span>
                         </div>
                     `;
                 }
@@ -1170,7 +1172,6 @@ const DB_NODE_NAME = 'reports_vladimir';
                     return `<p class="leading-relaxed text-gray-300 text-xs">${parsedLine}</p>`;
                 }).join('');
 
-                // Текст содержимого без лишних дублирующих кнопок
                 detailDiv.innerHTML = `
                     <div class="space-y-2.5 bg-brand-dark/40 p-4 rounded-xl border border-brand-border/60">
                         ${formattedContent}
