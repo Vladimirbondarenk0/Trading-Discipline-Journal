@@ -2309,8 +2309,16 @@ const DB_NODE_NAME = 'reports_vladimir';
                     activeRuleIndex = null; // сбрасываем при открытии
                     renderRulesModalList();
                     modal.classList.remove('hidden');
+                    
+                    // Блокируем прокрутку фона и останавливаем Lenis
+                    document.body.style.overflow = 'hidden';
+                    if (typeof lenis !== 'undefined' && lenis) lenis.stop();
                 } else {
                     modal.classList.add('hidden');
+                    
+                    // Возвращаем прокрутку фона и возобновляем Lenis
+                    document.body.style.overflow = '';
+                    if (typeof lenis !== 'undefined' && lenis) lenis.start();
                 }
             }
         }
