@@ -1148,18 +1148,18 @@ const DB_NODE_NAME = 'reports_vladimir';
                     container.appendChild(btn);
                 });
             } else {
-                // Режим детализации: скрываем нижнюю кнопку, а в шапку добавляем стрелочку «Назад» и название этапа
+                // Режим детализации: скрываем нижнюю кнопку, а в шапку добавляем стрелочку вправо и название этапа
                 if (footerCloseBtn) footerCloseBtn.classList.add('hidden');
 
                 const rule = rulesList[activeRuleIndex];
                 
                 if (titleEl) {
                     titleEl.innerHTML = `
-                        <div class="flex items-center space-x-3 w-full pr-2">
-                            <button onclick="closeRuleDetail()" class="w-7 h-7 rounded-lg bg-brand-dark hover:bg-brand-border text-amber-400 border border-brand-border flex items-center justify-center transition shadow-md cursor-pointer flex-shrink-0" title="Назад к списку">
-                                <i class="fa-solid fa-arrow-left text-xs"></i>
-                            </button>
-                            <span class="truncate text-sm font-bold text-white">${rule.title}</span>
+                        <div class="flex items-center space-x-3 w-full pr-2 cursor-pointer group" onclick="closeRuleDetail()" title="Назад к списку">
+                            <div class="w-7 h-7 rounded-lg bg-brand-dark group-hover:bg-brand-border text-amber-400 border border-brand-border flex items-center justify-center transition shadow-md flex-shrink-0">
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </div>
+                            <span class="truncate text-sm font-bold text-white group-hover:text-amber-300 transition">${rule.title}</span>
                         </div>
                     `;
                 }
