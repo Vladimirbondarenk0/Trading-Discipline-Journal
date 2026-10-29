@@ -1987,9 +1987,14 @@ const DB_NODE_NAME = 'reports_vladimir';
                     <div class="p-4 flex items-center justify-between cursor-pointer record-header transition" onclick="toggleAccordion(${item.id})">
                         <div class="flex-1 pointer-events-none">
                             <div class="flex items-center space-x-2 text-xs">
-                                ${authorBadge}
-                                <span class="text-gray-400 font-medium">${item.date}</span>
-                            </div>
+    ${authorBadge}
+    <span class="text-gray-400 font-medium">${item.date}</span>
+    ${item.comment && item.comment.trim() !== '' ? `
+        <span class="text-amber-400/90 hover:text-amber-400 transition" title="Есть уточнение к отчёту">
+            <i class="fa-solid fa-comment-dots text-xs"></i>
+        </span>
+    ` : ''}
+</div>
                             <div class="text-sm font-semibold text-white mt-1">${item.trades}</div>
                         </div>
 
