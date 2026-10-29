@@ -1164,16 +1164,25 @@ const DB_NODE_NAME = 'reports_vladimir';
 
                 rulesList.forEach((rule, idx) => {
                     const btn = document.createElement('div');
-                    // Добавили класс group, чтобы ховер работал на всю карточку
-                    btn.className = "glass-card p-3.5 rounded-xl border border-brand-border hover:border-amber-400/50 cursor-pointer transition flex items-center justify-between font-medium group";
+                    btn.className = "glass-card p-3.5 rounded-xl border border-brand-border hover:border-amber-400/50 cursor-pointer transition flex items-center justify-between font-medium";
                     btn.innerHTML = `
                         <div class="flex items-center space-x-2">
                             <span class="w-6 h-6 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-[11px] border border-amber-500/20 flex-shrink-0">${idx}</span>
                             <span>${rule.title}</span>
                         </div>
-                        <!-- Стрелочка по умолчанию серая (text-gray-500), при наведении становится желтой (group-hover:text-amber-400) -->
-                        <i class="fa-solid fa-chevron-right text-gray-500 group-hover:text-amber-400 text-xs transition-all duration-300 transform group-hover:translate-x-0.5"></i>
+                        <i id="rule-arrow-${idx}" class="fa-solid fa-chevron-right text-gray-500 text-xs transition-all duration-300"></i>
                     `;
+                    
+                    // Плавное изменение цвета стрелочки через события мыши
+                    btn.onmouseenter = () => {
+                        const arrow = document.getElementById(`rule-arrow-${idx}`);
+                        if (arrow) arrow.style.color = '#F3BA2F'; // Золотистый цвет AMD
+                    };
+                    btn.onmouseleave = () => {
+                        const arrow = document.getElementById(`rule-arrow-${idx}`);
+                        if (arrow) arrow.style.color = '#6B7280'; // Серый цвет (gray-500)
+                    };
+
                     btn.onclick = () => {
                         activeRuleIndex = idx;
                         renderRulesModalList();
