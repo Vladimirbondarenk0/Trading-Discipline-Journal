@@ -2313,6 +2313,20 @@ const DB_NODE_NAME = 'reports_vladimir';
                     // Блокируем прокрутку фона и останавливаем Lenis
                     document.body.style.overflow = 'hidden';
                     if (typeof lenis !== 'undefined' && lenis) lenis.stop();
+
+                    // Изолируем скролл внутри модалки от Lenis
+                    const modalContent = modal.querySelector('#rule-modal-content-container');
+                    if (modalContent && !modalContent._wheelBound) {
+                        modalContent._wheelBound = true;
+                        modalContent.addEventListener('wheel', (e) => {
+                            const isAtTop = modalContent.scrollTop === 0;
+                            const isAtBottom = modalContent.scrollHeight - modalContent.scrollTop <= modalContent.clientHeight;
+                            if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+                                e.preventDefault();
+                            }
+                            e.stopPropagation();
+                        }, { passive: false });
+                    }
                 } else {
                     modal.classList.add('hidden');
                     
