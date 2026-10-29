@@ -2390,15 +2390,17 @@ const DB_NODE_NAME = 'reports_vladimir';
             if (modal) {
                 const isHidden = modal.classList.contains('hidden');
                 if (isHidden) {
-                    activeRuleIndex = null; // сбрасываем при открытии
+                    activeRuleIndex = null; // сбрасываем при открытии на главный список
                     renderRulesModalList();
                     modal.classList.remove('hidden');
                     
-                    // Блокируем прокрутку фона и останавливаем Lenis
+                    // Блокируем прокрутку фона и останавливаем Lenis (если он активен)
                     document.body.style.overflow = 'hidden';
-                    if (typeof lenis !== 'undefined' && lenis) lenis.stop();
+                    if (typeof lenis !== 'undefined' && lenis !== null) {
+                        lenis.stop();
+                    }
 
-                    // Изолируем скролл внутри модалки от Lenis
+                    // Изолируем скролл внутри модалки от внешних преград
                     const modalContent = modal.querySelector('#rule-modal-content-container');
                     if (modalContent && !modalContent._wheelBound) {
                         modalContent._wheelBound = true;
@@ -2416,7 +2418,9 @@ const DB_NODE_NAME = 'reports_vladimir';
                     
                     // Возвращаем прокрутку фона и возобновляем Lenis
                     document.body.style.overflow = '';
-                    if (typeof lenis !== 'undefined' && lenis) lenis.start();
+                    if (typeof lenis !== 'undefined' && lenis !== null) {
+                        lenis.start();
+                    }
                 }
             }
         }
@@ -3370,25 +3374,26 @@ const DB_NODE_NAME = 'reports_vladimir';
             }
         });
 
-        // Инициализация плавной прокрутки Lenis для мыши, тачпадов и тачскринов
-        const lenis = new Lenis({
-            duration: 1.2,          // Плавность (больше значение = мягче и дольше скольжение)
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Благородная кривая замедления
-            direction: 'vertical',  // Вертикальный скролл
-            gestureDirection: 'vertical',
-            smooth: true,
-            mouseMultiplier: 1,     // Множитель скорости колесика мыши
-            smoothTouch: false,     // На тачскринах оставляем нативную инерцию браузера, чтобы не конфликтовало, но если нужна ультра-гладкость везде — можно поставить true
-            touchMultiplier: 2,
-        });
+        // Инициализация Lenis только для десктопов (на телефонах работает нативный скролл)
+        let lenis = null;
+        if (window.innerWidth > 768) {
+            lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                direction: 'vertical',
+                gestureDirection: 'vertical',
+                smooth: true,
+                mouseMultiplier: 1,
+                smoothTouch: false,
+                touchMultiplier: 2,
+            });
 
-        // Связываем Lenis с анимационным циклом браузера (requestAnimationFrame)
-        function raf(time) {
-            lenis.raf(time);
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
             requestAnimationFrame(raf);
         }
-
-        requestAnimationFrame(raf);
     </script>
     
 </body>
