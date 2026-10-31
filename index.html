@@ -3440,6 +3440,34 @@ function closeWeekendModal() {
             }
             requestAnimationFrame(raf);
         }
+
+        // Универсальное открытие любой модалки с остановкой Lenis
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    // Блокируем прокрутку фона и останавливаем Lenis
+    document.body.style.overflow = 'hidden';
+    if (typeof lenis !== 'undefined' && lenis !== null) {
+        lenis.stop();
+    }
+
+    modal.classList.remove('hidden');
+}
+
+// Универсальное закрытие любой модалки с возобновлением Lenis
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+
+    // Возвращаем прокрутку фона и возобновляем Lenis
+    document.body.style.overflow = '';
+    if (typeof lenis !== 'undefined' && lenis !== null) {
+        lenis.start();
+    }
+}
     </script>
     
 </body>
