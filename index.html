@@ -2419,45 +2419,20 @@ if (dayOfWeek === 6 || dayOfWeek === 0) {
                 }, 100);
             }
         }
-        function toggleRuleModal() {
-            const modal = document.getElementById('rule-modal');
-            if (modal) {
-                const isHidden = modal.classList.contains('hidden');
-                if (isHidden) {
-                    activeRuleIndex = null; // сбрасываем при открытии на главный список
-                    renderRulesModalList();
-                    modal.classList.remove('hidden');
-                    
-                    // Блокируем прокрутку фона и останавливаем Lenis (если он активен)
-                    document.body.style.overflow = 'hidden';
-                    if (typeof lenis !== 'undefined' && lenis !== null) {
-                        lenis.stop();
-                    }
+     // Специальный контроллер для модалки правил (использует общие функции)
+function toggleRuleModal() {
+    const modal = document.getElementById('rule-modal');
+    if (!modal) return;
 
-                    // Изолируем скролл внутри модалки от внешних преград
-                    const modalContent = modal.querySelector('#rule-modal-content-container');
-                    if (modalContent && !modalContent._wheelBound) {
-                        modalContent._wheelBound = true;
-                        modalContent.addEventListener('wheel', (e) => {
-                            const isAtTop = modalContent.scrollTop === 0;
-                            const isAtBottom = modalContent.scrollHeight - modalContent.scrollTop <= modalContent.clientHeight;
-                            if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
-                                e.preventDefault();
-                            }
-                            e.stopPropagation();
-                        }, { passive: false });
-                    }
-                } else {
-                    modal.classList.add('hidden');
-                    
-                    // Возвращаем прокрутку фона и возобновляем Lenis
-                    document.body.style.overflow = '';
-                    if (typeof lenis !== 'undefined' && lenis !== null) {
-                        lenis.start();
-                    }
-                }
-            }
-        }
+    const isHidden = modal.classList.contains('hidden');
+    if (isHidden) {
+        activeRuleIndex = null; // сбрасываем при открытии на главный список
+        renderRulesModalList();
+        openModal('rule-modal'); // Вызываем универсальное открытие с остановкой Lenis
+    } else {
+        closeModal('rule-modal'); // Вызываем универсальное закрытие с возвратом Lenis
+    }
+}
 
         function toggleFirebaseModal() {
             document.getElementById('firebase-modal').classList.toggle('hidden');
@@ -3433,7 +3408,7 @@ function closeWeekendModal() {
         }
 
       
-// Универсальное открытие любой модалки с остановкой глобального скролла
+// Универсальное открытие любой модалки с остановкой глобального скролла и Lenis
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
