@@ -3433,59 +3433,32 @@ function closeWeekendModal() {
         }
 
       
-// Универсальное открытие любой модалки с мягким скроллом и остановкой фона
+// Универсальное открытие любой модалки с остановкой глобального скролла
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
-    // Блокируем прокрутку фона сайта
+    // Блокируем прокрутку фона сайта и останавливаем глобальный Lenis
     document.body.style.overflow = 'hidden';
+    if (typeof lenis !== 'undefined' && lenis !== null) {
+        lenis.stop();
+    }
 
     modal.classList.remove('hidden');
-
-    // Находим прокручиваемый блок внутри модалки
-    const scrollContainer = modal.querySelector('.overflow-y-auto') || modal.querySelector('.glass-panel');
-    
-    if (scrollContainer && typeof Lenis !== 'undefined') {
-        // Создаем локальный плавный скролл Lenis специально для этой модалки
-        modal._modalLenis = new Lenis({
-            wrapper: modal,
-            content: scrollContainer,
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical',
-            gestureDirection: 'vertical',
-            smooth: true,
-            mouseMultiplier: 1,
-            smoothTouch: false,
-            touchMultiplier: 2,
-        });
-
-        function modalRaf(time) {
-            if (modal._modalLenis) {
-                modal._modalLenis.raf(time);
-                requestAnimationFrame(modalRaf);
-            }
-        }
-        requestAnimationFrame(modalRaf);
-    }
 }
 
-// Универсальное закрытие любой модалки с очисткой скролла
+// Универсальное закрытие любой модалки с возвратом прокрутки
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
     modal.classList.add('hidden');
 
-    // Уничтожаем локальный Lenis модалки при закрытии
-    if (modal._modalLenis) {
-        modal._modalLenis.destroy();
-        modal._modalLenis = null;
-    }
-
-    // Возвращаем прокрутку фона сайта
+    // Возвращаем прокрутку фона сайта и запускаем глобальный Lenis
     document.body.style.overflow = '';
+    if (typeof lenis !== 'undefined' && lenis !== null) {
+        lenis.start();
+    }
 }
     </script>
     
