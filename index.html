@@ -2580,32 +2580,44 @@ if (dayOfWeek === 6 || dayOfWeek === 0) {
       let backtestImage1 = null;
         let backtestImage2 = null;
 
-        function openWeekendModal() {
-            document.body.style.overflow = 'hidden';
-            const userReports = reportsHistory.filter(item => item.author === currentUser);
-            const lastViolation = userReports.find(item => item.compliance !== 'clean');
+       function openWeekendModal() {
+    document.body.style.overflow = 'hidden';
+    
+    // Останавливаем Lenis на десктопе, чтобы он не перехватывал wheel у модалки
+    if (typeof lenis !== 'undefined' && lenis !== null) {
+        lenis.stop();
+    }
 
-            const focusBox = document.getElementById('personal-error-focus-box');
-            const focusText = document.getElementById('personal-error-text');
+    const userReports = reportsHistory.filter(item => item.author === currentUser);
+    const lastViolation = userReports.find(item => item.compliance !== 'clean');
 
-            if (lastViolation && lastViolation.error && lastViolation.error !== 'Отсутствуют') {
-                focusText.innerText = `Внимание к детали: "${lastViolation.error}". Проанализируй этот момент перед открытием сессии в понедельник.`;
-                focusBox.classList.remove('hidden');
-            } else {
-                focusBox.classList.add('hidden');
-            }
+    const focusBox = document.getElementById('personal-error-focus-box');
+    const focusText = document.getElementById('personal-error-text');
 
-            updateWeekendTitle();
-            renderBacktestStats();
-            updateWeekendProgress();
-            renderBacktestHistory();
-            document.getElementById('weekend-modal').classList.remove('hidden');
-        }
+    if (lastViolation && lastViolation.error && lastViolation.error !== 'Отсутствуют') {
+        focusText.innerText = `Внимание к детали: "${lastViolation.error}". Проанализируй этот момент перед открытием сессии в понедельник.`;
+        focusBox.classList.remove('hidden');
+    } else {
+        focusBox.classList.add('hidden');
+    }
 
-        function closeWeekendModal() {
-            document.body.style.overflow = '';
-            document.getElementById('weekend-modal').classList.add('hidden');
-        }
+    updateWeekendTitle();
+    renderBacktestStats();
+    updateWeekendProgress();
+    renderBacktestHistory();
+    document.getElementById('weekend-modal').classList.remove('hidden');
+}
+
+function closeWeekendModal() {
+    document.body.style.overflow = '';
+
+    // Возобновляем плавную прокрутку Lenis
+    if (typeof lenis !== 'undefined' && lenis !== null) {
+        lenis.start();
+    }
+
+    document.getElementById('weekend-modal').classList.add('hidden');
+}
 
         // Динамический вывод дат выходных в правую плашку (например, "24 и 25 октября")
         function updateWeekendTitle() {
