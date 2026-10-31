@@ -3433,51 +3433,59 @@ function closeWeekendModal() {
         }
 
       
-// Универсальное открытие любой модалки с остановкой Lenis и привязкой скролла
+// Универсальное открытие любой модалки с мягким скроллом и остановкой фона
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
-    // Блокируем прокрутку фона и останавливаем Lenis
+    // Блокируем прокрутку фона сайта
     document.body.style.overflow = 'hidden';
-    if (typeof lenis !== 'undefined' && lenis !== null) {
-        lenis.stop();
-    }
 
     modal.classList.remove('hidden');
 
-    // Жёстко перенаправляем колесико мыши внутрь модалки, чтобы она крутилась
-    if (!modal._wheelBound) {
-        modal._wheelBound = true;
-        modal.addEventListener('wheel', (e) => {
-            // Находим внутренний прокручиваемый контейнер (сам блок модалки)
-            const scrollableBox = modal.querySelector('.overflow-y-auto') || modal.querySelector('.glass-panel');
-            if (!scrollableBox) return;
+    // Находим прокручиваемый блок внутри модалки
+    const scrollContainer = modal.querySelector('.overflow-y-auto') || modal.querySelector('.glass-panel');
+    
+    if (scrollContainer && typeof Lenis !== 'undefined') {
+        // Создаем локальный плавный скролл Lenis специально для этой модалки
+        modal._modalLenis = new Lenis({
+            wrapper: modal,
+            content: scrollContainer,
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        });
 
-            const isAtTop = scrollableBox.scrollTop === 0;
-            const isAtBottom = scrollableBox.scrollHeight - scrollableBox.scrollTop <= scrollableBox.clientHeight;
-
-            // Если пытаемся прокрутить вверх на самом верху или вниз на самом низу — гасим событие, чтобы фон не дергался
-            if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
-                e.preventDefault();
+        function modalRaf(time) {
+            if (modal._modalLenis) {
+                modal._modalLenis.raf(time);
+                requestAnimationFrame(modalRaf);
             }
-            e.stopPropagation();
-        }, { passive: false });
+        }
+        requestAnimationFrame(modalRaf);
     }
 }
 
-// Универсальное закрытие любой модалки с возобновлением Lenis
+// Универсальное закрытие любой модалки с очисткой скролла
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
     modal.classList.add('hidden');
 
-    // Возвращаем прокрутку фона и возобновляем Lenis
-    document.body.style.overflow = '';
-    if (typeof lenis !== 'undefined' && lenis !== null) {
-        lenis.start();
+    // Уничтожаем локальный Lenis модалки при закрытии
+    if (modal._modalLenis) {
+        modal._modalLenis.destroy();
+        modal._modalLenis = null;
     }
+
+    // Возвращаем прокрутку фона сайта
+    document.body.style.overflow = '';
 }
     </script>
     
