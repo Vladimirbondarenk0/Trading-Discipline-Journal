@@ -236,6 +236,20 @@
     white-space: nowrap;
     animation: marqueeScroll 8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
 }
+
+        /* Жесткая изоляция скролла внутри модалок */
+#rule-modal .glass-panel,
+#weekend-modal .glass-panel,
+#unlock-modal > div,
+#notice-modal > div,
+#delete-modal > div,
+#firebase-modal > div,
+#screenshot-warning-modal > div,
+#delete-reply-modal > div {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
     </style>
 </head>
 <body class="min-h-screen pb-16">
@@ -3407,26 +3421,24 @@ function closeWeekendModal() {
             requestAnimationFrame(raf);
         }
 
-      
-// Универсальное открытие любой модалки с гарантированным нативным скроллом
+// Универсальное открытие любой модалки с принудительной изоляцией скролла
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
-    // Блокируем прокрутку фона страницы и останавливаем Lenis
-    document.body.style.overflow = 'hidden';
+    // Мягко останавливаем глобальный Lenis, не ломая структуру DOM
     if (typeof lenis !== 'undefined' && lenis !== null) {
         lenis.stop();
     }
+    document.body.style.overflow = 'hidden';
 
     modal.classList.remove('hidden');
 
-    // Принудительно включаем скролл на самом окне модалки и её контенте
-    const panel = modal.querySelector('.glass-panel');
+    // Находим главный контейнер внутри модалки и активируем нативный скролл
+    const panel = modal.querySelector('.glass-panel') || modal.querySelector('div > div');
     if (panel) {
-        panel.style.maxHeight = '90vh';
+        panel.style.maxHeight = '85vh';
         panel.style.overflowY = 'auto';
-        panel.style.webkitOverflowScrolling = 'touch'; // Плавность для мобильных
     }
 }
 
@@ -3437,12 +3449,12 @@ function closeModal(modalId) {
 
     modal.classList.add('hidden');
 
-    // Возвращаем прокрутку фона страницы и запускаем Lenis
+    // Возвращаем глобальный скролл и запуск Lenis
     document.body.style.overflow = '';
     if (typeof lenis !== 'undefined' && lenis !== null) {
         lenis.start();
     }
-}
+}    
     </script>
     
 </body>
