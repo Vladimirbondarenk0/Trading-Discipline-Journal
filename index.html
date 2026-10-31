@@ -3408,18 +3408,26 @@ function closeWeekendModal() {
         }
 
       
-// Универсальное открытие любой модалки с остановкой глобального скролла и Lenis
+// Универсальное открытие любой модалки с гарантированным нативным скроллом
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
-    // Блокируем прокрутку фона сайта и останавливаем глобальный Lenis
+    // Блокируем прокрутку фона страницы и останавливаем Lenis
     document.body.style.overflow = 'hidden';
     if (typeof lenis !== 'undefined' && lenis !== null) {
         lenis.stop();
     }
 
     modal.classList.remove('hidden');
+
+    // Принудительно включаем скролл на самом окне модалки и её контенте
+    const panel = modal.querySelector('.glass-panel');
+    if (panel) {
+        panel.style.maxHeight = '90vh';
+        panel.style.overflowY = 'auto';
+        panel.style.webkitOverflowScrolling = 'touch'; // Плавность для мобильных
+    }
 }
 
 // Универсальное закрытие любой модалки с возвратом прокрутки
@@ -3429,7 +3437,7 @@ function closeModal(modalId) {
 
     modal.classList.add('hidden');
 
-    // Возвращаем прокрутку фона сайта и запускаем глобальный Lenis
+    // Возвращаем прокрутку фона страницы и запускаем Lenis
     document.body.style.overflow = '';
     if (typeof lenis !== 'undefined' && lenis !== null) {
         lenis.start();
