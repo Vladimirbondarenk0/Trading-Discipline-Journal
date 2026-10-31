@@ -1468,28 +1468,35 @@ const DB_NODE_NAME = 'reports_vladimir';
                 return;
             }
 
-            // 3. Выходной день (Суббота / Воскресенье) без сданного отчёта за сегодня
-            if (dayOfWeek === 6 || dayOfWeek === 0) {
-                if (completedCard) completedCard.classList.add('hidden');
-                if (wizardContainer) wizardContainer.classList.add('hidden');
-                
-                // Показываем панель выходных, скрываем торговую панель сессии
-                if (weekendPanel) weekendPanel.classList.remove('hidden');
-                if (tradingPanel) tradingPanel.classList.add('hidden');
-                
-                if (timerCard) {
-                    timerCard.classList.remove('hidden');
-                    const badgeTextEl = document.getElementById('session-badge-text');
-                    if (badgeTextEl) badgeTextEl.innerText = "Выходной день (Рынок закрыт)";
-                    
-                    const clockEl = document.getElementById('live-clock');
-                    if (clockEl) clockEl.innerText = "ПОКОЙ";
-                    
-                    const remTextEl = document.getElementById('session-remaining-text');
-                    if (remTextEl) remTextEl.innerText = "Отдых до понедельника, 09:00";
-                }
-                return;
-            }
+            // 3. Выходной день (Суббота / Воскресенье): Рынок закрыт, но открыт путь к бэктестам и пользе
+if (dayOfWeek === 6 || dayOfWeek === 0) {
+    if (completedCard) completedCard.classList.add('hidden');
+    if (wizardContainer) wizardContainer.classList.add('hidden');
+    
+    // Показываем панель сессии с призывом к бэктестам
+    if (timerCard) {
+        timerCard.classList.remove('hidden');
+        const badgeTextEl = document.getElementById('session-badge-text');
+        if (badgeTextEl) badgeTextEl.innerText = "Выходной день (Покой и Бэктесты)";
+        
+        const clockEl = document.getElementById('live-clock');
+        if (clockEl) clockEl.innerText = "ПОКОЙ";
+        
+        const remTextEl = document.getElementById('session-remaining-text');
+        if (remTextEl) remTextEl.innerText = "Время для FX Replay и разбора ошибок";
+
+        // Меняем кнопку досрочного ввода на открытие модалки «Проводим выходные с пользой»
+        const unlockBtn = timerCard.querySelector('button');
+        if (unlockBtn) {
+            unlockBtn.setAttribute('onclick', 'openWeekendModal()');
+            unlockBtn.innerHTML = `
+                <i class="fa-solid fa-seedling text-amber-400"></i>
+                <span>Проводим выходные с пользой</span>
+            `;
+        }
+    }
+    return;
+}
 
             // 4. Обычный рабочий день и окно 09:00 - 12:00
             if (totalCurrentSeconds >= startSeconds && totalCurrentSeconds < endSeconds && !isUnlockedToday) {
