@@ -2855,7 +2855,7 @@ function closeWeekendModal() {
 
                 const editBtnHtml = isEditing 
                     ? `<button onclick="toggleArchiveEdit('${author}')" class="text-[10px] bg-rose-500/25 hover:bg-rose-500/40 text-rose-300 px-2.5 py-0.5 rounded border border-rose-500/40 transition flex items-center space-x-1"><i class="fa-solid fa-xmark text-xs"></i><span>Завершить</span></button>`
-                    : `<button onclick="toggleArchiveEdit('${author}')" class="text-[10px] bg-brand-dark/60 hover:bg-brand-border text-gray-300 px-2 py-0.5 rounded border border-brand-border transition flex items-center space-x-1"><i class="fa-solid fa-pen ${headerColor} text-[9px]"></i><span>Редактировать</span></button>`;
+                    : `<button onclick="toggleArchiveEdit('${author}')" class="text-[10px] bg-brand-dark/60 hover:bg-brand-border text-gray-300 px-2 py-0.5 rounded border border-brand-border transition flex items-center space-x-1"><i class="fa-solid fa-pen ${headerColor} text-[9px]"></i><span></span></button>`;
 
                 colDiv.innerHTML = `
                     <div class="text-xs font-bold ${headerColor} flex items-center space-x-1.5 border-b border-brand-border/40 pb-1.5 justify-between">
