@@ -41,7 +41,7 @@
 
     <style>
 
-        /* Плавный и мягкий нативный скролл во всех модалках и списках */
+/* Обеспечиваем идеальный нативный плавный скролл внутри элементов с прокруткой */
 .overflow-y-auto {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
@@ -681,7 +681,7 @@
 
  <!-- Modal Checklist for Rules & System AMD Guide -->
     <div id="rule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="glass-panel w-full max-w-2xl md:max-w-3xl lg:max-w-4xl rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] flex flex-col shadow-2xl transition-all duration-300">
+    <div class="glass-panel w-full max-w-2xl md:max-w-3xl lg:max-w-4xl rounded-2xl p-6 border border-brand-border space-y-5 max-h-[90vh] flex flex-col shadow-2xl transition-all duration-300" data-lenis-prevent>
             <div class="flex items-center justify-between border-b border-brand-border pb-3 flex-shrink-0 gap-4">
                 <!-- Обертка с маской overflow-hidden для эффекта бегущей строки -->
                 <div class="flex items-center space-x-2 flex-1 min-w-0 overflow-hidden relative">
@@ -738,8 +738,8 @@
     </div>
 
     <!-- MODAL: Проводим выходные с пользой -->
-    <div id="weekend-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-        <div class="glass-panel max-w-4xl w-full rounded-2xl p-5 sm:p-6 border border-brand-border space-y-5 max-h-[90vh] overflow-y-auto shadow-2xl">
+    <div id="weekend-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden" data-lenis-prevent>
+    <div class="glass-panel max-w-4xl w-full rounded-2xl p-5 sm:p-6 border border-brand-border space-y-5 max-h-[90vh] overflow-y-auto shadow-2xl">
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-brand-border/60 pb-3">
                 <div class="flex items-center space-x-3">
