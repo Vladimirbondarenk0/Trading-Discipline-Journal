@@ -3432,7 +3432,8 @@ function closeWeekendModal() {
             requestAnimationFrame(raf);
         }
 
-        // Универсальное открытие любой модалки с остановкой Lenis
+      
+// Универсальное открытие любой модалки с остановкой Lenis и привязкой скролла
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
@@ -3444,6 +3445,25 @@ function openModal(modalId) {
     }
 
     modal.classList.remove('hidden');
+
+    // Жёстко перенаправляем колесико мыши внутрь модалки, чтобы она крутилась
+    if (!modal._wheelBound) {
+        modal._wheelBound = true;
+        modal.addEventListener('wheel', (e) => {
+            // Находим внутренний прокручиваемый контейнер (сам блок модалки)
+            const scrollableBox = modal.querySelector('.overflow-y-auto') || modal.querySelector('.glass-panel');
+            if (!scrollableBox) return;
+
+            const isAtTop = scrollableBox.scrollTop === 0;
+            const isAtBottom = scrollableBox.scrollHeight - scrollableBox.scrollTop <= scrollableBox.clientHeight;
+
+            // Если пытаемся прокрутить вверх на самом верху или вниз на самом низу — гасим событие, чтобы фон не дергался
+            if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+                e.preventDefault();
+            }
+            e.stopPropagation();
+        }, { passive: false });
+    }
 }
 
 // Универсальное закрытие любой модалки с возобновлением Lenis
